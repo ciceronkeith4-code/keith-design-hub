@@ -69,7 +69,7 @@ export const EXPERIENCE = [
 ];
 
 export const EDUCATION = [
-  { school: "San Sebastian College – Recoletos Manila", detail: "BS Information Technology", period: "2023 — Present", badge: "Dean's Lister" },
+  { school: "San Sebastian College – Recoletos Manila", detail: "BS Information Technology", period: "2023", badge: "Dean's Lister" },
   { school: "The Lady Mediatrix Institute Inc.", detail: "STEM", period: "2020 — 2023", badge: "With High Honors" },
   { school: "Recto Memorial National High School", detail: "Junior High School", period: "2019 — 2020", badge: "With Honors" },
 ];
@@ -82,6 +82,15 @@ export const TRAININGS = [
 ];
 
 export const PROJECTS = [
+  {
+    title: "ONE CAINTA APP",
+    description: "A unified municipal portal and public service application for Cainta, Rizal providing digital community services, public announcements, and local government resources.",
+    image: "/images/projects/onecainta.png",
+    tech: ["PHP", "JavaScript", "HTML5", "CSS3", "MySQL", "PWA"],
+    demo: "https://onecainta.com",
+    github: null,
+    shots: ["/images/projects/onecainta.png"],
+  },
   {
     title: "SSCRMNL IT DEPARTMENT OFFICIAL PAGE",
     description: "A student-led computing community website for technical learning, leadership, innovation, professional connection, and service.",
@@ -142,7 +151,7 @@ export const SOCIALS = [
   { id: "viber", label: "Viber", detail: "+63 9944933136", action: "Chat on Viber", url: "viber://chat?number=%2B639944933136", color: "#7360F2" },
 ] as const;
 
-export const CONTACT = { email: "ciceronkeith4@gmail.com", phone: "+63 9944933136", location: "San Miguel, Manila" };
+export const CONTACT = { email: "ciceronkeith4@gmail.com", phone: "+63 9944933136", location: "Philippines" };
 
 
 
