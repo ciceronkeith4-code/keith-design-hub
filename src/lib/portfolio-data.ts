@@ -79,11 +79,18 @@ export const PROJECTS = [
   {
     title: "NCLEX Amplified Review Center - Intern Portal",
     description: "An intern management and review center portal providing learning tools, intern resources, and administrative monitoring for NCLEX Amplified Review Center.",
-    image: "/images/projects/onecainta.png",
+    image: "/images/projects/nclex-amplified.png",
     tech: ["React", "TypeScript", "Tailwind CSS", "Node.js", "Vercel"],
     demo: "https://interns.nclexamplifiedreviewcenter.com",
     github: null,
-    shots: ["/images/projects/onecainta.png"],
+    shots: [
+      "/images/projects/nclex-amplified.png",
+      "/images/projects/nclex-shot-1.png",
+      "/images/projects/nclex-shot-2.png",
+      "/images/projects/nclex-shot-3.png",
+      "/images/projects/nclex-shot-4.png",
+      "/images/projects/nclex-shot-5.png",
+    ],
   },
   {
     title: "ONE CAINTA APP",

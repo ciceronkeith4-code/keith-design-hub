@@ -49,8 +49,8 @@ function MobilePortraitCarousel() {
   }, []);
 
   return (
-    <div className="relative flex w-full flex-col items-center py-2 sm:hidden">
-      <div className="relative h-[270px] w-[200px] overflow-hidden rounded-3xl border border-white/15 bg-neutral-900 shadow-[0_20px_40px_rgba(0,0,0,0.5)]">
+    <div className="relative flex w-full flex-col items-center py-0 sm:hidden">
+      <div className="relative h-[240px] w-[180px] overflow-hidden rounded-3xl border border-white/15 bg-neutral-900 shadow-[0_16px_32px_rgba(0,0,0,0.45)]">
         <AnimatePresence mode="wait">
           <motion.img
             key={photos[photoIndex]}
@@ -67,7 +67,7 @@ function MobilePortraitCarousel() {
       </div>
 
       {/* Pagination dots for mobile */}
-      <div className="mt-3.5 flex gap-1.5">
+      <div className="mt-2.5 flex gap-1.5">
         {photos.map((_, idx) => (
           <button
             key={idx}
@@ -85,7 +85,7 @@ function MobilePortraitCarousel() {
 
 export function About() {
   return (
-    <section id="about" className="full-page-slide stacked-panel panel-dark z-20 overflow-hidden px-4 py-12 sm:py-16">
+    <section id="about" className="full-page-slide stacked-panel panel-dark z-20 overflow-hidden px-4 py-8 sm:py-16">
       <div className="pointer-events-none absolute inset-x-0 top-1/2 flex -translate-y-1/2 overflow-hidden whitespace-nowrap opacity-[0.018]">
         <div className="marquee-track flex min-w-max">
           <span className="font-display pr-20 text-[18vw] uppercase leading-none">Keith Czimonne Anderson Ciceron</span>
@@ -93,7 +93,7 @@ export function About() {
         </div>
       </div>
 
-      <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-8 lg:grid-cols-[1fr_1.1fr] lg:gap-20">
+      <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-4 sm:gap-8 lg:grid-cols-[1fr_1.1fr] lg:gap-20">
         <Reveal className="relative flex items-center justify-center">
           <DesktopPortraitOrbit />
           <MobilePortraitCarousel />
