@@ -59,28 +59,28 @@ export function OJT() {
               </div>
               
               <div className="border-t border-white/10 pt-8 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">
-                <div className="relative mx-auto flex h-[255px] max-w-sm items-center justify-center">
+                <div className="relative mx-auto flex h-[230px] sm:h-[255px] w-full max-w-[290px] sm:max-w-sm items-center justify-center">
                   <motion.img
                     key={photo.src}
                     initial={{ opacity: 0, scale: 0.94, rotate: -2 }}
                     animate={{ opacity: 1, scale: 1, rotate: 0 }}
                     src={photo.src}
                     alt={photo.caption}
-                    className="h-[min(220px,60vw)] w-[min(300px,82vw)] rounded-[1.25rem] border border-white/20 object-cover shadow-2xl grayscale transition hover:grayscale-0"
+                    className="h-[min(190px,52vw)] w-[min(250px,74vw)] rounded-[1.25rem] border border-white/20 object-cover shadow-2xl grayscale transition hover:grayscale-0"
                   />
                   <button
                     onClick={() => move(-1)}
                     aria-label="Previous OJT photo"
-                    className="absolute left-[-8px] flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-[#403D39]/90 text-white transition hover:bg-[#EB5E28]"
+                    className="absolute left-0 sm:-left-2 flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full border border-white/10 bg-[#403D39]/90 text-white transition hover:bg-[#EB5E28]"
                   >
-                    <ChevronLeft className="h-5 w-5" />
+                    <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5" />
                   </button>
                   <button
                     onClick={() => move(1)}
                     aria-label="Next OJT photo"
-                    className="absolute right-[-8px] flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-[#403D39]/90 text-white transition hover:bg-[#EB5E28]"
+                    className="absolute right-0 sm:-right-2 flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full border border-white/10 bg-[#403D39]/90 text-white transition hover:bg-[#EB5E28]"
                   >
-                    <ChevronRight className="h-5 w-5" />
+                    <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5" />
                   </button>
                 </div>
                 

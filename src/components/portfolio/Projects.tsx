@@ -42,10 +42,10 @@ export function Projects() {
                       aria-label={`View screenshots for ${project.title}`}
                       className="group relative flex w-full flex-col items-center py-4"
                     >
-                      <div className={`${reverse ? "screen-float-left" : "screen-float-right"} relative aspect-[16/10] w-full max-w-[420px] [transform-style:preserve-3d]`}>
-                        <div className="absolute bottom-[-42px] left-1/2 z-0 h-16 w-12 -translate-x-1/2 rounded-b-md bg-gradient-to-b from-neutral-300 to-neutral-500 shadow-md" />
-                        <div className="absolute bottom-[-53px] left-1/2 z-0 h-3 w-28 -translate-x-1/2 rounded-sm bg-neutral-400 shadow-md" />
-                        <div className="absolute inset-0 z-10 overflow-hidden rounded-[1.5rem] border border-neutral-300 bg-white p-2 pb-10 shadow-2xl">
+                      <div className={`${reverse ? "md:screen-float-left" : "md:screen-float-right"} relative aspect-[16/10] w-full max-w-[min(420px,88vw)] [transform-style:preserve-3d]`}>
+                        <div className="absolute bottom-[-32px] sm:bottom-[-42px] left-1/2 z-0 h-12 sm:h-16 w-10 sm:w-12 -translate-x-1/2 rounded-b-md bg-gradient-to-b from-neutral-300 to-neutral-500 shadow-md" />
+                        <div className="absolute bottom-[-40px] sm:bottom-[-53px] left-1/2 z-0 h-2.5 sm:h-3 w-20 sm:w-28 -translate-x-1/2 rounded-sm bg-neutral-400 shadow-md" />
+                        <div className="absolute inset-0 z-10 overflow-hidden rounded-[1.25rem] sm:rounded-[1.5rem] border border-neutral-300 bg-white p-1.5 sm:p-2 pb-8 sm:pb-10 shadow-2xl">
                           <div className="h-full overflow-hidden rounded-[1rem] border border-neutral-300/40 bg-neutral-900">
                             <img
                               src={project.image}

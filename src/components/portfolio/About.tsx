@@ -30,13 +30,13 @@ function PortraitOrbit() {
 
 export function About() {
   return (
-    <section id="about" className="full-page-slide stacked-panel panel-dark z-20 px-4 py-12 sm:py-16">
+    <section id="about" className="full-page-slide stacked-panel panel-dark z-20 overflow-hidden px-4 py-12 sm:py-16">
       <div className="pointer-events-none absolute inset-x-0 top-1/2 flex -translate-y-1/2 overflow-hidden whitespace-nowrap opacity-[0.018]">
         <div className="marquee-track flex min-w-max"><span className="font-display pr-20 text-[18vw] uppercase leading-none">Keith Czimonne Anderson Ciceron</span><span className="font-display pr-20 text-[18vw] uppercase leading-none">Keith Czimonne Anderson Ciceron</span></div>
       </div>
 
-      <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[1fr_1.1fr] lg:gap-20">
-        <Reveal className="relative flex min-h-[340px] items-center justify-center overflow-visible sm:min-h-[400px]"><PortraitOrbit /></Reveal>
+      <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-[1fr_1.1fr] lg:gap-20">
+        <Reveal className="relative flex min-h-[290px] items-center justify-center overflow-hidden sm:min-h-[400px]"><PortraitOrbit /></Reveal>
 
         <Reveal delay={0.12}>
           <span className="font-mono text-[10px] font-bold uppercase tracking-[0.3em] text-[#E25822]">About Me</span>

@@ -45,8 +45,8 @@ export function Experience() {
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
-          {/* Strictly Fixed Box & Layout Dimensions */}
-          <div className="relative h-[320px] min-h-[320px] max-h-[320px] w-full overflow-hidden rounded-3xl border border-white/10 bg-[#18181A] p-6 shadow-2xl sm:h-[300px] sm:min-h-[300px] sm:max-h-[300px] sm:p-8">
+          {/* Mobile-Responsive Box & Layout Dimensions */}
+          <div className="relative min-h-[320px] sm:min-h-[300px] w-full overflow-hidden rounded-3xl border border-white/10 bg-[#18181A] p-5 sm:p-8 shadow-2xl">
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentIndex}
@@ -60,14 +60,14 @@ export function Experience() {
                 transition={{ duration: 0.35 }}
                 className="flex h-full flex-col cursor-grab active:cursor-grabbing"
               >
-                {/* Header - Fixed Height */}
-                <div className="flex h-14 shrink-0 items-center justify-between gap-3 border-b border-white/10 pb-4">
-                  <div className="flex items-center gap-3.5 min-w-0">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-[#E25822]/30 bg-[#E25822]/20 text-[#E25822]">
-                      <Briefcase className="h-5 w-5" />
+                {/* Header - Mobile Responsive */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-4">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-2xl border border-[#E25822]/30 bg-[#E25822]/20 text-[#E25822]">
+                      <Briefcase className="h-4 w-4 sm:h-5 sm:w-5" />
                     </div>
                     <div className="min-w-0">
-                      <h3 className="font-display text-base sm:text-xl uppercase tracking-wide text-[#F8F1E7] truncate">
+                      <h3 className="font-display text-sm sm:text-xl uppercase tracking-wide text-[#F8F1E7] truncate">
                         {item.role}
                       </h3>
                       <p className="mt-0.5 text-xs sm:text-sm font-semibold text-[#8C857B] truncate">
@@ -75,8 +75,8 @@ export function Experience() {
                       </p>
                     </div>
                   </div>
-                  <div className="flex shrink-0 items-center gap-1.5 rounded-full border border-[#E25822]/30 bg-[#E25822]/15 px-3.5 py-1.5 font-mono text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[#F8F1E7]">
-                    <Calendar className="h-3.5 w-3.5 text-[#E25822]" />
+                  <div className="flex w-fit shrink-0 items-center gap-1.5 rounded-full border border-[#E25822]/30 bg-[#E25822]/15 px-3 py-1 font-mono text-[9px] sm:text-xs font-bold uppercase tracking-wider text-[#F8F1E7]">
+                    <Calendar className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-[#E25822]" />
                     {item.period}
                   </div>
                 </div>

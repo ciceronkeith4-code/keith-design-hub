@@ -177,7 +177,7 @@ export function Hero({ ready = true }: HeroProps) {
           Hello, I&apos;m available for work
         </motion.span>
 
-        <motion.h1 variants={entranceItem} className="font-display max-w-5xl text-[clamp(2.1rem,11.5vw,9.5rem)] uppercase leading-[0.88] sm:leading-[0.84] sm:whitespace-nowrap tracking-[-0.035em] text-[#18181A]">
+        <motion.h1 variants={entranceItem} className="font-display max-w-5xl text-[clamp(1.85rem,10vw,9.5rem)] uppercase leading-[0.88] sm:leading-[0.84] sm:whitespace-nowrap tracking-[-0.035em] text-[#18181A]">
           Keith <span className="text-[#E25822]">Ciceron.</span>
         </motion.h1>
 
