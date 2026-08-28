@@ -1,14 +1,29 @@
 import { motion, AnimatePresence, type PanInfo } from "framer-motion";
-import { useState } from "react";
-import { ChevronLeft, ChevronRight, Award } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import { Award } from "lucide-react";
 import { TRAININGS } from "@/lib/portfolio-data";
 import { SectionHeading } from "./SectionHeading";
 
 export function Trainings() {
   const [index, setIndex] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
 
-  const prev = () => setIndex((current) => (current === 0 ? TRAININGS.length - 1 : current - 1));
-  const next = () => setIndex((current) => (current === TRAININGS.length - 1 ? 0 : current + 1));
+  const prev = useCallback(
+    () => setIndex((current) => (current === 0 ? TRAININGS.length - 1 : current - 1)),
+    []
+  );
+  const next = useCallback(
+    () => setIndex((current) => (current === TRAININGS.length - 1 ? 0 : current + 1)),
+    []
+  );
+
+  useEffect(() => {
+    if (isHovered) return;
+    const timer = setInterval(() => {
+      next();
+    }, 4500);
+    return () => clearInterval(timer);
+  }, [isHovered, next]);
 
   const handleDragEnd = (_: unknown, info: PanInfo) => {
     if (info.offset.x < -40) {
@@ -35,8 +50,12 @@ export function Trainings() {
         />
 
         <div className="relative mt-8 sm:mt-12">
-          {/* Main Active Card Container */}
-          <div className="relative mx-auto w-full max-w-xl overflow-hidden rounded-3xl border border-white/10 bg-[#18181A] p-6 shadow-2xl sm:p-8">
+          {/* Main Active Card Container with Auto-play & Hover Pause */}
+          <div
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            className="relative mx-auto w-full max-w-xl overflow-hidden rounded-3xl border border-white/10 bg-[#18181A] p-6 shadow-2xl sm:p-8"
+          >
             <AnimatePresence mode="wait">
               <motion.div
                 key={index}
@@ -72,22 +91,6 @@ export function Trainings() {
                 </div>
               </motion.div>
             </AnimatePresence>
-
-            {/* Prev/Next Chevron Controls */}
-            <button
-              onClick={prev}
-              aria-label="Previous activity"
-              className="absolute left-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-[#222225]/80 text-[#F8F1E7] transition hover:border-[#E25822] hover:bg-[#E25822]"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </button>
-            <button
-              onClick={next}
-              aria-label="Next activity"
-              className="absolute right-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-[#222225]/80 text-[#F8F1E7] transition hover:border-[#E25822] hover:bg-[#E25822]"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </button>
           </div>
 
           {/* Dots Indicator & Counter */}
