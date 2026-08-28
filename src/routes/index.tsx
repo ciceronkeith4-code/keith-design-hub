@@ -19,10 +19,10 @@ import { Trainings } from "@/components/portfolio/Trainings";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Keith Ciceron | Full Stack Developer" },
-      { name: "description", content: "Full Stack Developer passionate about building clean, user-friendly, and efficient digital experiences." },
-      { property: "og:title", content: "Keith Ciceron | Full Stack Developer" },
-      { property: "og:description", content: "Full Stack Developer passionate about building clean, user-friendly, and efficient digital experiences." },
+      { title: "Keith Ciceron | Software Developer" },
+      { name: "description", content: "Software Developer passionate about building clean, user-friendly, and efficient digital experiences." },
+      { property: "og:title", content: "Keith Ciceron | Software Developer" },
+      { property: "og:description", content: "Software Developer passionate about building clean, user-friendly, and efficient digital experiences." },
       { property: "og:url", content: "/" },
     ],
     links: [

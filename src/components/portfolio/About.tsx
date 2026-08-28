@@ -106,7 +106,7 @@ export function About() {
           </h2>
           <div className="mt-5 text-sm leading-relaxed text-[#D8D0C5] sm:text-base">
             <p>
-              I am a full-stack web developer specializing in building end-to-end web applications—from crafting intuitive,
+              I am a software developer specializing in building end-to-end applications from crafting intuitive,
               responsive user interfaces to engineering reliable backend APIs and database architectures.
             </p>
           </div>
@@ -116,7 +116,7 @@ export function About() {
                 Core Specializations
               </h3>
               <p className="mt-2 text-xs font-medium leading-relaxed text-neutral-400">
-                Full Stack Development • System Design • UI/UX Prototyping
+                Software Development • System Design • UI/UX Prototyping
               </p>
             </div>
           </div>

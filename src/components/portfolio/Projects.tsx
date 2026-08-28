@@ -20,7 +20,7 @@ export function Projects() {
               Project <span className="text-[#E25822]">Showcase</span>
             </>
           }
-          subtitle="Selected work — expand any card to browse screenshots and UI screens."
+          subtitle="Selected work. Expand any card to browse screenshots and UI screens."
         />
 
         <div className="mt-10 space-y-10 sm:space-y-14">

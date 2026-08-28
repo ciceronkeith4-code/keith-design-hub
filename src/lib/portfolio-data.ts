@@ -39,7 +39,7 @@ export const EXPERIENCE = [
   {
     role: "Dev Assistant",
     company: "Opoli Technology Inc.",
-    period: "Sep 2022 — Dec 2025",
+    period: "Sep 2022 to Dec 2025",
     image: "/images/ojt/opoli-bounty.jpg",
     points: [
       "Performed manual testing on web and mobile applications.",
@@ -51,7 +51,7 @@ export const EXPERIENCE = [
   {
     role: "Freelance Photo & Video Editor",
     company: "Self-Employed",
-    period: "Jan 2023 — Apr 2024",
+    period: "Jan 2023 to Apr 2024",
     image: "/images/profile/keith-brown-shirt.jpg",
     points: [
       "Edited social media content for multiple platforms.",
@@ -63,9 +63,9 @@ export const EXPERIENCE = [
 ];
 
 export const EDUCATION = [
-  { school: "San Sebastian College – Recoletos Manila", detail: "BS Information Technology", period: "2023", badge: "Dean's Lister" },
-  { school: "The Lady Mediatrix Institute Inc.", detail: "STEM", period: "2020 — 2023", badge: "With High Honors" },
-  { school: "Recto Memorial National High School", detail: "Junior High School", period: "2019 — 2020", badge: "With Honors" },
+  { school: "San Sebastian College Recoletos Manila", detail: "BS Information Technology", period: "2023", badge: "Dean's Lister" },
+  { school: "The Lady Mediatrix Institute Inc.", detail: "STEM", period: "2020 to 2023", badge: "With High Honors" },
+  { school: "Recto Memorial National High School", detail: "Junior High School", period: "2019 to 2020", badge: "With Honors" },
 ];
 
 export const TRAININGS = [

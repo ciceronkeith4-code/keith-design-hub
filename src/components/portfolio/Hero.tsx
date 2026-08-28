@@ -4,7 +4,7 @@ import { memo, useCallback, useEffect, useRef, useState, type PointerEvent as Re
 import { MagneticButton } from "./MagneticButton";
 import { scrollToSection } from "./useScrollSpy";
 
-const professionWords = ["Full Stack Web Developer", "Full Stack Engineer"] as const;
+const professionWords = ["Software Developer", "Software Engineer"] as const;
 const entranceEase = [0.22, 1, 0.36, 1] as const;
 const PROFESSION_START_DELAY_MS = 100;
 const PROFESSION_INTRO_DURATION_MS = 600;
@@ -182,7 +182,7 @@ export function Hero({ ready = true }: HeroProps) {
         </motion.h1>
 
         <motion.h2 variants={entranceItem} className="font-display mt-4 sm:mt-6 text-lg uppercase tracking-[0.16em] sm:tracking-[0.2em] text-[#E25822] sm:text-2xl md:text-3xl lg:text-4xl font-bold">
-          FULL STACK DEVELOPER
+          SOFTWARE DEVELOPER
         </motion.h2>
 
         <motion.p variants={entranceItem} className="mt-4 max-w-2xl text-base font-medium leading-relaxed tracking-wide text-[#4A443B] sm:text-lg md:text-xl">

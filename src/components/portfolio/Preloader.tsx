@@ -106,7 +106,7 @@ export function Preloader({ onComplete }: PreloaderProps) {
             >
               {[0, 1].map((copy) => (
                 <span key={copy} className="block shrink-0 pr-[12vw]">
-                  FULL STACK WEB DEVELOPER
+                  SOFTWARE DEVELOPER
                 </span>
               ))}
             </motion.div>
