@@ -1,4 +1,4 @@
-﻿import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
   Link,
@@ -77,35 +77,37 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Keith Ciceron — Software & Web Developer" },
+      { title: "Keith Ciceron — Full Stack Developer" },
       {
         name: "description",
         content:
-          "Keith Czimonne Anderson Ciceron — aspiring software & web developer building modern, user-friendly, and scalable web applications.",
+          "Keith Czimonne Anderson Ciceron — Full Stack Developer building modern, user-friendly, and scalable web applications.",
       },
       { name: "author", content: "Keith Czimonne Anderson Ciceron" },
-      { name: "theme-color", content: "#0F172A" },
-      { property: "og:title", content: "Keith Ciceron — Software & Web Developer" },
+      { name: "theme-color", content: "#18181A" },
+      { property: "og:title", content: "Keith Ciceron — Full Stack Developer" },
       {
         property: "og:description",
         content:
-          "Portfolio of Keith Czimonne Anderson Ciceron — software developer, web developer, and UI/UX enthusiast.",
+          "Portfolio of Keith Czimonne Anderson Ciceron — Full Stack Developer and UI/UX enthusiast.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Keith Ciceron — Software & Web Developer" },
+      { name: "twitter:title", content: "Keith Ciceron — Full Stack Developer" },
       {
         name: "twitter:description",
-        content: "Portfolio of Keith Czimonne Anderson Ciceron — software & web developer.",
+        content: "Portfolio of Keith Czimonne Anderson Ciceron — Full Stack Developer.",
       },
-      { name: "description", content: "A modern, minimalist portfolio website showcasing the skills and projects of a Software Developer and Web Developer." },
-      { property: "og:description", content: "A modern, minimalist portfolio website showcasing the skills and projects of a Software Developer and Web Developer." },
-      { name: "twitter:description", content: "A modern, minimalist portfolio website showcasing the skills and projects of a Software Developer and Web Developer." },
+      { name: "description", content: "A modern, minimalist portfolio website showcasing the skills and projects of a Full Stack Developer." },
+      { property: "og:description", content: "A modern, minimalist portfolio website showcasing the skills and projects of a Full Stack Developer." },
+      { name: "twitter:description", content: "A modern, minimalist portfolio website showcasing the skills and projects of a Full Stack Developer." },
       { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/39e269c0-f56b-4fda-86ca-c0bbc70b11c5/id-preview-13519e60--d997127f-9841-46ca-b344-76a4c56a2031.lovable.app-1781974348891.png" },
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/39e269c0-f56b-4fda-86ca-c0bbc70b11c5/id-preview-13519e60--d997127f-9841-46ca-b344-76a4c56a2031.lovable.app-1781974348891.png" },
     ],
     links: [
-      { rel: "stylesheet", href: appCss },      { rel: "icon", href: "/logo-kc.png", type: "image/png" },
+      { rel: "stylesheet", href: appCss },
+      { rel: "icon", href: "/logo-kc.png", type: "image/png" },
+      { rel: "shortcut icon", href: "/logo-kc.png", type: "image/png" },
       { rel: "apple-touch-icon", href: "/logo-kc.png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },

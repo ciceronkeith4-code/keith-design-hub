@@ -1,11 +1,12 @@
-import { SiHtml5, SiCss, SiJavascript, SiTypescript, SiReact, SiTailwindcss, SiNodedotjs, SiMysql, SiFirebase, SiFigma, SiGit, SiGithub, SiVercel, SiSupabase, SiClaude, SiCursor, SiGithubcopilot } from "react-icons/si";
+import { SiHtml5, SiCss, SiJavascript, SiTypescript, SiReact, SiTailwindcss, SiNodedotjs, SiMysql, SiFirebase, SiFigma, SiGit, SiGithub, SiVercel, SiSupabase } from "react-icons/si";
 import { VscVscode } from "react-icons/vsc";
-import { FaBug, FaCode, FaCodeBranch, FaHeart, FaRobot, FaServer } from "react-icons/fa6";
+import { FaBug, FaCode, FaServer } from "react-icons/fa6";
 import { TbApi, TbUserSearch } from "react-icons/tb";
-import { AntigravityMark, PhotoshopMark } from "@/components/portfolio/SkillMarks";
+import { PhotoshopMark } from "@/components/portfolio/SkillMarks";
 
 export const NAV_ITEMS = [
   { id: "about", label: "About" },
+  { id: "skills", label: "Skills" },
   { id: "experience", label: "Experience" },
   { id: "projects", label: "Projects" },
 ] as const;
@@ -19,6 +20,7 @@ export const SKILLS = [
   { name: "Tailwind CSS", icon: SiTailwindcss, color: "#06B6D4", group: "Frontend" },
   { name: "Node.js", icon: SiNodedotjs, color: "#5FA04E", group: "Backend" },
   { name: "REST API", icon: TbApi, color: "#EB5E28", group: "Backend" },
+  { name: "Server Logic", icon: FaServer, color: "#059669", group: "Backend" },
   { name: "MySQL", icon: SiMysql, color: "#4479A1", group: "Database" },
   { name: "Firebase", icon: SiFirebase, color: "#FFCA28", group: "Database" },
   { name: "Supabase", icon: SiSupabase, color: "#3FCF8E", group: "Database" },
@@ -31,14 +33,6 @@ export const SKILLS = [
   { name: "QA Testing", icon: TbUserSearch, color: "#7C3AED", group: "Additional Skills" },
   { name: "Debugging", icon: FaBug, color: "#DC2626", group: "Additional Skills" },
   { name: "UI/UX Design", icon: FaCode, color: "#EB5E28", group: "Additional Skills" },
-  { name: "Server Logic", icon: FaServer, color: "#059669", group: "Backend" },
-  { name: "Claude", icon: SiClaude, color: "#D97757", group: "AI Tools" },
-  { name: "Codex", icon: FaRobot, color: "#10A37F", group: "AI Tools" },
-  { name: "Antigravity", icon: AntigravityMark, color: "#7C3AED", group: "AI Tools" },
-  { name: "GitHub Copilot", icon: SiGithubcopilot, color: "#6E40C9", group: "AI Tools" },
-  { name: "Stitch", icon: FaCodeBranch, color: "#4285F4", group: "AI Tools" },
-  { name: "Cursor", icon: SiCursor, color: "#111111", group: "AI Tools" },
-  { name: "Lovable", icon: FaHeart, color: "#FF4B7A", group: "AI Tools" },
 ];
 
 export const EXPERIENCE = [
@@ -104,7 +98,6 @@ export const PROJECTS = [
       "/images/projects/sscrmnl-itdept-3.png",
     ],
   },
-
   {
     title: "Cicerra Realty Services",
     description: "A professional real estate listing and services platform with modern property discovery, detailed listing views, a seamless contact system, and fully responsive layouts.",

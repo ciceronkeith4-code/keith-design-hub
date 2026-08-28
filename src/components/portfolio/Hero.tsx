@@ -4,11 +4,11 @@ import { memo, useCallback, useEffect, useRef, useState, type PointerEvent as Re
 import { MagneticButton } from "./MagneticButton";
 import { scrollToSection } from "./useScrollSpy";
 
-const professionWords = ["Software Developer", "UI/UX Designer"] as const;
+const professionWords = ["Full Stack Web Developer", "Full Stack Engineer"] as const;
 const entranceEase = [0.22, 1, 0.36, 1] as const;
-const PROFESSION_START_DELAY_MS = 500;
-const PROFESSION_INTRO_DURATION_MS = 4500;
-const PROFESSION_WORD_HOLD_MS = 2200;
+const PROFESSION_START_DELAY_MS = 100;
+const PROFESSION_INTRO_DURATION_MS = 600;
+const PROFESSION_WORD_HOLD_MS = 1800;
 
 const contentVariants = {
   hidden: {},
@@ -161,7 +161,7 @@ export function Hero({ ready = true }: HeroProps) {
         <HeroBackdrop x={smoothGlowX} y={smoothGlowY} reducedMotion={Boolean(reduceMotion)} />
       </motion.div>
 
-      <div className="pointer-events-none absolute inset-x-0 top-10 z-10 flex justify-between px-[8%] font-mono text-[10px] uppercase tracking-[0.22em] text-neutral-400">
+      <div className="pointer-events-none absolute inset-x-0 top-6 sm:top-10 z-10 flex justify-between px-4 sm:px-[8%] font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.18em] sm:tracking-[0.22em] text-neutral-400">
         <span>Manila · PH</span>
         <span>Portfolio / 2026</span>
       </div>
@@ -171,57 +171,44 @@ export function Hero({ ready = true }: HeroProps) {
         initial="hidden"
         animate={ready ? "visible" : "hidden"}
         variants={contentVariants}
-        className="relative z-20 mx-auto flex max-w-5xl flex-col items-center text-center"
+        className="relative z-20 mx-auto flex max-w-5xl flex-col items-center text-center px-2"
       >
-        <motion.span variants={entranceItem} className="mb-7 font-mono text-[10px] font-bold uppercase tracking-[0.32em] text-[#EB5E28] sm:mb-8">
+        <motion.span variants={entranceItem} className="mb-6 font-mono text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.24em] sm:tracking-[0.32em] text-[#E25822] sm:mb-8">
           Hello, I&apos;m available for work
         </motion.span>
 
-        <motion.h1 variants={entranceItem} className="font-display max-w-5xl text-[clamp(2.7rem,13vw,9.5rem)] uppercase leading-[0.84] whitespace-nowrap tracking-[-0.035em] text-neutral-950">
-          Keith <span className="text-[#EB5E28]">Ciceron.</span>
+        <motion.h1 variants={entranceItem} className="font-display max-w-5xl text-[clamp(2.1rem,11.5vw,9.5rem)] uppercase leading-[0.88] sm:leading-[0.84] sm:whitespace-nowrap tracking-[-0.035em] text-[#18181A]">
+          Keith <span className="text-[#E25822]">Ciceron.</span>
         </motion.h1>
 
-        <motion.div variants={entranceItem} className="mt-7">
-          <RotatingProfession active={professionStarted} />
-        </motion.div>
+        <motion.h2 variants={entranceItem} className="font-display mt-4 sm:mt-6 text-lg uppercase tracking-[0.16em] sm:tracking-[0.2em] text-[#E25822] sm:text-2xl md:text-3xl lg:text-4xl font-bold">
+          FULL STACK DEVELOPER
+        </motion.h2>
 
-        <div className="relative h-[250px] w-full">
-          {introComplete && (
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={contentVariants}
-            className="flex flex-col items-center"
+        <motion.p variants={entranceItem} className="mt-4 max-w-2xl text-base font-medium leading-relaxed tracking-wide text-[#4A443B] sm:text-lg md:text-xl">
+          Building modern, scalable web applications with intuitive user interfaces and robust backend systems.
+        </motion.p>
+
+        <motion.div variants={entranceItem} className="mt-7 flex flex-wrap justify-center gap-3">
+          <MagneticButton onClick={goProjects} className="bg-[#E25822] text-[#F8F1E7] hover:bg-[#c94b19] shadow-md">
+            View Projects <ArrowUpRight className="h-4 w-4" />
+          </MagneticButton>
+          <MagneticButton
+            onClick={goContact}
+            variant="ghost"
+            className="border-[#E25822]/30 bg-[#F8F1E7] text-[#18181A] hover:border-[#E25822] hover:bg-white"
           >
-            <motion.p variants={entranceItem} className="mt-7 max-w-3xl text-base font-medium leading-relaxed tracking-wide text-neutral-700 sm:text-lg md:text-xl lg:text-2xl">
-              I build modern, user-friendly, and scalable web applications with a focus on clean code and thoughtful design.
-            </motion.p>
-
-            <motion.div variants={entranceItem} className="mt-10 flex flex-wrap justify-center gap-3">
-              <MagneticButton onClick={goProjects} className="bg-[#252422] text-white hover:bg-[#EB5E28]">
-                View Projects <ArrowUpRight className="h-4 w-4" />
-              </MagneticButton>
-              <MagneticButton
-                onClick={goContact}
-                variant="ghost"
-                className="border-[#252422]/15 bg-white/65 text-[#252422] hover:border-[#EB5E28]/30 hover:bg-white"
-              >
-                Let&apos;s Talk
-              </MagneticButton>
-            </motion.div>
-
-
-          </motion.div>
-          )}
-        </div>
+            Let&apos;s Talk
+          </MagneticButton>
+        </motion.div>
       </motion.div>
 
       <motion.button
         initial={{ opacity: 0, y: 12 }}
-        animate={introComplete ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
-        transition={{ delay: introComplete ? 0.15 : 0, duration: 0.45, ease: entranceEase }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.45, ease: entranceEase }}
         onClick={goAbout}
-        className="absolute bottom-9 left-1/2 z-20 -translate-x-1/2 text-neutral-400 transition-colors duration-200 hover:text-[#EB5E28]"
+        className="absolute bottom-9 left-1/2 z-20 -translate-x-1/2 text-neutral-500 transition-colors duration-200 hover:text-[#E25822]"
         aria-label="Scroll to about section"
       >
         <motion.span

@@ -1,12 +1,12 @@
-﻿import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-const LOADER_DURATION = 5000;
+const LOADER_DURATION = 2400;
 const stages = [
   { label: "Initializing", progress: "00", at: 0 },
-  { label: "Loading modules", progress: "34", at: 1600 },
-  { label: "Preparing interface", progress: "72", at: 3300 },
-  { label: "Ready", progress: "100", at: 4700 },
+  { label: "Loading modules", progress: "34", at: 600 },
+  { label: "Preparing interface", progress: "72", at: 1400 },
+  { label: "Ready", progress: "100", at: 2100 },
 ] as const;
 
 interface PreloaderProps {
@@ -91,7 +91,7 @@ export function Preloader({ onComplete }: PreloaderProps) {
                 key={delay}
                 animate={reduceMotion ? {} : { scaleY: [0.5, 1, 0.5], opacity: [0.5, 1, 0.5] }}
                 transition={{ duration: 1.1, repeat: Infinity, delay }}
-                className={(index === 0 ? "h-3" : index === 1 ? "h-5" : "h-2") + " w-1 origin-bottom rounded-full bg-[#EB5E28] will-change-transform"}
+                className={(index === 0 ? "h-3" : index === 1 ? "h-5" : "h-2") + " w-1 origin-bottom rounded-full bg-[#E25822] will-change-transform"}
               />
             ))}
           </div>
@@ -106,7 +106,7 @@ export function Preloader({ onComplete }: PreloaderProps) {
             >
               {[0, 1].map((copy) => (
                 <span key={copy} className="block shrink-0 pr-[12vw]">
-                  SOFTWARE DEVELOPER
+                  FULL STACK WEB DEVELOPER
                 </span>
               ))}
             </motion.div>
@@ -118,12 +118,12 @@ export function Preloader({ onComplete }: PreloaderProps) {
             transition={{ delay: reduceMotion ? 0 : 0.12, type: "spring", stiffness: 190, damping: 24 }}
             className="absolute left-1/2 top-1/2 z-20 w-[min(88vw,340px)] -translate-x-1/2 -translate-y-1/2"
           >
-            <div className="relative h-[62px] overflow-hidden rounded-full border border-white/[0.07] bg-[#3c3935] shadow-[0_14px_30px_rgba(0,0,0,0.25)]">
+            <div className="relative h-[62px] overflow-hidden rounded-full border border-white/[0.07] bg-[#18181A] shadow-[0_14px_30px_rgba(0,0,0,0.25)]">
               <motion.div
                 initial={{ scaleX: 0 }}
-                animate={{ scaleX: 1 }}
-                transition={{ duration: reduceMotion ? 0 : duration / 1000, ease: [0.22, 1, 0.36, 1] }}
-                className="absolute inset-0 origin-left transform-gpu bg-[linear-gradient(90deg,#49453f,#5b5147)] will-change-transform"
+                animate={{ scaleX: progress / 100 }}
+                transition={{ duration: 0.05, ease: "linear" }}
+                className="absolute inset-0 origin-left transform-gpu bg-[linear-gradient(90deg,#e25822,#c94b19)] will-change-transform"
               />
               <motion.div
                 aria-hidden
@@ -131,7 +131,7 @@ export function Preloader({ onComplete }: PreloaderProps) {
                 transition={{ duration: 1.6, ease: "easeInOut", repeat: Infinity }}
                 className="pointer-events-none absolute inset-y-0 w-16 -skew-x-12 transform-gpu bg-gradient-to-r from-transparent via-white/[0.13] to-transparent will-change-transform"
               />
-              <div className="relative z-10 flex h-full items-center justify-between px-8 font-mono text-[11px] font-bold uppercase tracking-[0.12em] text-[#ded9cf]">
+              <div className="relative z-10 flex h-full items-center justify-between px-8 font-mono text-[11px] font-bold uppercase tracking-[0.12em] text-[#F8F1E7]">
                 <motion.span
                   key={stage.label}
                   initial={{ opacity: 0, y: 4 }}
@@ -141,13 +141,13 @@ export function Preloader({ onComplete }: PreloaderProps) {
                 >
                   {stage.label}
                 </motion.span>
-                <span className="text-[#f1eee6]">{progress}%</span>
+                <span className="text-[#F8F1E7] tab-nums">{progress}%</span>
               </div>
             </div>
             <motion.div
               animate={reduceMotion ? {} : { scaleX: [0.82, 1, 0.82], opacity: [0.18, 0.38, 0.18] }}
               transition={{ duration: 2.2, repeat: Infinity }}
-              className="mx-auto mt-5 h-px w-[58%] origin-center transform-gpu bg-[#EB5E28] will-change-transform"
+              className="mx-auto mt-5 h-px w-[58%] origin-center transform-gpu bg-[#E25822] will-change-transform"
             />
           </motion.div>
 

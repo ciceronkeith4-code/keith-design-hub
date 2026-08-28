@@ -9,13 +9,153 @@ import { Reveal } from "./Reveal";
 export function Projects() {
   const [expanded, setExpanded] = useState<number | null>(null);
   const [lightbox, setLightbox] = useState<{ images: LightboxImage[]; index: number } | null>(null);
-  return <section id="projects" className="stacked-panel panel-light z-50 px-4 py-24 sm:py-32">
-    <div className="relative mx-auto max-w-6xl"><SectionHeading eyebrow="Projects" title={<>Project <span className="text-[#EB5E28]">Showcase</span></>} subtitle="Selected work — expand any card to browse screenshots and UI screens." />
-      <div className="mt-16 space-y-16 sm:space-y-24">{PROJECTS.map((project, index) => { const reverse = index % 2 === 1; const open = expanded === index; return <Reveal key={project.title} delay={index * 0.06}><article className="grid items-center gap-8 md:grid-cols-2"><div className={reverse ? "md:order-2" : "md:order-1"}><button onClick={() => setLightbox({ images: project.shots.map((src) => ({ src, caption: project.title })), index: 0 })} aria-label={`View screenshots for ${project.title}`} className="group relative flex w-full flex-col items-center py-8"><div className={`${reverse ? "screen-float-left" : "screen-float-right"} relative aspect-[16/10] w-full max-w-[420px] [transform-style:preserve-3d]`}><div className="absolute bottom-[-42px] left-1/2 z-0 h-16 w-12 -translate-x-1/2 rounded-b-md bg-gradient-to-b from-neutral-300 to-neutral-500 shadow-md" /><div className="absolute bottom-[-53px] left-1/2 z-0 h-3 w-28 -translate-x-1/2 rounded-sm bg-neutral-400 shadow-md" /><div className="absolute inset-0 z-10 overflow-hidden rounded-[1.5rem] border border-neutral-200 bg-[#fafafa] p-2 pb-10 shadow-2xl"><div className="h-full overflow-hidden rounded-[1rem] border border-neutral-300/40 bg-neutral-900"><img src={project.image} alt={project.title} loading="lazy" className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.035]" onError={(event) => { event.currentTarget.style.display = "none"; }} /></div><div className="absolute inset-x-0 bottom-0 flex h-10 items-center justify-center rounded-b-[1.5rem] border-t border-neutral-300 bg-gradient-to-b from-neutral-200 to-neutral-300"><span className="h-2.5 w-2.5 rounded-full bg-neutral-800/60" /></div></div></div></button></div>
-        <div className={`flex flex-col p-2 ${reverse ? "md:order-1" : "md:order-2"}`}><h3 className="font-display text-3xl uppercase leading-none tracking-wide text-neutral-950 sm:text-4xl lg:text-[2.75rem]">{project.title}</h3><p className="mt-4 text-sm leading-relaxed text-neutral-600 sm:text-base">{project.description}</p><div className="mt-5 flex flex-wrap gap-1.5">{project.tech.map((tech) => <span key={tech} className="rounded-full border border-neutral-200 bg-white px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-neutral-600">{tech}</span>)}</div>{(project.demo || ('isSchoolProject' in project && project.isSchoolProject)) && <div className="mt-6 flex max-w-sm items-center gap-3">{project.demo ? <a href={project.demo} target="_blank" rel="noopener noreferrer" className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-[#EB5E28] px-5 py-3.5 text-xs font-bold text-white shadow-md transition hover:scale-[1.02] hover:bg-[#d04e1c]"><ExternalLink className="h-3.5 w-3.5" />Live Demo</a> : <span className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-neutral-300 bg-neutral-100 px-5 py-3.5 text-xs font-bold text-neutral-500">School Project</span>}</div>}<button onClick={() => setExpanded(open ? null : index)} aria-expanded={open} className="mt-5 flex w-fit items-center gap-1.5 text-xs font-bold text-neutral-500 transition hover:text-neutral-950">{open ? "Hide screenshots" : "View screenshots"}<ChevronDown className={`h-4 w-4 transition ${open ? "rotate-180" : ""}`} /></button><AnimatePresence>{open && <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden"><button onClick={() => setLightbox({ images: project.shots.map((src) => ({ src, caption: project.title })), index: 0 })} className="mt-4 overflow-hidden rounded-xl border border-neutral-200"><img src={project.image} alt={`${project.title} screen`} className="aspect-video w-full object-cover" onError={(event) => { event.currentTarget.style.display = "none"; }} /></button></motion.div>}</AnimatePresence></div>
-      </article></Reveal>; })}</div>
-    </div><Lightbox images={lightbox?.images ?? []} index={lightbox?.index ?? null} onClose={() => setLightbox(null)} onIndexChange={(next) => setLightbox((current) => current ? { ...current, index: next } : current)} />
-  </section>;
+
+  return (
+    <section id="projects" className="stacked-panel panel-light z-50 px-4 py-12 sm:py-16">
+      <div className="relative mx-auto max-w-6xl">
+        <SectionHeading
+          eyebrow="Projects"
+          title={
+            <>
+              Project <span className="text-[#E25822]">Showcase</span>
+            </>
+          }
+          subtitle="Selected work — expand any card to browse screenshots and UI screens."
+        />
+
+        <div className="mt-10 space-y-10 sm:space-y-14">
+          {PROJECTS.map((project, index) => {
+            const reverse = index % 2 === 1;
+            const open = expanded === index;
+
+            return (
+              <Reveal key={project.title} delay={index * 0.06}>
+                <article className="grid items-center gap-8 md:grid-cols-2">
+                  <div className={reverse ? "md:order-2" : "md:order-1"}>
+                    <button
+                      onClick={() =>
+                        setLightbox({
+                          images: project.shots.map((src) => ({ src, caption: project.title })),
+                          index: 0,
+                        })
+                      }
+                      aria-label={`View screenshots for ${project.title}`}
+                      className="group relative flex w-full flex-col items-center py-4"
+                    >
+                      <div className={`${reverse ? "screen-float-left" : "screen-float-right"} relative aspect-[16/10] w-full max-w-[420px] [transform-style:preserve-3d]`}>
+                        <div className="absolute bottom-[-42px] left-1/2 z-0 h-16 w-12 -translate-x-1/2 rounded-b-md bg-gradient-to-b from-neutral-300 to-neutral-500 shadow-md" />
+                        <div className="absolute bottom-[-53px] left-1/2 z-0 h-3 w-28 -translate-x-1/2 rounded-sm bg-neutral-400 shadow-md" />
+                        <div className="absolute inset-0 z-10 overflow-hidden rounded-[1.5rem] border border-neutral-300 bg-white p-2 pb-10 shadow-2xl">
+                          <div className="h-full overflow-hidden rounded-[1rem] border border-neutral-300/40 bg-neutral-900">
+                            <img
+                              src={project.image}
+                              alt={project.title}
+                              loading="lazy"
+                              className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.035]"
+                              onError={(event) => {
+                                event.currentTarget.style.display = "none";
+                              }}
+                            />
+                          </div>
+                          <div className="absolute inset-x-0 bottom-0 flex h-10 items-center justify-center rounded-b-[1.5rem] border-t border-neutral-300 bg-gradient-to-b from-neutral-200 to-neutral-300">
+                            <span className="h-2.5 w-2.5 rounded-full bg-neutral-800/60" />
+                          </div>
+                        </div>
+                      </div>
+                    </button>
+                  </div>
+
+                  <div className={`flex flex-col p-2 ${reverse ? "md:order-1" : "md:order-2"}`}>
+                    <h3 className="font-display text-3xl uppercase leading-none tracking-wide text-[#18181A] sm:text-4xl lg:text-[2.75rem]">
+                      {project.title}
+                    </h3>
+                    <p className="mt-4 text-sm leading-relaxed text-[#5C5549] sm:text-base">
+                      {project.description}
+                    </p>
+
+                    <div className="mt-5 flex flex-wrap gap-1.5">
+                      {project.tech.map((tech) => (
+                        <span
+                          key={tech}
+                          className="rounded-full border border-[#E25822]/20 bg-white px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#E25822]"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+
+                    {(project.demo || ('isSchoolProject' in project && project.isSchoolProject)) && (
+                      <div className="mt-6 flex max-w-sm items-center gap-3">
+                        {project.demo ? (
+                          <a
+                            href={project.demo}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-[#E25822] px-5 py-3.5 text-xs font-bold text-[#F8F1E7] shadow-md transition hover:scale-[1.02] hover:bg-[#c94b19]"
+                          >
+                            <ExternalLink className="h-3.5 w-3.5" /> Live Demo
+                          </a>
+                        ) : (
+                          <span className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-neutral-300 bg-neutral-100 px-5 py-3.5 text-xs font-bold text-neutral-500">
+                            School Project
+                          </span>
+                        )}
+                      </div>
+                    )}
+
+                    <button
+                      onClick={() => setExpanded(open ? null : index)}
+                      aria-expanded={open}
+                      className="mt-5 flex w-fit items-center gap-1.5 text-xs font-bold text-[#E25822] transition hover:text-[#18181A]"
+                    >
+                      {open ? "Hide screenshots" : "View screenshots"}
+                      <ChevronDown className={`h-4 w-4 transition ${open ? "rotate-180" : ""}`} />
+                    </button>
+
+                    <AnimatePresence>
+                      {open && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          className="overflow-hidden"
+                        >
+                          <button
+                            onClick={() =>
+                              setLightbox({
+                                images: project.shots.map((src) => ({ src, caption: project.title })),
+                                index: 0,
+                              })
+                            }
+                            className="mt-4 overflow-hidden rounded-xl border border-neutral-200"
+                          >
+                            <img
+                              src={project.image}
+                              alt={`${project.title} screen`}
+                              className="aspect-video w-full object-cover"
+                              onError={(event) => {
+                                event.currentTarget.style.display = "none";
+                              }}
+                            />
+                          </button>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </article>
+              </Reveal>
+            );
+          })}
+        </div>
+      </div>
+      <Lightbox
+        images={lightbox?.images ?? []}
+        index={lightbox?.index ?? null}
+        onClose={() => setLightbox(null)}
+        onIndexChange={(next) => setLightbox((current) => (current ? { ...current, index: next } : current))}
+      />
+    </section>
+  );
 }
 
 

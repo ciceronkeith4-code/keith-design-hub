@@ -7,12 +7,12 @@ export function Trainings() {
   const [index, setIndex] = useState(0);
 
   return (
-    <section id="trainings" className="stacked-panel panel-mid z-[80] px-4 py-20">
+    <section id="trainings" className="stacked-panel panel-mid z-[80] px-4 py-10 sm:py-12">
       <div className="relative mx-auto max-w-5xl">
         <SectionHeading
           tone="dark"
           eyebrow="Activities"
-          title={<>Trainings & <span className="text-[#EB5E28]">Activities</span></>}
+          title={<>Trainings & <span className="text-[#E25822]">Activities</span></>}
           subtitle="Workshops, hackathons, and seminars that shaped my growth."
         />
         <div className="mt-14 flex flex-col items-center">
@@ -41,15 +41,15 @@ export function Trainings() {
                     onClick={() => setIndex(itemIndex)}
                     className={`w-[300px] shrink-0 rounded-3xl border p-7 text-left transition duration-500 ${
                       active
-                        ? "scale-[1.03] border-[#EB5E28] bg-[#252422] opacity-100 shadow-[0_20px_40px_-10px_rgba(235,94,40,0.25)]"
-                        : "scale-95 border-white/[0.03] bg-[#252422]/60 opacity-40 hover:opacity-70"
+                        ? "scale-[1.03] border-[#E25822] bg-[#18181A] opacity-100 shadow-[0_20px_40px_-10px_rgba(226,88,34,0.3)]"
+                        : "scale-95 border-white/[0.03] bg-[#18181A]/60 opacity-40 hover:opacity-70"
                     }`}
                   >
-                    <h3 className="font-display min-h-[40px] text-sm uppercase leading-snug tracking-wide text-white">
+                    <h3 className="font-display min-h-[40px] text-sm uppercase leading-snug tracking-wide text-[#F8F1E7]">
                       {training.title}
                     </h3>
                     <p className="mt-4 border-t border-white/5 pt-4 text-xs font-semibold text-neutral-400">
-                      <span className={active ? "text-[#EB5E28]" : "text-neutral-300"}>{training.role}</span> · <span className="font-mono">{training.date}</span>
+                      <span className={active ? "text-[#E25822]" : "text-[#D8D0C5]"}>{training.role}</span> · <span className="font-mono">{training.date}</span>
                     </p>
                   </button>
                 );
@@ -62,7 +62,7 @@ export function Trainings() {
                 key={training.title}
                 onClick={() => setIndex(itemIndex)}
                 aria-label={`Go to training ${itemIndex + 1}`}
-                className={`h-2 rounded-full transition ${index === itemIndex ? "w-6 bg-[#EB5E28]" : "w-2 bg-white/30"}`}
+                className={`h-2 rounded-full transition ${index === itemIndex ? "w-6 bg-[#E25822]" : "w-2 bg-white/30"}`}
               />
             ))}
           </div>
