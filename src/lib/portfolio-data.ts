@@ -77,6 +77,15 @@ export const TRAININGS = [
 
 export const PROJECTS = [
   {
+    title: "NCLEX Amplified Review Center - Intern Portal",
+    description: "An intern management and review center portal providing learning tools, intern resources, and administrative monitoring for NCLEX Amplified Review Center.",
+    image: "/images/projects/onecainta.png",
+    tech: ["React", "TypeScript", "Tailwind CSS", "Node.js", "Vercel"],
+    demo: "https://interns.nclexamplifiedreviewcenter.com",
+    github: null,
+    shots: ["/images/projects/onecainta.png"],
+  },
+  {
     title: "ONE CAINTA APP",
     description: "A unified municipal portal and public service application for Cainta, Rizal providing digital community services, public announcements, and local government resources.",
     image: "/images/projects/onecainta.png",
