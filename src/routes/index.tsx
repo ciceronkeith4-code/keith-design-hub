@@ -11,18 +11,12 @@ import { Trainings } from "@/components/portfolio/Trainings";
 import { BentoDashboard } from "@/components/portfolio/BentoDashboard";
 import { DashboardLayout, type TabId } from "@/components/portfolio/DashboardLayout";
 
+// Title/description live in __root.tsx (the single source of truth for both). This route only adds
+// the canonical URL and og:url, which social platforms and search engines require as absolute.
 export const Route = createFileRoute("/")({
   head: () => ({
-    meta: [
-      { title: "Keith Ciceron | Full Stack Developer" },
-      { name: "description", content: "Full Stack Developer passionate about building clean, user-friendly, and efficient digital experiences." },
-      { property: "og:title", content: "Keith Ciceron | Full Stack Developer" },
-      { property: "og:description", content: "Full Stack Developer passionate about building clean, user-friendly, and efficient digital experiences." },
-      { property: "og:url", content: "/" },
-    ],
-    links: [
-      { rel: "canonical", href: "/" },
-    ],
+    meta: [{ property: "og:url", content: "https://keithciceron.vercel.app/" }],
+    links: [{ rel: "canonical", href: "https://keithciceron.vercel.app/" }],
   }),
   component: Index,
 });

@@ -145,15 +145,6 @@ export const PROJECTS = [
   },
 ];
 
-export const SOCIALS = [
-  { id: "facebook", label: "Facebook", detail: "Keith Ciceron", action: "Send Message", url: "https://www.facebook.com/keith.ciceron", color: "#1877F2" },
-  { id: "instagram", label: "Instagram", detail: "@mon.czii", action: "Send DM", url: "https://www.instagram.com/mon.czii", color: "#E4405F" },
-  { id: "tiktok", label: "TikTok", detail: "@keith_ciceron", action: "Watch Content", url: "https://www.tiktok.com/@keith_ciceron", color: "#111111" },
-  { id: "linkedin", label: "LinkedIn", detail: "Keith Ciceron", action: "Connect", url: "https://www.linkedin.com/in/keith-ciceron", color: "#0A66C2" },
-  { id: "gmail", label: "Gmail", detail: "ciceronkeith4@gmail.com", action: "Send Email", url: "mailto:ciceronkeith4@gmail.com", color: "#EA4335" },
-  { id: "viber", label: "Viber", detail: "+63 9944933136", action: "Chat on Viber", url: "viber://chat?number=%2B639944933136", color: "#7360F2" },
-] as const;
-
 export const CONTACT = { email: "ciceronkeith4@gmail.com", phone: "+63 9944933136", location: "Manila, Philippines" };
 
 

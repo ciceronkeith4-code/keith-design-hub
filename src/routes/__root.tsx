@@ -7,10 +7,9 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import type { ReactNode } from "react";
 
 import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
 
 function NotFoundComponent() {
   return (
@@ -37,9 +36,6 @@ function NotFoundComponent() {
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
-  useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
-  }, [error]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -98,11 +94,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         name: "twitter:description",
         content: "Portfolio of Keith Czimonne Anderson Ciceron | Full Stack Developer.",
       },
-      { name: "description", content: "A modern, minimalist portfolio website showcasing the skills and projects of a Full Stack Developer." },
-      { property: "og:description", content: "A modern, minimalist portfolio website showcasing the skills and projects of a Full Stack Developer." },
-      { name: "twitter:description", content: "A modern, minimalist portfolio website showcasing the skills and projects of a Full Stack Developer." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/39e269c0-f56b-4fda-86ca-c0bbc70b11c5/id-preview-13519e60--d997127f-9841-46ca-b344-76a4c56a2031.lovable.app-1781974348891.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/39e269c0-f56b-4fda-86ca-c0bbc70b11c5/id-preview-13519e60--d997127f-9841-46ca-b344-76a4c56a2031.lovable.app-1781974348891.png" },
+      { property: "og:image", content: "https://keithciceron.vercel.app/og-image.png" },
+      { name: "twitter:image", content: "https://keithciceron.vercel.app/og-image.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },

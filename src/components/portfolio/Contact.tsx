@@ -1,13 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Send } from "lucide-react";
-import {
-  SiFacebook,
-  SiInstagram,
-  SiTiktok,
-  SiGmail,
-  SiViber,
-  SiGithub,
-} from "react-icons/si";
+import { SiGmail, SiGithub } from "react-icons/si";
 import { FaLinkedinIn } from "react-icons/fa6";
 
 interface SocialLink {
@@ -15,35 +8,12 @@ interface SocialLink {
   label: string;
   handle: string;
   url: string;
-  icon: typeof SiFacebook;
+  icon: typeof SiGmail;
   external: boolean;
 }
 
+// Kept to the three links a recruiter or client actually needs: email, LinkedIn, GitHub.
 const SOCIAL_LINKS: SocialLink[] = [
-  {
-    id: "facebook",
-    label: "Facebook",
-    handle: "Keith Ciceron",
-    url: "https://www.facebook.com/keith.ciceron",
-    icon: SiFacebook,
-    external: true,
-  },
-  {
-    id: "instagram",
-    label: "Instagram",
-    handle: "@mon.czii",
-    url: "https://www.instagram.com/mon.czii",
-    icon: SiInstagram,
-    external: true,
-  },
-  {
-    id: "tiktok",
-    label: "TikTok",
-    handle: "@keith_ciceron",
-    url: "https://www.tiktok.com/@keith_ciceron",
-    icon: SiTiktok,
-    external: true,
-  },
   {
     id: "linkedin",
     label: "LinkedIn",
@@ -58,14 +28,6 @@ const SOCIAL_LINKS: SocialLink[] = [
     handle: "ciceronkeith4@gmail.com",
     url: "mailto:ciceronkeith4@gmail.com",
     icon: SiGmail,
-    external: false,
-  },
-  {
-    id: "viber",
-    label: "Viber",
-    handle: "+63 9944933136",
-    url: "viber://chat?number=%2B639944933136",
-    icon: SiViber,
     external: false,
   },
   {

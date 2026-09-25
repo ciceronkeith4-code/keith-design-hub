@@ -11,7 +11,6 @@ import {
   Code2,
 } from "lucide-react";
 import { FaGithub, FaLinkedinIn } from "react-icons/fa6";
-import { SiViber } from "react-icons/si";
 import {
   CommandDialog,
   CommandInput,
@@ -158,21 +157,6 @@ export function CommandPalette({ open, onOpenChange, onSelectTab }: CommandPalet
               <span>Send Email</span>
             </div>
             <span className="font-mono text-[10px] text-muted-foreground">ciceronkeith4@gmail.com</span>
-          </CommandItem>
-
-          <CommandItem
-            value="viber chat message phone"
-            onSelect={() => {
-              window.location.href = "viber://chat?number=%2B639944933136";
-              onOpenChange(false);
-            }}
-            className="cursor-pointer flex items-center justify-between"
-          >
-            <div className="flex items-center gap-2.5">
-              <SiViber className="h-4 w-4 opacity-70" />
-              <span>Chat on Viber</span>
-            </div>
-            <span className="font-mono text-[10px] text-muted-foreground">+63 9944933136</span>
           </CommandItem>
         </CommandGroup>
       </CommandList>
