@@ -3,13 +3,6 @@ import { VscVscode } from "react-icons/vsc";
 import { TbUserSearch } from "react-icons/tb";
 import { PhotoshopMark } from "@/components/portfolio/SkillMarks";
 
-export const NAV_ITEMS = [
-  { id: "about", label: "About" },
-  { id: "skills", label: "Skills" },
-  { id: "experience", label: "Experience" },
-  { id: "projects", label: "Projects" },
-] as const;
-
 export const SKILLS = [
   { name: "HTML5", icon: SiHtml5, color: "#E34F26", group: "Frontend" },
   { name: "CSS3", icon: SiCss, color: "#1572B6", group: "Frontend" },
@@ -150,12 +143,6 @@ export const PROJECTS = [
     shots: ["/images/projects/library-login.png"],
     isSchoolProject: true,
   },
-];
-
-export const OJT_PHOTOS = [
-  { src: "/images/ojt/ojt-1.jpg", caption: "IT support setup at Legasynch office" },
-  { src: "/images/ojt/ojt-2.jpg", caption: "LMS review portal system verification" },
-  { src: "/images/ojt/ojt-3.jpg", caption: "Review software and hardware maintenance" },
 ];
 
 export const SOCIALS = [
