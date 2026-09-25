@@ -1,58 +1,54 @@
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion, type Variants } from "framer-motion";
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 
-const LOADER_DURATION = 1500;
-const stages = [
-  { label: "Initializing", progress: "00" },
-  { label: "Loading dashboard", progress: "35" },
-  { label: "Preparing bento modules", progress: "70" },
-  { label: "Ready", progress: "100" },
+// Built bottom-up like a real stack: data first, interface last. Listed top-down for reading order.
+const LAYERS = [
+  { label: "Frontend", tech: "React · TypeScript · Tailwind", delay: 640 },
+  { label: "Backend", tech: "Node.js", delay: 380 },
+  { label: "Database", tech: "MySQL · Supabase · Firebase", delay: 120 },
 ] as const;
+
+const HOLD_MS = 220;
+// Fallbacks only: normally completion follows the CSS animations' own `finished` promises.
+const FALLBACK_BUILD_MS = 1300;
+const SAFETY_CAP_MS = 4000;
+
+const EASE_OUT = [0.23, 1, 0.32, 1] as const;
+const EASE_DRAWER = [0.32, 0.72, 0, 1] as const;
 
 interface PreloaderProps {
   onComplete?: () => void;
 }
 
 export function Preloader({ onComplete }: PreloaderProps) {
-  const [progress, setProgress] = useState(0);
   const [complete, setComplete] = useState(false);
   const reduceMotion = useReducedMotion();
+  const stackRef = useRef<HTMLDivElement>(null);
   const notified = useRef(false);
-  const duration = reduceMotion ? 120 : LOADER_DURATION;
-
-  const stage = reduceMotion
-    ? stages[stages.length - 1]
-    : progress < 35
-    ? stages[0]
-    : progress < 70
-    ? stages[1]
-    : progress < 100
-    ? stages[2]
-    : stages[3];
 
   useEffect(() => {
-    if (reduceMotion) {
-      setProgress(100);
-      const timer = window.setTimeout(() => setComplete(true), duration);
-      return () => window.clearTimeout(timer);
+    let cancelled = false;
+    let holdTimer = 0;
+    const finish = () => {
+      if (cancelled) return;
+      holdTimer = window.setTimeout(() => !cancelled && setComplete(true), reduceMotion ? 80 : HOLD_MS);
+    };
+
+    const safety = window.setTimeout(() => !cancelled && setComplete(true), SAFETY_CAP_MS);
+    const node = stackRef.current;
+    if (node && typeof node.getAnimations === "function") {
+      // The build started at first paint, possibly long before hydration; wait only for what's left of it.
+      Promise.allSettled(node.getAnimations({ subtree: true }).map((a) => a.finished)).then(finish);
+    } else {
+      holdTimer = window.setTimeout(finish, FALLBACK_BUILD_MS);
     }
-    const startedAt = performance.now();
-    let frame = 0;
-    const tick = (now: number) => {
-      const next = Math.min(100, Math.round(((now - startedAt) / duration) * 100));
-      setProgress(next);
-      if (next < 100) frame = window.requestAnimationFrame(tick);
-    };
-    frame = window.requestAnimationFrame(tick);
-    const finishTimer = window.setTimeout(() => {
-      setProgress(100);
-      setComplete(true);
-    }, duration);
+
     return () => {
-      window.cancelAnimationFrame(frame);
-      window.clearTimeout(finishTimer);
+      cancelled = true;
+      window.clearTimeout(holdTimer);
+      window.clearTimeout(safety);
     };
-  }, [duration, reduceMotion]);
+  }, [reduceMotion]);
 
   const notifyComplete = useCallback(() => {
     if (notified.current) return;
@@ -60,49 +56,65 @@ export function Preloader({ onComplete }: PreloaderProps) {
     onComplete?.();
   }, [onComplete]);
 
+  // Exit: content lifts and fades first, then the whole screen wipes upward to reveal Home underneath.
+  const overlayVariants: Variants = {
+    exit: reduceMotion
+      ? { opacity: 0, transition: { duration: 0.2, ease: "easeOut" } }
+      : { clipPath: "inset(0% 0% 100% 0%)", transition: { duration: 0.65, ease: EASE_DRAWER, delay: 0.08 } },
+  };
+  const contentVariants: Variants = {
+    exit: reduceMotion
+      ? { opacity: 0 }
+      : { opacity: 0, transform: "translateY(-16px)", transition: { duration: 0.3, ease: EASE_OUT } },
+  };
+
   return (
     <AnimatePresence onExitComplete={notifyComplete}>
       {!complete && (
         <motion.div
-          initial={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-[150] flex flex-col justify-between p-6 sm:p-10 bg-[#ECEEEA] dark:bg-[#0A0A0A] text-[#161616] dark:text-[#EDEDED] select-none"
+          key="preloader"
+          variants={overlayVariants}
+          initial={false}
+          exit="exit"
+          style={{ clipPath: "inset(0% 0% 0% 0%)" }}
+          className="fixed inset-0 z-[150] bg-[#ECEEEA] dark:bg-[#0A0A0A] text-[#161616] dark:text-[#EDEDED] select-none"
           role="status"
           aria-label="Loading portfolio"
         >
-          {/* Top Info */}
-          <div className="flex items-center justify-between">
-            <span className="font-sans text-xs font-medium uppercase tracking-wider text-[#161616] dark:text-[#EDEDED]">
-              Keith Ciceron
-            </span>
-            <span className="font-mono text-xs text-[#62655E] dark:text-[#A3A3A3]">
-              Portfolio / 2026
-            </span>
-          </div>
-
-          {/* Center Progress Box */}
-          <div className="mx-auto w-full max-w-xs space-y-3 rounded-[24px] bg-[#F6F7F4] dark:bg-[#141414] border border-[#E3E5E0] dark:border-[#262626] p-5">
-            <div className="flex items-center justify-between text-xs font-mono">
-              <span className="text-[#161616] dark:text-[#EDEDED] font-medium">{stage.label}</span>
-              <span className="text-[#62655E] dark:text-[#A3A3A3] tabular-nums">{progress}%</span>
+          <motion.div
+            variants={contentVariants}
+            style={{ transform: "translateY(0px)" }}
+            className="h-full flex flex-col justify-between p-6 sm:p-10"
+          >
+            <div className="flex items-center justify-between">
+              <span className="font-sans text-xs font-medium uppercase tracking-wider">Keith Ciceron</span>
+              <span className="font-mono text-xs text-[#62655E] dark:text-[#A3A3A3]">Portfolio / 2026</span>
             </div>
 
-            {/* Progress Bar */}
-            <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#E3E5E0] dark:bg-[#262626]">
-              <motion.div
-                className="h-full bg-[#1C1C1C] dark:bg-[#EDEDED]"
-                style={{ width: `${progress}%` }}
-                transition={{ duration: 0.05 }}
-              />
+            <div ref={stackRef} className="mx-auto w-full max-w-[340px]" aria-hidden="true">
+              {LAYERS.map((layer) => (
+                <div key={layer.label} style={{ "--intro-delay": `${layer.delay}ms` } as CSSProperties}>
+                  {/* Mask hugs the text line only, so the label is fully hidden until it rises out of its rule */}
+                  <div className="pt-4 pb-2.5">
+                    <div className="overflow-hidden">
+                      <div className="intro-rise flex items-baseline justify-between gap-4">
+                        <span className="font-mono text-xs font-medium uppercase tracking-wider">{layer.label}</span>
+                        <span className="font-mono text-[11px] text-[#62655E] dark:text-[#A3A3A3] truncate">
+                          {layer.tech}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="intro-rule h-px w-full bg-[#161616] dark:bg-[#EDEDED]" />
+                </div>
+              ))}
             </div>
-          </div>
 
-          {/* Bottom Info */}
-          <div className="flex items-center justify-between font-mono text-[11px] text-[#62655E] dark:text-[#A3A3A3]">
-            <span>Full Stack Developer</span>
-            <span>Manila · PH</span>
-          </div>
+            <div className="flex items-center justify-between font-mono text-[11px] text-[#62655E] dark:text-[#A3A3A3]">
+              <span>Full Stack Developer</span>
+              <span>Manila · PH</span>
+            </div>
+          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>

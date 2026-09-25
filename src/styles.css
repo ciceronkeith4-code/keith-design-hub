@@ -173,7 +173,28 @@
   }
 }
 
+/* Intro "stack build": pure CSS so it plays from first paint, before hydration, off the main thread.
+   Each layer sets --intro-delay; the rule draws across, then its label rises out of it. */
+@keyframes intro-rule {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+@keyframes intro-rise {
+  from { transform: translateY(105%); }
+  to { transform: translateY(0); }
+}
+.intro-rule {
+  transform-origin: left center;
+  animation: intro-rule 560ms cubic-bezier(0.23, 1, 0.32, 1) var(--intro-delay, 0ms) both;
+}
+.intro-rise {
+  animation: intro-rise 480ms cubic-bezier(0.23, 1, 0.32, 1) calc(var(--intro-delay, 0ms) + 140ms) both;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .intro-rule, .intro-rise {
+    animation-delay: 0ms !important;
+  }
   *, *::before, *::after {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
