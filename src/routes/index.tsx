@@ -79,6 +79,7 @@ function Index() {
       <DashboardLayout activeTab={activeTab} onTabChange={handleTabChange}>
         {activeTab === "dashboard" && (
           <BentoDashboard
+            introReady={introReady}
             onNavigate={handleTabChange}
             activeFilter={activeFilter}
             onFilterChange={setActiveFilter}

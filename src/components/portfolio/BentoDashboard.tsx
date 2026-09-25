@@ -1,16 +1,19 @@
 import { ArrowUpRight, ArrowRight } from "lucide-react";
 import type { TabId } from "./DashboardLayout";
+import { ParticlePortrait } from "./ParticlePortrait";
 
 interface BentoDashboardProps {
   onNavigate: (tab: TabId) => void;
   activeFilter?: string;
   onFilterChange?: (filter: string) => void;
+  /** False while the intro overlay still covers the page, so the particle fly-in isn't played behind it. */
+  introReady?: boolean;
 }
 
-// Organic silhouette for the portrait frame; overflow-hidden clips the image's flat bottom edge to this curve.
+// Organic silhouette for the portrait frame; must match ParticlePortrait's COLORS.normal.paper fill (#E1E4DD).
 const PORTRAIT_SHAPE = "68% 32% 58% 42% / 44% 56% 44% 56%";
 
-export function BentoDashboard({ onNavigate }: BentoDashboardProps) {
+export function BentoDashboard({ onNavigate, introReady = true }: BentoDashboardProps) {
   return (
     <div className="w-full flex-1 flex flex-col">
       {/* my-auto centers the hero in the free height but never clips it when the viewport is shorter than the content */}
@@ -48,19 +51,13 @@ export function BentoDashboard({ onNavigate }: BentoDashboardProps) {
           </div>
         </div>
 
-        {/* Portrait clipped inside an organic shape. The shape stays light in dark mode so the halftone reads as a true positive, never a negative. */}
-        <div
-          className="relative shrink-0 w-[168px] sm:w-[200px] lg:w-[248px] xl:w-[272px] aspect-[4/5] overflow-hidden bg-[#DFE2DB] dark:bg-[#E4E6E1]"
+        {/* Particle portrait inside an organic shape: particles swirl in within the outline, and the curve clips the
+            portrait's flat bottom cut. The shape stays light in both themes so the dots read as a true positive. */}
+        <ParticlePortrait
+          play={introReady}
+          className="shrink-0 h-[300px] sm:h-[360px] lg:h-[min(62vh,500px)] aspect-[4/5] overflow-hidden bg-[#E1E4DD] isolate"
           style={{ borderRadius: PORTRAIT_SHAPE }}
-        >
-          <img
-            src="/images/profile/keith-code-portrait.png"
-            alt="Keith Ciceron rendered as a halftone portrait"
-            width={288}
-            height={388}
-            className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[88%] h-auto"
-          />
-        </div>
+        />
       </div>
 
       <div className="w-full flex justify-end pt-6">

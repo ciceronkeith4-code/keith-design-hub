@@ -88,6 +88,18 @@ export const PROJECTS = [
     ],
   },
   {
+    title: "Iconic Cards PH - Point of Sale System",
+    description: "An adaptive web and mobile point-of-sale and ordering system for Iconic Cards PH, with a searchable card catalog, cart and checkout, and an admin panel for managing products and orders with Excel export.",
+    image: "/images/projects/iconiccards-1.png",
+    tech: ["JavaScript", "Node.js", "Express", "HTML5", "CSS3", "Vercel"],
+    demo: "https://iconiccards.vercel.app/",
+    github: null,
+    shots: [
+      "/images/projects/iconiccards-1.png",
+      "/images/projects/iconiccards-2.png",
+    ],
+  },
+  {
     title: "ONE CAINTA APP",
     description: "A unified municipal portal and public service application for Cainta, Rizal providing digital community services, public announcements, and local government resources.",
     image: "/images/projects/onecainta.png",
