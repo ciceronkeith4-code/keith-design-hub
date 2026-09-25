@@ -80,35 +80,29 @@ function CategoryBlock({ category }: { category: Category }) {
 
 export function Skills() {
   return (
-    <div className="w-full flex flex-col justify-center py-2 text-left">
-      {/* Plain Page Title */}
-      <div className="mb-6 sm:mb-8 shrink-0">
-        <span className="font-mono text-[10px] text-[#6E716B] dark:text-[#A3A3A3] uppercase tracking-wider block">
-          Skills
-        </span>
-        <h2 className="font-sans text-[clamp(26px,3.5vh,36px)] font-semibold tracking-tight text-[#161616] dark:text-[#EDEDED] leading-tight">
-          Technical Capabilities
-        </h2>
-      </div>
+    <div className="w-full flex flex-col text-left">
+      <h2 className="mb-6 sm:mb-8 font-sans text-[clamp(26px,3.5vh,36px)] font-semibold tracking-tight text-[#161616] dark:text-[#EDEDED] leading-tight">
+        Technical Capabilities
+      </h2>
 
       {/* Rebalanced 3 Columns: Back-end + QA placed together in Column 2 */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 items-start">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-8 items-start">
         {/* Column 1: Front-end */}
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-8">
           {COLUMN_1_CATEGORIES.map((cat) => (
             <CategoryBlock key={cat.id} category={cat} />
           ))}
         </div>
 
         {/* Column 2: Back-end + QA & Testing + Database */}
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-8">
           {COLUMN_2_CATEGORIES.map((cat) => (
             <CategoryBlock key={cat.id} category={cat} />
           ))}
         </div>
 
         {/* Column 3: Tools & DevOps + UI/UX & Design */}
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-8">
           {COLUMN_3_CATEGORIES.map((cat) => (
             <CategoryBlock key={cat.id} category={cat} />
           ))}

@@ -50,7 +50,7 @@ export function Hero({ onNavigate }: HeroProps) {
                 Keith Ciceron
               </h1>
               <h2 className="font-sans mt-2 text-base sm:text-lg font-medium tracking-wide text-[#666666] uppercase">
-                Software Developer
+                Full Stack Developer
               </h2>
               <p className="mt-4 max-w-xl text-sm leading-relaxed text-[#444444]">
                 Building modern, scalable web applications with intuitive user interfaces and robust backend systems.

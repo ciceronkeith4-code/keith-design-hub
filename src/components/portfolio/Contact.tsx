@@ -193,26 +193,14 @@ export function Contact() {
   };
 
   return (
-    <div className="w-full max-w-[620px] flex flex-col justify-center py-2 text-left">
-      {/* Plain Page Title */}
-      <div className="mb-4 sm:mb-5 shrink-0">
-        <span className="font-mono text-[10px] text-[#6E716B] dark:text-[#A3A3A3] uppercase tracking-wider block">
-          Contact
-        </span>
-        <h2 className="font-sans text-[clamp(26px,3.5vh,36px)] font-semibold tracking-tight text-[#161616] dark:text-[#EDEDED] leading-tight">
-          Get in Touch
-        </h2>
-      </div>
+    <div className="w-full flex flex-col text-left">
+      <h2 className="mb-6 sm:mb-8 font-sans text-[clamp(26px,3.5vh,36px)] font-semibold tracking-tight text-[#161616] dark:text-[#EDEDED] leading-tight">
+        Get in Touch
+      </h2>
 
-      {/* Primary Focal Point: Send a Message Form Card */}
-      <div className="rounded-[16px] sm:rounded-[20px] border border-[#E5E5E0] dark:border-[#262626] bg-[#F6F7F4] dark:bg-[#141414] p-[clamp(14px,2vh,20px)] shadow-xs flex flex-col justify-start">
-        <div className="pb-2 border-b border-[#E5E5E0] dark:border-[#262626] shrink-0 mb-3">
-          <span className="font-mono text-[10px] text-[#6E716B] dark:text-[#A3A3A3] uppercase tracking-wider">
-            SEND A MESSAGE
-          </span>
-        </div>
-
-        <form onSubmit={handleSubmit} className="flex flex-col gap-2.5" noValidate>
+      {/* Primary Focal Point: Message Form Card */}
+      <div className="rounded-[16px] sm:rounded-[20px] border border-[#E5E5E0] dark:border-[#262626] bg-[#F6F7F4] dark:bg-[#141414] p-5 sm:p-7 flex flex-col">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
           <input
             type="checkbox"
             name="botcheck"
@@ -226,65 +214,66 @@ export function Contact() {
             autoComplete="off"
           />
 
-          {/* Name Field */}
-          <div>
-            <label
-              htmlFor="contact-name"
-              className="font-mono text-[10px] text-[#6E716B] dark:text-[#A3A3A3] uppercase tracking-wider block mb-1"
-            >
-              Name <span className="text-red-500">*</span>
-            </label>
-            <input
-              id="contact-name"
-              type="text"
-              value={formData.name}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, name: e.target.value }))
-              }
-              placeholder="Your full name"
-              className={`w-full rounded-[8px] border bg-white dark:bg-[#1C1C1C] px-3 py-1.5 text-xs text-[#161616] dark:text-[#EDEDED] placeholder-[#A0A39C] dark:placeholder-[#6E716B] focus:outline-none transition-colors ${
-                errors.name
-                  ? "border-red-400 focus:border-red-500"
-                  : "border-[#E5E5E0] dark:border-[#262626] focus:border-[#161616] dark:focus:border-[#EDEDED]"
-              }`}
-            />
-            {errors.name && (
-              <p className="font-mono text-[10px] text-red-500 mt-0.5">{errors.name}</p>
-            )}
-          </div>
+          {/* Name + Email Fields, side by side on wider screens */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label
+                htmlFor="contact-name"
+                className="font-mono text-[10px] text-[#62655E] dark:text-[#A3A3A3] uppercase tracking-wider block mb-1.5"
+              >
+                Name <span className="text-red-500">*</span>
+              </label>
+              <input
+                id="contact-name"
+                type="text"
+                value={formData.name}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, name: e.target.value }))
+                }
+                placeholder="Your full name"
+                className={`w-full rounded-[8px] border bg-white dark:bg-[#1C1C1C] px-3 py-2 text-base sm:text-sm text-[#161616] dark:text-[#EDEDED] placeholder-[#71746C] dark:placeholder-[#8A8D86] focus:outline-none transition-colors ${
+                  errors.name
+                    ? "border-red-400 focus:border-red-500"
+                    : "border-[#E5E5E0] dark:border-[#262626] focus:border-[#161616] dark:focus:border-[#EDEDED]"
+                }`}
+              />
+              {errors.name && (
+                <p className="font-mono text-[10px] text-red-500 mt-0.5">{errors.name}</p>
+              )}
+            </div>
 
-          {/* Email Field */}
-          <div>
-            <label
-              htmlFor="contact-email"
-              className="font-mono text-[10px] text-[#6E716B] dark:text-[#A3A3A3] uppercase tracking-wider block mb-1"
-            >
-              Email <span className="text-red-500">*</span>
-            </label>
-            <input
-              id="contact-email"
-              type="email"
-              value={formData.email}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, email: e.target.value }))
-              }
-              placeholder="your.email@example.com"
-              className={`w-full rounded-[8px] border bg-white dark:bg-[#1C1C1C] px-3 py-1.5 text-xs text-[#161616] dark:text-[#EDEDED] placeholder-[#A0A39C] dark:placeholder-[#6E716B] focus:outline-none transition-colors ${
-                errors.email
-                  ? "border-red-400 focus:border-red-500"
-                  : "border-[#E5E5E0] dark:border-[#262626] focus:border-[#161616] dark:focus:border-[#EDEDED]"
-              }`}
-            />
-            {errors.email && (
-              <p className="font-mono text-[10px] text-red-500 mt-0.5">{errors.email}</p>
-            )}
+            <div>
+              <label
+                htmlFor="contact-email"
+                className="font-mono text-[10px] text-[#62655E] dark:text-[#A3A3A3] uppercase tracking-wider block mb-1.5"
+              >
+                Email <span className="text-red-500">*</span>
+              </label>
+              <input
+                id="contact-email"
+                type="email"
+                value={formData.email}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, email: e.target.value }))
+                }
+                placeholder="your.email@example.com"
+                className={`w-full rounded-[8px] border bg-white dark:bg-[#1C1C1C] px-3 py-2 text-base sm:text-sm text-[#161616] dark:text-[#EDEDED] placeholder-[#71746C] dark:placeholder-[#8A8D86] focus:outline-none transition-colors ${
+                  errors.email
+                    ? "border-red-400 focus:border-red-500"
+                    : "border-[#E5E5E0] dark:border-[#262626] focus:border-[#161616] dark:focus:border-[#EDEDED]"
+                }`}
+              />
+              {errors.email && (
+                <p className="font-mono text-[10px] text-red-500 mt-0.5">{errors.email}</p>
+              )}
+            </div>
           </div>
 
           {/* Subject Field */}
           <div>
             <label
               htmlFor="contact-subject"
-              className="font-mono text-[10px] text-[#6E716B] dark:text-[#A3A3A3] uppercase tracking-wider block mb-1"
+              className="font-mono text-[10px] text-[#62655E] dark:text-[#A3A3A3] uppercase tracking-wider block mb-1.5"
             >
               Subject
             </label>
@@ -296,7 +285,7 @@ export function Contact() {
                 setFormData((prev) => ({ ...prev, subject: e.target.value }))
               }
               placeholder="Project inquiry, role, or collaboration"
-              className="w-full rounded-[8px] border border-[#E5E5E0] dark:border-[#262626] bg-white dark:bg-[#1C1C1C] px-3 py-1.5 text-xs text-[#161616] dark:text-[#EDEDED] placeholder-[#A0A39C] dark:placeholder-[#6E716B] focus:border-[#161616] dark:focus:border-[#EDEDED] focus:outline-none transition-colors"
+              className="w-full rounded-[8px] border border-[#E5E5E0] dark:border-[#262626] bg-white dark:bg-[#1C1C1C] px-3 py-2 text-base sm:text-sm text-[#161616] dark:text-[#EDEDED] placeholder-[#71746C] dark:placeholder-[#8A8D86] focus:border-[#161616] dark:focus:border-[#EDEDED] focus:outline-none transition-colors"
             />
           </div>
 
@@ -304,19 +293,19 @@ export function Contact() {
           <div>
             <label
               htmlFor="contact-message"
-              className="font-mono text-[10px] text-[#6E716B] dark:text-[#A3A3A3] uppercase tracking-wider block mb-1"
+              className="font-mono text-[10px] text-[#62655E] dark:text-[#A3A3A3] uppercase tracking-wider block mb-1.5"
             >
               Message <span className="text-red-500">*</span>
             </label>
             <textarea
               id="contact-message"
-              rows={3}
+              rows={4}
               value={formData.message}
               onChange={(e) =>
                 setFormData((prev) => ({ ...prev, message: e.target.value }))
               }
               placeholder="Describe your inquiry or idea..."
-              className={`w-full rounded-[8px] border bg-white dark:bg-[#1C1C1C] px-3 py-1.5 text-xs text-[#161616] dark:text-[#EDEDED] placeholder-[#A0A39C] dark:placeholder-[#6E716B] focus:outline-none transition-colors resize-none ${
+              className={`w-full rounded-[8px] border bg-white dark:bg-[#1C1C1C] px-3 py-2 text-base sm:text-sm text-[#161616] dark:text-[#EDEDED] placeholder-[#71746C] dark:placeholder-[#8A8D86] focus:outline-none transition-colors resize-none ${
                 errors.message
                   ? "border-red-400 focus:border-red-500"
                   : "border-[#E5E5E0] dark:border-[#262626] focus:border-[#161616] dark:focus:border-[#EDEDED]"
@@ -341,11 +330,11 @@ export function Contact() {
           )}
 
           {/* Submit Button Row */}
-          <div className="flex justify-end pt-1 mt-0.5">
+          <div className="flex justify-end pt-1">
             <button
               type="submit"
               disabled={loading}
-              className="inline-flex items-center justify-center gap-2 rounded-md bg-[#161616] text-white dark:bg-[#EDEDED] dark:text-[#161616] hover:bg-[#2E2E2E] dark:hover:bg-white disabled:opacity-60 px-5 py-2 text-xs font-medium transition-colors cursor-pointer shadow-xs shrink-0"
+              className="inline-flex items-center justify-center gap-2 rounded-md bg-[#161616] text-white dark:bg-[#EDEDED] dark:text-[#161616] hover:bg-[#2E2E2E] dark:hover:bg-white disabled:opacity-60 disabled:cursor-wait px-5 py-2.5 text-sm font-medium transition-colors cursor-pointer shrink-0"
             >
               <span>{loading ? "Sending…" : "Send Message"}</span>
               <Send className="h-3.5 w-3.5" />
@@ -355,7 +344,7 @@ export function Contact() {
       </div>
 
       {/* Socials on the Bottom */}
-      <div className="mt-4 sm:mt-5 flex flex-col items-start gap-2 shrink-0">
+      <div className="mt-6 flex flex-col items-start gap-3 shrink-0">
         <div className="flex items-center gap-2 flex-wrap">
           {SOCIAL_LINKS.map((social) => {
             const Icon = social.icon;
@@ -368,7 +357,7 @@ export function Contact() {
                     : {})}
                   title={`${social.label}: ${social.handle}`}
                   aria-label={`${social.label} (${social.handle})`}
-                  className="h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-white dark:bg-[#141414] border border-[#E5E5E0] dark:border-[#262626] text-[#161616] dark:text-[#EDEDED] hover:bg-[#161616] hover:text-white dark:hover:bg-white dark:hover:text-[#161616] flex items-center justify-center transition-all shadow-xs cursor-pointer"
+                  className="h-10 w-10 sm:h-9 sm:w-9 rounded-full bg-white dark:bg-[#141414] border border-[#E5E5E0] dark:border-[#262626] text-[#161616] dark:text-[#EDEDED] hover:bg-[#161616] hover:text-white dark:hover:bg-white dark:hover:text-[#161616] flex items-center justify-center transition-all shadow-xs cursor-pointer"
                 >
                   <Icon className="h-3.5 w-3.5" />
                 </a>
@@ -381,7 +370,7 @@ export function Contact() {
           })}
         </div>
 
-        <p className="font-sans text-xs text-[#6E716B] dark:text-[#A3A3A3]">
+        <p className="font-sans text-xs text-[#62655E] dark:text-[#A3A3A3]">
           Manila, Philippines
         </p>
       </div>

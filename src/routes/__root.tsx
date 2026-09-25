@@ -77,30 +77,30 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Keith Ciceron | Software Developer" },
+      { title: "Keith Ciceron | Full Stack Developer" },
       {
         name: "description",
         content:
-          "Keith Czimonne Anderson Ciceron | Software Developer building modern, user-friendly, and scalable web applications.",
+          "Keith Czimonne Anderson Ciceron | Full Stack Developer building modern, user-friendly, and scalable web applications.",
       },
       { name: "author", content: "Keith Czimonne Anderson Ciceron" },
       { name: "theme-color", content: "#ECEEEA" },
-      { property: "og:title", content: "Keith Ciceron | Software Developer" },
+      { property: "og:title", content: "Keith Ciceron | Full Stack Developer" },
       {
         property: "og:description",
         content:
-          "Portfolio of Keith Czimonne Anderson Ciceron | Software Developer and UI/UX enthusiast.",
+          "Portfolio of Keith Czimonne Anderson Ciceron | Full Stack Developer and UI/UX enthusiast.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Keith Ciceron | Software Developer" },
+      { name: "twitter:title", content: "Keith Ciceron | Full Stack Developer" },
       {
         name: "twitter:description",
-        content: "Portfolio of Keith Czimonne Anderson Ciceron | Software Developer.",
+        content: "Portfolio of Keith Czimonne Anderson Ciceron | Full Stack Developer.",
       },
-      { name: "description", content: "A modern, minimalist portfolio website showcasing the skills and projects of a Software Developer." },
-      { property: "og:description", content: "A modern, minimalist portfolio website showcasing the skills and projects of a Software Developer." },
-      { name: "twitter:description", content: "A modern, minimalist portfolio website showcasing the skills and projects of a Software Developer." },
+      { name: "description", content: "A modern, minimalist portfolio website showcasing the skills and projects of a Full Stack Developer." },
+      { property: "og:description", content: "A modern, minimalist portfolio website showcasing the skills and projects of a Full Stack Developer." },
+      { name: "twitter:description", content: "A modern, minimalist portfolio website showcasing the skills and projects of a Full Stack Developer." },
       { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/39e269c0-f56b-4fda-86ca-c0bbc70b11c5/id-preview-13519e60--d997127f-9841-46ca-b344-76a4c56a2031.lovable.app-1781974348891.png" },
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/39e269c0-f56b-4fda-86ca-c0bbc70b11c5/id-preview-13519e60--d997127f-9841-46ca-b344-76a4c56a2031.lovable.app-1781974348891.png" },
     ],
@@ -128,10 +128,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
+// Applies the saved/system theme before first paint so dark visitors never see a light flash.
+const THEME_BOOTSTRAP = `(function(){try{var t=localStorage.getItem("keith_theme");if(t!=="light"&&t!=="dark"){t=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"}if(t==="dark")document.documentElement.classList.add("dark")}catch(e){}})();`;
+
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_BOOTSTRAP }} />
         <HeadContent />
       </head>
       <body>

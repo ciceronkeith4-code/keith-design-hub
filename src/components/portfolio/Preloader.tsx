@@ -67,31 +67,31 @@ export function Preloader({ onComplete }: PreloaderProps) {
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-[150] flex flex-col justify-between p-6 sm:p-10 bg-[#ECEEEA] text-[#161616] select-none"
+          className="fixed inset-0 z-[150] flex flex-col justify-between p-6 sm:p-10 bg-[#ECEEEA] dark:bg-[#0A0A0A] text-[#161616] dark:text-[#EDEDED] select-none"
           role="status"
           aria-label="Loading portfolio"
         >
           {/* Top Info */}
           <div className="flex items-center justify-between">
-            <span className="font-sans text-xs font-medium uppercase tracking-wider text-[#161616]">
+            <span className="font-sans text-xs font-medium uppercase tracking-wider text-[#161616] dark:text-[#EDEDED]">
               Keith Ciceron
             </span>
-            <span className="font-mono text-xs text-[#6E716B]">
+            <span className="font-mono text-xs text-[#62655E] dark:text-[#A3A3A3]">
               Portfolio / 2026
             </span>
           </div>
 
           {/* Center Progress Box */}
-          <div className="mx-auto w-full max-w-xs space-y-3 rounded-[24px] bg-[#F6F7F4] border border-[#E3E5E0] p-5">
+          <div className="mx-auto w-full max-w-xs space-y-3 rounded-[24px] bg-[#F6F7F4] dark:bg-[#141414] border border-[#E3E5E0] dark:border-[#262626] p-5">
             <div className="flex items-center justify-between text-xs font-mono">
-              <span className="text-[#161616] font-medium">{stage.label}</span>
-              <span className="text-[#6E716B]">{progress}%</span>
+              <span className="text-[#161616] dark:text-[#EDEDED] font-medium">{stage.label}</span>
+              <span className="text-[#62655E] dark:text-[#A3A3A3] tabular-nums">{progress}%</span>
             </div>
 
             {/* Progress Bar */}
-            <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#E3E5E0]">
+            <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#E3E5E0] dark:bg-[#262626]">
               <motion.div
-                className="h-full bg-[#1C1C1C]"
+                className="h-full bg-[#1C1C1C] dark:bg-[#EDEDED]"
                 style={{ width: `${progress}%` }}
                 transition={{ duration: 0.05 }}
               />
@@ -99,8 +99,8 @@ export function Preloader({ onComplete }: PreloaderProps) {
           </div>
 
           {/* Bottom Info */}
-          <div className="flex items-center justify-between font-mono text-[11px] text-[#6E716B]">
-            <span>Software Developer</span>
+          <div className="flex items-center justify-between font-mono text-[11px] text-[#62655E] dark:text-[#A3A3A3]">
+            <span>Full Stack Developer</span>
             <span>Manila · PH</span>
           </div>
         </motion.div>

@@ -45,20 +45,15 @@ export function Projects({ activeFilter = "All", onFilterChange }: ProjectsProps
   const paginatedProjects = filteredProjects.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
   return (
-    <div className="w-full flex flex-col justify-center py-2 h-full min-h-0 text-left">
+    <div className="w-full flex flex-col text-left">
       {/* Page Title & Filter Pills */}
-      <div className="shrink-0 flex flex-col gap-2.5 mb-3">
-        <div>
-          <span className="font-mono text-[10px] text-[#6E716B] dark:text-[#A3A3A3] uppercase tracking-wider block">
-            Projects
-          </span>
-          <h2 className="font-sans text-[clamp(26px,3.5vh,36px)] font-semibold tracking-tight text-[#161616] dark:text-[#EDEDED] leading-tight">
-            Selected Works
-          </h2>
-        </div>
+      <div className="shrink-0 flex flex-col mb-4">
+        <h2 className="mb-6 sm:mb-8 font-sans text-[clamp(26px,3.5vh,36px)] font-semibold tracking-tight text-[#161616] dark:text-[#EDEDED] leading-tight">
+          Selected Works
+        </h2>
 
         {/* Filter Pills Row */}
-        <div className="flex items-center gap-1.5 overflow-x-auto card-scrollbar py-0.5">
+        <div className="flex items-center gap-1.5 overflow-x-auto card-scrollbar py-0.5" role="group" aria-label="Filter projects by technology">
           {FILTER_TAGS.map((tag) => {
             const isActive = currentFilter === tag;
             return (
@@ -66,7 +61,8 @@ export function Projects({ activeFilter = "All", onFilterChange }: ProjectsProps
                 key={tag}
                 type="button"
                 onClick={() => setFilter(tag)}
-                className={`rounded-full px-3 py-1 text-[11px] font-medium transition-colors cursor-pointer whitespace-nowrap ${
+                aria-pressed={isActive}
+                className={`rounded-full px-3 py-1 text-xs font-medium transition-colors cursor-pointer whitespace-nowrap ${
                   isActive
                     ? "bg-[#161616] text-white dark:bg-[#EDEDED] dark:text-[#161616]"
                     : "bg-white/80 dark:bg-[#141414] text-[#161616] dark:text-[#EDEDED] border border-[#E3E5E0] dark:border-[#262626] hover:bg-[#ECEEEA] dark:hover:bg-[#1F1F1F]"
@@ -82,7 +78,7 @@ export function Projects({ activeFilter = "All", onFilterChange }: ProjectsProps
       {/* Main Content Area: Flat Rows separated by thin 1px dividers */}
       {filteredProjects.length === 0 ? (
         <div className="flex-1 min-h-0 flex flex-col items-start justify-center py-8">
-          <p className="font-mono text-xs sm:text-sm text-[#6E716B] dark:text-[#A3A3A3]">
+          <p className="font-mono text-xs sm:text-sm text-[#62655E] dark:text-[#A3A3A3]">
             No projects match the selected filter.
           </p>
           <button
@@ -103,7 +99,7 @@ export function Projects({ activeFilter = "All", onFilterChange }: ProjectsProps
               return (
                 <article
                   key={project.title}
-                  className="flex flex-row items-center gap-4 py-3 sm:py-3.5 min-h-0 shrink-0 group"
+                  className="flex flex-row items-center gap-4 sm:gap-5 py-4 min-h-0 shrink-0 group"
                 >
                   {/* Thumbnail (Permitted card/thumbnail container) */}
                   <div className="w-[120px] sm:w-[150px] h-[80px] sm:h-[92px] shrink-0 relative overflow-hidden rounded-lg border border-[#E3E5E0] dark:border-[#262626] bg-[#ECEEEA] dark:bg-[#1A1A1A]">
@@ -133,7 +129,7 @@ export function Projects({ activeFilter = "All", onFilterChange }: ProjectsProps
                         </h3>
                       </div>
 
-                      <p className="mt-1 text-[11px] sm:text-xs leading-relaxed text-[#6E716B] dark:text-[#A3A3A3] line-clamp-2">
+                      <p className="mt-1 text-[11px] sm:text-xs leading-relaxed text-[#62655E] dark:text-[#A3A3A3] line-clamp-2">
                         {project.description}
                       </p>
 
@@ -141,7 +137,7 @@ export function Projects({ activeFilter = "All", onFilterChange }: ProjectsProps
                         {project.tech.slice(0, 5).map((tech) => (
                           <span
                             key={tech}
-                            className="font-mono text-[9px] text-[#6E716B] dark:text-[#A3A3A3] after:content-[','] last:after:content-[''] pr-1"
+                            className="font-mono text-[10px] text-[#62655E] dark:text-[#A3A3A3] after:content-[','] last:after:content-[''] pr-1"
                           >
                             {tech}
                           </span>
@@ -180,7 +176,7 @@ export function Projects({ activeFilter = "All", onFilterChange }: ProjectsProps
                           <ExternalLink className="h-3 w-3" />
                         </a>
                       ) : (
-                        <span className="font-mono text-[9px] sm:text-[10px] text-[#6E716B] dark:text-[#A3A3A3]">
+                        <span className="font-mono text-[10px] text-[#62655E] dark:text-[#A3A3A3]">
                           (School Project)
                         </span>
                       )}
@@ -193,18 +189,18 @@ export function Projects({ activeFilter = "All", onFilterChange }: ProjectsProps
 
           {/* Clean Pagination Controls Bar */}
           {totalPages > 1 && (
-            <div className="pt-3 flex items-center justify-between shrink-0">
+            <div className="pt-4 flex items-center justify-between shrink-0">
               <button
                 type="button"
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 disabled={validPage <= 1}
-                className="inline-flex items-center gap-1 text-xs font-mono text-[#6E716B] dark:text-[#A3A3A3] hover:text-[#161616] dark:hover:text-[#EDEDED] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+                className="inline-flex items-center gap-1 text-xs font-mono text-[#62655E] dark:text-[#A3A3A3] hover:text-[#161616] dark:hover:text-[#EDEDED] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
               >
                 <ChevronLeft className="h-3.5 w-3.5" />
                 <span>Previous</span>
               </button>
 
-              <span className="font-mono text-xs text-[#6E716B] dark:text-[#A3A3A3] font-medium tracking-wider">
+              <span className="font-mono text-xs text-[#62655E] dark:text-[#A3A3A3] font-medium tracking-wider">
                 {validPage} / {totalPages}
               </span>
 
@@ -212,7 +208,7 @@ export function Projects({ activeFilter = "All", onFilterChange }: ProjectsProps
                 type="button"
                 onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                 disabled={validPage >= totalPages}
-                className="inline-flex items-center gap-1 text-xs font-mono text-[#6E716B] dark:text-[#A3A3A3] hover:text-[#161616] dark:hover:text-[#EDEDED] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+                className="inline-flex items-center gap-1 text-xs font-mono text-[#62655E] dark:text-[#A3A3A3] hover:text-[#161616] dark:hover:text-[#EDEDED] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
               >
                 <span>Next</span>
                 <ChevronRight className="h-3.5 w-3.5" />

@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Home, User, Code2, Briefcase, FolderOpen, Calendar, Mail, type LucideIcon } from "lucide-react";
 import { TopBar } from "./TopBar";
 import { CommandPalette } from "./CommandPalette";
 import { useTheme } from "@/lib/theme";
@@ -9,16 +10,17 @@ export type TabId = "dashboard" | "about" | "skills" | "experience" | "projects"
 export interface NavSection {
   id: TabId;
   label: string;
+  icon: LucideIcon;
 }
 
 const SECTIONS: NavSection[] = [
-  { id: "dashboard", label: "Home" },
-  { id: "about", label: "About" },
-  { id: "skills", label: "Skills" },
-  { id: "experience", label: "Experience" },
-  { id: "projects", label: "Projects" },
-  { id: "activities", label: "Activities" },
-  { id: "contact", label: "Contact" },
+  { id: "dashboard", label: "Home", icon: Home },
+  { id: "about", label: "About", icon: User },
+  { id: "skills", label: "Skills", icon: Code2 },
+  { id: "experience", label: "Experience", icon: Briefcase },
+  { id: "projects", label: "Projects", icon: FolderOpen },
+  { id: "activities", label: "Activities", icon: Calendar },
+  { id: "contact", label: "Contact", icon: Mail },
 ];
 
 interface DashboardLayoutProps {
@@ -29,7 +31,8 @@ interface DashboardLayoutProps {
 
 export function DashboardLayout({ activeTab, onTabChange, children }: DashboardLayoutProps) {
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
-  const { theme, toggleTheme } = useTheme();
+  const { toggleTheme } = useTheme();
+  const isHome = activeTab === "dashboard";
 
   const handleSelectTab = (id: TabId) => {
     onTabChange(id);
@@ -41,10 +44,8 @@ export function DashboardLayout({ activeTab, onTabChange, children }: DashboardL
       {/* 1. TOP BAR (Thin bar across top, 1px bottom border, no fill) */}
       {/* ============================================================ */}
       <TopBar
-        activeTab={activeTab}
         onSelectTab={handleSelectTab}
         onOpenCommandPalette={() => setCommandPaletteOpen(true)}
-        theme={theme}
         onToggleTheme={toggleTheme}
       />
 
@@ -52,55 +53,65 @@ export function DashboardLayout({ activeTab, onTabChange, children }: DashboardL
       {/* 2. BODY CONTAINER: SIDEBAR + LEFT-ALIGNED CONTENT AREA       */}
       {/* ============================================================ */}
       <div className="flex-1 min-h-0 min-w-0 flex flex-row overflow-hidden">
-        {/* SIDEBAR: TEXT, NOT ICONS */}
+        {/* SIDEBAR: icon + label */}
         <aside className="hidden md:flex h-full min-h-0 w-48 sm:w-52 lg:w-56 shrink-0 flex-col justify-start border-r border-[#E5E5E0] dark:border-[#262626] bg-transparent px-3 py-6 z-30 select-none overflow-y-auto card-scrollbar">
-          <span className="font-mono text-[10px] text-[#6E716B] dark:text-[#A3A3A3] uppercase tracking-wider block px-2.5 mb-3 font-medium">
+          <span className="font-mono text-[10px] text-[#62655E] dark:text-[#A3A3A3] uppercase tracking-wider block px-2.5 mb-3 font-medium">
             Sections
           </span>
 
           <nav aria-label="Sections Navigation" className="flex flex-col gap-1">
             {SECTIONS.map((item) => {
               const isActive = activeTab === item.id;
+              const Icon = item.icon;
               return (
                 <button
                   key={item.id}
+                  type="button"
                   onClick={() => handleSelectTab(item.id)}
-                  className={`w-full text-left px-2.5 py-1.5 text-xs sm:text-sm font-medium transition-colors cursor-pointer rounded-md ${
+                  aria-current={isActive ? "page" : undefined}
+                  className={`w-full flex items-center gap-2.5 text-left px-2.5 py-1.5 text-sm font-medium transition-colors cursor-pointer rounded-md ${
                     isActive
                       ? "bg-black/5 dark:bg-white/10 text-[#161616] dark:text-[#EDEDED]"
-                      : "text-[#6E716B] dark:text-[#A3A3A3] hover:text-[#161616] dark:hover:text-[#EDEDED] hover:bg-black/[0.03] dark:hover:bg-white/[0.04]"
+                      : "text-[#62655E] dark:text-[#A3A3A3] hover:text-[#161616] dark:hover:text-[#EDEDED] hover:bg-black/[0.03] dark:hover:bg-white/[0.04]"
                   }`}
                 >
-                  {item.label}
+                  <Icon className="h-3.5 w-3.5 shrink-0" strokeWidth={2} />
+                  <span>{item.label}</span>
                 </button>
               );
             })}
           </nav>
         </aside>
 
-        {/* MOBILE BOTTOM NAVIGATION BAR */}
-        <nav aria-label="Mobile Navigation" className="flex md:hidden fixed bottom-2 inset-x-2 h-14 bg-[#1C1C1C] dark:bg-[#141414] border border-white/10 rounded-full z-50 items-center justify-around px-3 shadow-lg">
+        {/* MOBILE BOTTOM NAVIGATION BAR: icons for every section, label on the active one, so all seven fit a phone width */}
+        <nav aria-label="Mobile Navigation" className="flex md:hidden fixed bottom-2 inset-x-2 h-14 bg-[#1C1C1C] dark:bg-[#141414] border border-white/10 rounded-full z-50 items-center justify-between px-2 shadow-lg">
           {SECTIONS.map((item) => {
             const isActive = activeTab === item.id;
+            const Icon = item.icon;
             return (
               <button
                 key={item.id}
+                type="button"
                 onClick={() => handleSelectTab(item.id)}
-                className={`px-2 py-1 text-xs rounded-full transition-colors ${
-                  isActive ? "bg-white text-[#161616] font-medium" : "text-white/60 hover:text-white"
+                aria-label={item.label}
+                aria-current={isActive ? "page" : undefined}
+                className={`h-10 shrink-0 flex items-center justify-center gap-1.5 rounded-full text-xs transition-colors cursor-pointer ${
+                  isActive ? "px-3.5 bg-white text-[#161616] font-medium" : "w-10 text-white/60 hover:text-white"
                 }`}
               >
-                {item.label}
+                <Icon className="h-4 w-4 shrink-0" strokeWidth={2} />
+                {isActive && <span>{item.label}</span>}
               </button>
             );
           })}
         </nav>
 
         {/* ============================================================ */}
-        {/* 3. MAIN CONTENT AREA: LEFT-ALIGNED WITH GENEROUS LEFT PADDING*/}
+        {/* 3. MAIN CONTENT AREA: sections anchor to one shared top line so */}
+        {/* titles never jump between tabs; Home fills the height to center */}
         {/* ============================================================ */}
-        <main className="flex-1 min-w-0 min-h-0 h-full overflow-hidden flex flex-col justify-center">
-          <div className="flex-1 min-h-0 min-w-0 h-full w-full overflow-y-auto md:overflow-hidden card-scrollbar pl-8 sm:pl-12 lg:pl-16 pr-8 sm:pr-12 lg:pr-16 py-6 sm:py-8 flex flex-col justify-center items-start text-left pb-16 md:pb-8">
+        <main className="flex-1 min-w-0 min-h-0 h-full overflow-hidden flex flex-col">
+          <div className="flex-1 min-h-0 min-w-0 h-full w-full overflow-y-auto card-scrollbar px-6 sm:px-12 lg:px-16 pt-8 sm:pt-12 pb-24 md:pb-12 flex flex-col items-start text-left">
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeTab}
@@ -108,7 +119,7 @@ export function DashboardLayout({ activeTab, onTabChange, children }: DashboardL
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.15 }}
-                className="w-full max-w-[1000px] min-h-0 min-w-0 flex flex-col justify-center items-start text-left"
+                className={`w-full max-w-[1000px] min-w-0 flex flex-col items-start text-left ${isHome ? "flex-1" : ""}`}
               >
                 {children}
               </motion.div>

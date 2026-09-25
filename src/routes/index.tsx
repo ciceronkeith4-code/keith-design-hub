@@ -14,10 +14,10 @@ import { DashboardLayout, type TabId } from "@/components/portfolio/DashboardLay
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Keith Ciceron | Software Developer" },
-      { name: "description", content: "Software Developer passionate about building clean, user-friendly, and efficient digital experiences." },
-      { property: "og:title", content: "Keith Ciceron | Software Developer" },
-      { property: "og:description", content: "Software Developer passionate about building clean, user-friendly, and efficient digital experiences." },
+      { title: "Keith Ciceron | Full Stack Developer" },
+      { name: "description", content: "Full Stack Developer passionate about building clean, user-friendly, and efficient digital experiences." },
+      { property: "og:title", content: "Keith Ciceron | Full Stack Developer" },
+      { property: "og:description", content: "Full Stack Developer passionate about building clean, user-friendly, and efficient digital experiences." },
       { property: "og:url", content: "/" },
     ],
     links: [
@@ -39,13 +39,15 @@ function getTabFromHash(): TabId {
 
 function Index() {
   const [introReady, setIntroReady] = useState(false);
-  const [activeTab, setActiveTab] = useState<TabId>(() => getTabFromHash());
+  // Server has no URL hash, so render Home first and apply the hash after mount to keep hydration consistent.
+  const [activeTab, setActiveTab] = useState<TabId>("dashboard");
   const markIntroReady = useCallback(() => setIntroReady(true), []);
 
   useEffect(() => {
     const handleHashChange = () => {
       setActiveTab(getTabFromHash());
     };
+    handleHashChange();
     window.addEventListener("hashchange", handleHashChange);
     window.addEventListener("popstate", handleHashChange);
     return () => {
