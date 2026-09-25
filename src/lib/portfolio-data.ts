@@ -1,7 +1,6 @@
 import { SiHtml5, SiCss, SiJavascript, SiTypescript, SiReact, SiTailwindcss, SiNodedotjs, SiMysql, SiFirebase, SiFigma, SiGit, SiGithub, SiVercel, SiSupabase } from "react-icons/si";
 import { VscVscode } from "react-icons/vsc";
-import { FaBug, FaCode, FaServer } from "react-icons/fa6";
-import { TbApi, TbUserSearch } from "react-icons/tb";
+import { TbUserSearch } from "react-icons/tb";
 import { PhotoshopMark } from "@/components/portfolio/SkillMarks";
 
 export const NAV_ITEMS = [
@@ -19,8 +18,6 @@ export const SKILLS = [
   { name: "React", icon: SiReact, color: "#61DAFB", group: "Frontend" },
   { name: "Tailwind CSS", icon: SiTailwindcss, color: "#06B6D4", group: "Frontend" },
   { name: "Node.js", icon: SiNodedotjs, color: "#5FA04E", group: "Backend" },
-  { name: "REST API", icon: TbApi, color: "#EB5E28", group: "Backend" },
-  { name: "Server Logic", icon: FaServer, color: "#059669", group: "Backend" },
   { name: "MySQL", icon: SiMysql, color: "#4479A1", group: "Database" },
   { name: "Firebase", icon: SiFirebase, color: "#FFCA28", group: "Database" },
   { name: "Supabase", icon: SiSupabase, color: "#3FCF8E", group: "Database" },
@@ -31,8 +28,6 @@ export const SKILLS = [
   { name: "Vercel", icon: SiVercel, color: "#111111", group: "Tools & DevOps" },
   { name: "VS Code", icon: VscVscode, color: "#007ACC", group: "Tools & DevOps" },
   { name: "QA Testing", icon: TbUserSearch, color: "#7C3AED", group: "Additional Skills" },
-  { name: "Debugging", icon: FaBug, color: "#DC2626", group: "Additional Skills" },
-  { name: "UI/UX Design", icon: FaCode, color: "#EB5E28", group: "Additional Skills" },
 ];
 
 export const EXPERIENCE = [
@@ -63,7 +58,7 @@ export const EXPERIENCE = [
 ];
 
 export const EDUCATION = [
-  { school: "San Sebastian College Recoletos Manila", detail: "BS Information Technology", period: "2023", badge: "Dean's Lister" },
+  { school: "San Sebastian College Recoletos Manila", detail: "BS Information Technology", period: "2023 to present", badge: "Dean's Lister" },
   { school: "The Lady Mediatrix Institute Inc.", detail: "STEM", period: "2020 to 2023", badge: "With High Honors" },
   { school: "Recto Memorial National High School", detail: "Junior High School", period: "2019 to 2020", badge: "With Honors" },
 ];
@@ -160,7 +155,7 @@ export const SOCIALS = [
   { id: "viber", label: "Viber", detail: "+63 9944933136", action: "Chat on Viber", url: "viber://chat?number=%2B639944933136", color: "#7360F2" },
 ] as const;
 
-export const CONTACT = { email: "ciceronkeith4@gmail.com", phone: "+63 9944933136", location: "Philippines" };
+export const CONTACT = { email: "ciceronkeith4@gmail.com", phone: "+63 9944933136", location: "Manila, Philippines" };
 
 
 

@@ -1,117 +1,56 @@
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence, type PanInfo } from "framer-motion";
-import { Briefcase, Calendar } from "lucide-react";
 import { EXPERIENCE } from "@/lib/portfolio-data";
-import { SectionHeading } from "./SectionHeading";
 
 export function Experience() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isHovered, setIsHovered] = useState(false);
-
-  useEffect(() => {
-    if (isHovered) return;
-    const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % EXPERIENCE.length);
-    }, 4500);
-    return () => clearInterval(timer);
-  }, [isHovered]);
-
-  const handleDragEnd = (_: unknown, info: PanInfo) => {
-    if (info.offset.x < -40) {
-      setCurrentIndex((prev) => (prev + 1) % EXPERIENCE.length);
-    } else if (info.offset.x > 40) {
-      setCurrentIndex((prev) => (prev === 0 ? EXPERIENCE.length - 1 : prev - 1));
-    }
-  };
-
-  const item = EXPERIENCE[currentIndex];
-
   return (
-    <section id="experience" className="stacked-panel panel-mid z-40 px-4 py-10 sm:py-12">
-      <div className="relative mx-auto max-w-3xl">
-        <SectionHeading
-          tone="dark"
-          eyebrow="Experience"
-          title={
-            <>
-              Where I've <span className="text-[#E25822]">worked</span>
-            </>
-          }
-          subtitle="Hands-on roles in full-stack web development, software testing, and system optimization."
-        />
-
-        <div
-          className="relative mt-10"
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-        >
-          {/* Mobile-Responsive Box & Layout Dimensions */}
-          <div className="relative min-h-[320px] sm:min-h-[300px] w-full overflow-hidden rounded-3xl border border-white/10 bg-[#18181A] p-5 sm:p-8 shadow-2xl">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentIndex}
-                drag="x"
-                dragConstraints={{ left: 0, right: 0 }}
-                dragElastic={0.2}
-                onDragEnd={handleDragEnd}
-                initial={{ opacity: 0, x: 30 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -30 }}
-                transition={{ duration: 0.35 }}
-                className="flex h-full flex-col cursor-grab active:cursor-grabbing"
-              >
-                {/* Header - Mobile Responsive */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-4">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-2xl border border-[#E25822]/30 bg-[#E25822]/20 text-[#E25822]">
-                      <Briefcase className="h-4 w-4 sm:h-5 sm:w-5" />
-                    </div>
-                    <div className="min-w-0">
-                      <h3 className="font-display text-sm sm:text-xl uppercase tracking-wide text-[#F8F1E7] truncate">
-                        {item.role}
-                      </h3>
-                      <p className="mt-0.5 text-xs sm:text-sm font-semibold text-[#8C857B] truncate">
-                        {item.company}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex w-fit shrink-0 items-center gap-1.5 rounded-full border border-[#E25822]/30 bg-[#E25822]/15 px-3 py-1 font-mono text-[9px] sm:text-xs font-bold uppercase tracking-wider text-[#F8F1E7]">
-                    <Calendar className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-[#E25822]" />
-                    {item.period}
-                  </div>
-                </div>
-
-                {/* Bullets - Fixed Top Spacing */}
-                <ul className="mt-5 space-y-2.5">
-                  {item.points.map((point) => (
-                    <li key={point} className="flex items-start gap-3 text-xs sm:text-sm leading-relaxed text-[#D8D0C5]">
-                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#E25822]" />
-                      <span>{point}</span>
-                    </li>
-                  ))}
-                </ul>
-              </motion.div>
-            </AnimatePresence>
-          </div>
-
-          {/* Dots Indicator Only (No Arrows) */}
-          <div className="mt-6 flex items-center justify-center gap-2">
-            {EXPERIENCE.map((_, idx) => (
-              <button
-                key={idx}
-                onClick={() => setCurrentIndex(idx)}
-                aria-label={`Go to slide ${idx + 1}`}
-                className={`h-2.5 rounded-full transition-all ${
-                  currentIndex === idx ? "w-8 bg-[#E25822]" : "w-2.5 bg-white/20 hover:bg-white/40"
-                }`}
-              />
-            ))}
-          </div>
-        </div>
+    <div className="w-full flex flex-col justify-center py-2 text-left">
+      {/* Plain Page Title */}
+      <div className="mb-6 sm:mb-8 shrink-0">
+        <span className="font-mono text-[10px] text-[#6E716B] dark:text-[#A3A3A3] uppercase tracking-wider block">
+          Experience
+        </span>
+        <h2 className="font-sans text-[clamp(26px,3.5vh,36px)] font-semibold tracking-tight text-[#161616] dark:text-[#EDEDED] leading-tight">
+          Work History
+        </h2>
       </div>
-    </section>
+
+      {/* Two entries separated by a 1px divider, NO cards */}
+      <div className="divide-y divide-[#E5E5E0] dark:divide-[#262626]">
+        {EXPERIENCE.map((item) => (
+          <div
+            key={item.company + item.role}
+            className="py-4 sm:py-5 first:pt-0 last:pb-0 flex flex-col justify-start"
+          >
+            {/* Header: Role, Company on Left; Date on Right in Monospace */}
+            <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 pb-2">
+              <div>
+                <h3 className="font-sans text-sm sm:text-base font-semibold text-[#161616] dark:text-[#EDEDED]">
+                  {item.role}
+                </h3>
+                <p className="text-xs sm:text-sm text-[#6E716B] dark:text-[#A3A3A3]">
+                  {item.company}
+                </p>
+              </div>
+
+              <span className="font-mono text-[11px] sm:text-xs text-[#6E716B] dark:text-[#A3A3A3] shrink-0 self-start sm:self-auto">
+                {item.period}
+              </span>
+            </div>
+
+            {/* All bullets as plain text */}
+            <ul className="mt-2 space-y-1.5">
+              {item.points.map((point) => (
+                <li
+                  key={point}
+                  className="flex items-start gap-2.5 text-xs sm:text-[13px] leading-relaxed text-[#4A4D47] dark:text-[#CCCCCC]"
+                >
+                  <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-[#161616] dark:bg-[#EDEDED]" />
+                  <span>{point}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
-
-
-

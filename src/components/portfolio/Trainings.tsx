@@ -1,116 +1,43 @@
-import { motion, AnimatePresence, type PanInfo } from "framer-motion";
-import { useCallback, useEffect, useState } from "react";
-import { Award } from "lucide-react";
 import { TRAININGS } from "@/lib/portfolio-data";
-import { SectionHeading } from "./SectionHeading";
 
 export function Trainings() {
-  const [index, setIndex] = useState(0);
-  const [isHovered, setIsHovered] = useState(false);
-
-  const prev = useCallback(
-    () => setIndex((current) => (current === 0 ? TRAININGS.length - 1 : current - 1)),
-    []
-  );
-  const next = useCallback(
-    () => setIndex((current) => (current === TRAININGS.length - 1 ? 0 : current + 1)),
-    []
-  );
-
-  useEffect(() => {
-    if (isHovered) return;
-    const timer = setInterval(() => {
-      next();
-    }, 4500);
-    return () => clearInterval(timer);
-  }, [isHovered, next]);
-
-  const handleDragEnd = (_: unknown, info: PanInfo) => {
-    if (info.offset.x < -40) {
-      next();
-    } else if (info.offset.x > 40) {
-      prev();
-    }
-  };
-
-  const active = TRAININGS[index];
-
   return (
-    <section id="trainings" className="stacked-panel panel-mid z-[80] px-4 py-10 sm:py-14">
-      <div className="relative mx-auto max-w-4xl">
-        <SectionHeading
-          tone="dark"
-          eyebrow="Activities"
-          title={
-            <>
-              Trainings & <span className="text-[#E25822]">Activities</span>
-            </>
-          }
-          subtitle="Workshops, hackathons, and seminars that shaped my growth."
-        />
-
-        <div className="relative mt-8 sm:mt-12">
-          {/* Main Active Card Container with Auto-play & Hover Pause */}
-          <div
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-            className="relative mx-auto w-full max-w-xl overflow-hidden rounded-3xl border border-white/10 bg-[#18181A] p-6 shadow-2xl sm:p-8"
-          >
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={index}
-                drag="x"
-                dragConstraints={{ left: 0, right: 0 }}
-                dragElastic={0.2}
-                onDragEnd={handleDragEnd}
-                initial={{ opacity: 0, x: 30 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -30 }}
-                transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                className="flex cursor-grab flex-col active:cursor-grabbing"
-              >
-                <div className="flex items-center gap-3 border-b border-white/10 pb-4">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-[#E25822]/30 bg-[#E25822]/15 text-[#E25822]">
-                    <Award className="h-5 w-5" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#E25822]">
-                      {active.role}
-                    </span>
-                    <h3 className="font-display mt-0.5 text-base sm:text-lg uppercase leading-snug tracking-wide text-[#F8F1E7]">
-                      {active.title}
-                    </h3>
-                  </div>
-                </div>
-
-                <div className="mt-4 flex items-center justify-between font-mono text-xs text-[#8C857B]">
-                  <span>Event / Workshop</span>
-                  <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold text-[#D8D0C5]">
-                    {active.date}
-                  </span>
-                </div>
-              </motion.div>
-            </AnimatePresence>
-          </div>
-
-          {/* Dots Indicator & Counter */}
-          <div className="mt-6 flex items-center justify-center gap-2">
-            {TRAININGS.map((_, idx) => (
-              <button
-                key={idx}
-                onClick={() => setIndex(idx)}
-                aria-label={`Go to activity ${idx + 1}`}
-                className={`h-2 rounded-full transition-all duration-300 ${
-                  index === idx ? "w-7 bg-[#E25822]" : "w-2 bg-white/20 hover:bg-white/40"
-                }`}
-              />
-            ))}
-          </div>
-          <p className="mt-2 text-center font-mono text-[10px] uppercase tracking-widest text-[#8C857B]">
-            {index + 1} of {TRAININGS.length}
-          </p>
-        </div>
+    <div className="w-full flex flex-col justify-center py-2 text-left">
+      {/* Plain Page Title */}
+      <div className="mb-6 sm:mb-8 shrink-0">
+        <span className="font-mono text-[10px] text-[#6E716B] dark:text-[#A3A3A3] uppercase tracking-wider block">
+          Activities
+        </span>
+        <h2 className="font-sans text-[clamp(26px,3.5vh,36px)] font-semibold tracking-tight text-[#161616] dark:text-[#EDEDED] leading-tight">
+          Workshops & Events
+        </h2>
       </div>
-    </section>
+
+      {/* Simple List separated by thin dividers, NO cards */}
+      <div className="divide-y divide-[#E5E5E0] dark:divide-[#262626]">
+        {TRAININGS.map((item) => (
+          <div
+            key={item.title}
+            className="py-3.5 sm:py-4 first:pt-0 last:pb-0 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5"
+          >
+            <div className="flex items-center gap-3">
+              {/* Neutral Role badge */}
+              <span className="rounded-full bg-white dark:bg-[#141414] border border-[#E5E5E0] dark:border-[#262626] text-[#161616] dark:text-[#EDEDED] px-2.5 py-0.5 font-mono text-[10px] font-medium uppercase tracking-wider shrink-0 shadow-xs">
+                {item.role}
+              </span>
+              <h3 className="font-sans text-xs sm:text-sm font-semibold text-[#161616] dark:text-[#EDEDED]">
+                {item.title}
+              </h3>
+            </div>
+
+            <div className="flex items-center gap-3 font-mono text-[11px] text-[#6E716B] dark:text-[#A3A3A3] shrink-0 self-start sm:self-auto">
+              <span>Event / Workshop</span>
+              <span className="h-3 w-px bg-[#E5E5E0] dark:bg-[#262626]" />
+              <span>{item.date}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }

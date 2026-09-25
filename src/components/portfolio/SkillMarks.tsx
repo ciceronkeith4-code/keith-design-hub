@@ -1,19 +1,19 @@
-﻿import { useId, type SVGProps } from "react";
+import { useId, type SVGProps } from "react";
 
 type MarkProps = SVGProps<SVGSVGElement>;
 
 export function PhotoshopMark({ className, ...props }: MarkProps) {
   return (
     <svg viewBox="0 0 48 48" aria-hidden="true" className={className} {...props}>
-      <rect x="1.5" y="1.5" width="45" height="45" rx="10" fill="#001E36" />
+      <rect x="2" y="2" width="44" height="44" rx="10" fill="#161616" />
       <text
         x="24"
-        y="32.5"
-        fill="#31A8FF"
+        y="32"
+        fill="#FFFFFF"
         fontFamily="Arial Black, Arial, sans-serif"
-        fontSize="24"
+        fontSize="22"
         fontWeight="800"
-        letterSpacing="-1.6"
+        letterSpacing="-1"
         textAnchor="middle"
       >
         Ps

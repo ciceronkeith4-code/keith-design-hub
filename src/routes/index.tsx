@@ -1,20 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { About } from "@/components/portfolio/About";
-import { BackgroundFX } from "@/components/portfolio/BackgroundFX";
 import { Contact } from "@/components/portfolio/Contact";
-import { CustomCursor } from "@/components/portfolio/CustomCursor";
 import { Experience } from "@/components/portfolio/Experience";
-import { Footer } from "@/components/portfolio/Footer";
-import { Hero } from "@/components/portfolio/Hero";
-import { Navbar } from "@/components/portfolio/Navbar";
 import { Preloader } from "@/components/portfolio/Preloader";
 import { Projects } from "@/components/portfolio/Projects";
-import { ScrollProgress } from "@/components/portfolio/ScrollProgress";
 import { Skills } from "@/components/portfolio/Skills";
-import { SmoothScroll } from "@/components/portfolio/SmoothScroll";
 import { Trainings } from "@/components/portfolio/Trainings";
+import { BentoDashboard } from "@/components/portfolio/BentoDashboard";
+import { DashboardLayout, type TabId } from "@/components/portfolio/DashboardLayout";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -26,38 +21,81 @@ export const Route = createFileRoute("/")({
       { property: "og:url", content: "/" },
     ],
     links: [
-      { rel: "preload", href: "/fonts/anton-latin.woff2", as: "font", type: "font/woff2", crossOrigin: "anonymous" },
-      { rel: "preload", href: "/fonts/poppins-400.woff2", as: "font", type: "font/woff2", crossOrigin: "anonymous" },
       { rel: "canonical", href: "/" },
     ],
   }),
   component: Index,
 });
 
+const VALID_TABS: TabId[] = ["dashboard", "about", "skills", "experience", "projects", "activities", "contact"];
+
+function getTabFromHash(): TabId {
+  if (typeof window === "undefined") return "dashboard";
+  const hash = window.location.hash.replace(/^#/, "").toLowerCase();
+  if (hash === "home") return "dashboard";
+  if (hash === "trainings") return "activities";
+  return VALID_TABS.includes(hash as TabId) ? (hash as TabId) : "dashboard";
+}
+
 function Index() {
   const [introReady, setIntroReady] = useState(false);
+  const [activeTab, setActiveTab] = useState<TabId>(() => getTabFromHash());
   const markIntroReady = useCallback(() => setIntroReady(true), []);
 
+  useEffect(() => {
+    const handleHashChange = () => {
+      setActiveTab(getTabFromHash());
+    };
+    window.addEventListener("hashchange", handleHashChange);
+    window.addEventListener("popstate", handleHashChange);
+    return () => {
+      window.removeEventListener("hashchange", handleHashChange);
+      window.removeEventListener("popstate", handleHashChange);
+    };
+  }, []);
+
+  const [activeFilter, setActiveFilter] = useState<string>("All");
+
+  const handleTabChange = useCallback((tab: TabId) => {
+    setActiveTab(tab);
+    if (typeof window !== "undefined") {
+      const current = window.location.hash.replace(/^#/, "").toLowerCase();
+      if (current !== tab) {
+        window.history.pushState(
+          null,
+          "",
+          tab === "dashboard" ? window.location.pathname : `#${tab}`
+        );
+      }
+    }
+  }, []);
+
   return (
-    <SmoothScroll>
-      <div className="relative min-h-screen overflow-x-clip">
-        <Preloader onComplete={markIntroReady} />
-        <BackgroundFX active={introReady} />
-        <CustomCursor active={introReady} />
-        <ScrollProgress />
-        <Navbar ready={introReady} />
-        <main className="full-page-main">
-          <Hero ready={introReady} />
-          <About />
-          <Skills />
-          <Experience />
-          <Projects />
-          <Trainings />
-          <Contact />
-        </main>
-        <Footer />
-        <Toaster position="bottom-right" richColors />
-      </div>
-    </SmoothScroll>
+    <div className="relative h-screen h-[100dvh] w-screen overflow-hidden bg-[#ECEEEA] border-none outline-none">
+      <Preloader onComplete={markIntroReady} />
+
+      <DashboardLayout activeTab={activeTab} onTabChange={handleTabChange}>
+        {activeTab === "dashboard" && (
+          <BentoDashboard
+            onNavigate={handleTabChange}
+            activeFilter={activeFilter}
+            onFilterChange={setActiveFilter}
+          />
+        )}
+        {activeTab === "about" && <About />}
+        {activeTab === "skills" && <Skills />}
+        {activeTab === "experience" && <Experience />}
+        {activeTab === "projects" && (
+          <Projects
+            activeFilter={activeFilter}
+            onFilterChange={setActiveFilter}
+          />
+        )}
+        {activeTab === "activities" && <Trainings />}
+        {activeTab === "contact" && <Contact />}
+      </DashboardLayout>
+
+      <Toaster position="bottom-right" richColors />
+    </div>
   );
 }

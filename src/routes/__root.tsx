@@ -84,7 +84,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "Keith Czimonne Anderson Ciceron | Software Developer building modern, user-friendly, and scalable web applications.",
       },
       { name: "author", content: "Keith Czimonne Anderson Ciceron" },
-      { name: "theme-color", content: "#18181A" },
+      { name: "theme-color", content: "#ECEEEA" },
       { property: "og:title", content: "Keith Ciceron | Software Developer" },
       {
         property: "og:description",
@@ -111,9 +111,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "apple-touch-icon", href: "/logo-kc.png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+      { rel: "preconnect", href: "https://api.fontshare.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Geist:wght@300..800&family=Inter:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap",
+        href: "https://api.fontshare.com/v2/css?f[]=general-sans@300,400,500,600&display=swap",
+      },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap",
       },
     ],
   }),

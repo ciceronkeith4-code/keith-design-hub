@@ -1,162 +1,236 @@
-import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown, ExternalLink } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { ExternalLink, Eye, ChevronLeft, ChevronRight } from "lucide-react";
 import { PROJECTS } from "@/lib/portfolio-data";
-import { SectionHeading } from "./SectionHeading";
 import { Lightbox, type LightboxImage } from "./Lightbox";
-import { Reveal } from "./Reveal";
 
-export function Projects() {
-  const [expanded, setExpanded] = useState<number | null>(null);
+const FILTER_TAGS = [
+  "All",
+  "React",
+  "TypeScript",
+  "Tailwind CSS",
+  "PHP",
+  "MySQL",
+  "Next.js",
+  "Supabase",
+] as const;
+
+interface ProjectsProps {
+  activeFilter?: string;
+  onFilterChange?: (filter: string) => void;
+}
+
+const ITEMS_PER_PAGE = 3;
+
+export function Projects({ activeFilter = "All", onFilterChange }: ProjectsProps) {
+  const [internalFilter, setInternalFilter] = useState("All");
+  const [currentPage, setCurrentPage] = useState(1);
   const [lightbox, setLightbox] = useState<{ images: LightboxImage[]; index: number } | null>(null);
 
+  const currentFilter = onFilterChange ? activeFilter : internalFilter;
+  const setFilter = onFilterChange || setInternalFilter;
+
+  // Reset page when filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [currentFilter]);
+
+  const filteredProjects = currentFilter === "All"
+    ? PROJECTS
+    : PROJECTS.filter((p) => p.tech.some((t) => t.toLowerCase() === currentFilter.toLowerCase()));
+
+  const totalPages = Math.max(1, Math.ceil(filteredProjects.length / ITEMS_PER_PAGE));
+  const validPage = Math.min(currentPage, totalPages);
+
+  const startIndex = (validPage - 1) * ITEMS_PER_PAGE;
+  const paginatedProjects = filteredProjects.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
   return (
-    <section id="projects" className="stacked-panel panel-light z-50 px-4 py-12 sm:py-16">
-      <div className="relative mx-auto max-w-6xl">
-        <SectionHeading
-          eyebrow="Projects"
-          title={
-            <>
-              Project <span className="text-[#E25822]">Showcase</span>
-            </>
-          }
-          subtitle="Selected work. Expand any card to browse screenshots and UI screens."
-        />
+    <div className="w-full flex flex-col justify-center py-2 h-full min-h-0 text-left">
+      {/* Page Title & Filter Pills */}
+      <div className="shrink-0 flex flex-col gap-2.5 mb-3">
+        <div>
+          <span className="font-mono text-[10px] text-[#6E716B] dark:text-[#A3A3A3] uppercase tracking-wider block">
+            Projects
+          </span>
+          <h2 className="font-sans text-[clamp(26px,3.5vh,36px)] font-semibold tracking-tight text-[#161616] dark:text-[#EDEDED] leading-tight">
+            Selected Works
+          </h2>
+        </div>
 
-        <div className="mt-10 space-y-10 sm:space-y-14">
-          {PROJECTS.map((project, index) => {
-            const reverse = index % 2 === 1;
-            const open = expanded === index;
-
+        {/* Filter Pills Row */}
+        <div className="flex items-center gap-1.5 overflow-x-auto card-scrollbar py-0.5">
+          {FILTER_TAGS.map((tag) => {
+            const isActive = currentFilter === tag;
             return (
-              <Reveal key={project.title} delay={index * 0.06}>
-                <article className="grid items-center gap-8 md:grid-cols-2">
-                  <div className={reverse ? "md:order-2" : "md:order-1"}>
-                    <button
-                      onClick={() =>
-                        setLightbox({
-                          images: project.shots.map((src) => ({ src, caption: project.title })),
-                          index: 0,
-                        })
-                      }
-                      aria-label={`View screenshots for ${project.title}`}
-                      className="group relative flex w-full flex-col items-center py-4"
-                    >
-                      <div className={`${reverse ? "md:screen-float-left" : "md:screen-float-right"} relative aspect-[16/10] w-full max-w-[min(420px,88vw)] [transform-style:preserve-3d]`}>
-                        <div className="absolute bottom-[-32px] sm:bottom-[-42px] left-1/2 z-0 h-12 sm:h-16 w-10 sm:w-12 -translate-x-1/2 rounded-b-md bg-gradient-to-b from-neutral-300 to-neutral-500 shadow-md" />
-                        <div className="absolute bottom-[-40px] sm:bottom-[-53px] left-1/2 z-0 h-2.5 sm:h-3 w-20 sm:w-28 -translate-x-1/2 rounded-sm bg-neutral-400 shadow-md" />
-                        <div className="absolute inset-0 z-10 overflow-hidden rounded-[1.25rem] sm:rounded-[1.5rem] border border-neutral-300 bg-white p-1.5 sm:p-2 pb-8 sm:pb-10 shadow-2xl">
-                          <div className="h-full overflow-hidden rounded-[1rem] border border-neutral-300/40 bg-neutral-900">
-                            <img
-                              src={project.image}
-                              alt={project.title}
-                              loading="lazy"
-                              className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.035]"
-                              onError={(event) => {
-                                event.currentTarget.style.display = "none";
-                              }}
-                            />
-                          </div>
-                          <div className="absolute inset-x-0 bottom-0 flex h-10 items-center justify-center rounded-b-[1.5rem] border-t border-neutral-300 bg-gradient-to-b from-neutral-200 to-neutral-300">
-                            <span className="h-2.5 w-2.5 rounded-full bg-neutral-800/60" />
-                          </div>
-                        </div>
-                      </div>
-                    </button>
-                  </div>
-
-                  <div className={`flex flex-col p-2 ${reverse ? "md:order-1" : "md:order-2"}`}>
-                    <h3 className="font-display text-3xl uppercase leading-none tracking-wide text-[#18181A] sm:text-4xl lg:text-[2.75rem]">
-                      {project.title}
-                    </h3>
-                    <p className="mt-4 text-sm leading-relaxed text-[#5C5549] sm:text-base">
-                      {project.description}
-                    </p>
-
-                    <div className="mt-5 flex flex-wrap gap-1.5">
-                      {project.tech.map((tech) => (
-                        <span
-                          key={tech}
-                          className="rounded-full border border-[#E25822]/20 bg-white px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#E25822]"
-                        >
-                          {tech}
-                        </span>
-                      ))}
-                    </div>
-
-                    {(project.demo || ('isSchoolProject' in project && project.isSchoolProject)) && (
-                      <div className="mt-6 flex max-w-sm items-center gap-3">
-                        {project.demo ? (
-                          <a
-                            href={project.demo}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-[#E25822] px-5 py-3.5 text-xs font-bold text-[#F8F1E7] shadow-md transition hover:scale-[1.02] hover:bg-[#c94b19]"
-                          >
-                            <ExternalLink className="h-3.5 w-3.5" /> Live Demo
-                          </a>
-                        ) : (
-                          <span className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-neutral-300 bg-neutral-100 px-5 py-3.5 text-xs font-bold text-neutral-500">
-                            School Project
-                          </span>
-                        )}
-                      </div>
-                    )}
-
-                    <button
-                      onClick={() => setExpanded(open ? null : index)}
-                      aria-expanded={open}
-                      className="mt-5 flex w-fit items-center gap-1.5 text-xs font-bold text-[#E25822] transition hover:text-[#18181A]"
-                    >
-                      {open ? "Hide screenshots" : "View screenshots"}
-                      <ChevronDown className={`h-4 w-4 transition ${open ? "rotate-180" : ""}`} />
-                    </button>
-
-                    <AnimatePresence>
-                      {open && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          className="overflow-hidden"
-                        >
-                          <button
-                            onClick={() =>
-                              setLightbox({
-                                images: project.shots.map((src) => ({ src, caption: project.title })),
-                                index: 0,
-                              })
-                            }
-                            className="mt-4 overflow-hidden rounded-xl border border-neutral-200"
-                          >
-                            <img
-                              src={project.image}
-                              alt={`${project.title} screen`}
-                              className="aspect-video w-full object-cover"
-                              onError={(event) => {
-                                event.currentTarget.style.display = "none";
-                              }}
-                            />
-                          </button>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                </article>
-              </Reveal>
+              <button
+                key={tag}
+                type="button"
+                onClick={() => setFilter(tag)}
+                className={`rounded-full px-3 py-1 text-[11px] font-medium transition-colors cursor-pointer whitespace-nowrap ${
+                  isActive
+                    ? "bg-[#161616] text-white dark:bg-[#EDEDED] dark:text-[#161616]"
+                    : "bg-white/80 dark:bg-[#141414] text-[#161616] dark:text-[#EDEDED] border border-[#E3E5E0] dark:border-[#262626] hover:bg-[#ECEEEA] dark:hover:bg-[#1F1F1F]"
+                }`}
+              >
+                {tag}
+              </button>
             );
           })}
         </div>
       </div>
+
+      {/* Main Content Area: Flat Rows separated by thin 1px dividers */}
+      {filteredProjects.length === 0 ? (
+        <div className="flex-1 min-h-0 flex flex-col items-start justify-center py-8">
+          <p className="font-mono text-xs sm:text-sm text-[#6E716B] dark:text-[#A3A3A3]">
+            No projects match the selected filter.
+          </p>
+          <button
+            type="button"
+            onClick={() => setFilter("All")}
+            className="mt-3 rounded-md bg-[#161616] text-white dark:bg-[#EDEDED] dark:text-[#161616] px-4 py-1.5 text-xs font-medium hover:bg-[#333333] dark:hover:bg-white transition-colors cursor-pointer"
+          >
+            Show all projects
+          </button>
+        </div>
+      ) : (
+        <div className="flex-1 min-h-0 flex flex-col justify-between">
+          {/* List of Flat Project Rows */}
+          <div className="divide-y divide-[#E3E5E0] dark:divide-[#262626] border-t border-b border-[#E3E5E0] dark:border-[#262626]">
+            {paginatedProjects.map((project, idx) => {
+              const isFirstCardOnPage1 = validPage === 1 && idx === 0 && currentFilter === "All";
+
+              return (
+                <article
+                  key={project.title}
+                  className="flex flex-row items-center gap-4 py-3 sm:py-3.5 min-h-0 shrink-0 group"
+                >
+                  {/* Thumbnail (Permitted card/thumbnail container) */}
+                  <div className="w-[120px] sm:w-[150px] h-[80px] sm:h-[92px] shrink-0 relative overflow-hidden rounded-lg border border-[#E3E5E0] dark:border-[#262626] bg-[#ECEEEA] dark:bg-[#1A1A1A]">
+                    <img
+                      src={project.image}
+                      alt={project.title}
+                      loading="lazy"
+                      className="h-full w-full object-cover object-top transition-transform duration-300 group-hover:scale-105"
+                      onError={(e) => {
+                        e.currentTarget.style.display = "none";
+                      }}
+                    />
+                  </div>
+
+                  {/* Text Information */}
+                  <div className="flex-1 min-w-0 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        {isFirstCardOnPage1 && (
+                          <span className="rounded-full bg-[#E3F27A] dark:bg-[#E3F27A] text-[#161616] px-2 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-wider shrink-0">
+                            Featured
+                          </span>
+                        )}
+
+                        <h3 className="font-sans text-xs sm:text-sm font-semibold text-[#161616] dark:text-[#EDEDED] leading-snug">
+                          {project.title}
+                        </h3>
+                      </div>
+
+                      <p className="mt-1 text-[11px] sm:text-xs leading-relaxed text-[#6E716B] dark:text-[#A3A3A3] line-clamp-2">
+                        {project.description}
+                      </p>
+
+                      <div className="mt-1.5 flex flex-wrap gap-1">
+                        {project.tech.slice(0, 5).map((tech) => (
+                          <span
+                            key={tech}
+                            className="font-mono text-[9px] text-[#6E716B] dark:text-[#A3A3A3] after:content-[','] last:after:content-[''] pr-1"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Action Links */}
+                    <div className="mt-2 flex items-center gap-3">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setLightbox({
+                            images: (project.shots ?? [project.image]).map((src) => ({
+                              src,
+                              caption: `${project.title} — ${project.description}`,
+                            })),
+                            index: 0,
+                          })
+                        }
+                        aria-label={`View screenshots for ${project.title}`}
+                        className="inline-flex items-center gap-1 text-[11px] font-medium text-[#161616] dark:text-[#EDEDED] hover:underline cursor-pointer"
+                      >
+                        <Eye className="h-3 w-3" />
+                        <span>Screenshots</span>
+                      </button>
+
+                      {project.demo ? (
+                        <a
+                          href={project.demo}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-[11px] font-medium text-[#161616] dark:text-[#EDEDED] hover:underline cursor-pointer"
+                        >
+                          <span>Live Demo</span>
+                          <ExternalLink className="h-3 w-3" />
+                        </a>
+                      ) : (
+                        <span className="font-mono text-[9px] sm:text-[10px] text-[#6E716B] dark:text-[#A3A3A3]">
+                          (School Project)
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+
+          {/* Clean Pagination Controls Bar */}
+          {totalPages > 1 && (
+            <div className="pt-3 flex items-center justify-between shrink-0">
+              <button
+                type="button"
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={validPage <= 1}
+                className="inline-flex items-center gap-1 text-xs font-mono text-[#6E716B] dark:text-[#A3A3A3] hover:text-[#161616] dark:hover:text-[#EDEDED] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+              >
+                <ChevronLeft className="h-3.5 w-3.5" />
+                <span>Previous</span>
+              </button>
+
+              <span className="font-mono text-xs text-[#6E716B] dark:text-[#A3A3A3] font-medium tracking-wider">
+                {validPage} / {totalPages}
+              </span>
+
+              <button
+                type="button"
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                disabled={validPage >= totalPages}
+                className="inline-flex items-center gap-1 text-xs font-mono text-[#6E716B] dark:text-[#A3A3A3] hover:text-[#161616] dark:hover:text-[#EDEDED] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+              >
+                <span>Next</span>
+                <ChevronRight className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Lightbox Modal Overlay */}
       <Lightbox
         images={lightbox?.images ?? []}
         index={lightbox?.index ?? null}
         onClose={() => setLightbox(null)}
-        onIndexChange={(next) => setLightbox((current) => (current ? { ...current, index: next } : current))}
+        onIndexChange={(next) =>
+          setLightbox((current) => (current ? { ...current, index: next } : current))
+        }
       />
-    </section>
+    </div>
   );
 }
-
-
-

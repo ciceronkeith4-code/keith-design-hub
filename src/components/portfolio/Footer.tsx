@@ -3,7 +3,7 @@ import { CONTACT } from "@/lib/portfolio-data";
 import { scrollToSection } from "./useScrollSpy";
 
 const footerLinks = [
-  { label: "GitHub", href: "https://github.com/keithciceron" },
+  { label: "GitHub", href: "https://github.com/ciceronkeith4-code/ciceronkeith4-code" },
   { label: "Facebook", href: "https://www.facebook.com/keith.ciceron" },
   { label: "TikTok", href: "https://www.tiktok.com/@keith_ciceron" },
   { label: "LinkedIn", href: "https://www.linkedin.com/in/keith-ciceron" },

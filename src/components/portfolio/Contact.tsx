@@ -1,80 +1,390 @@
-import { motion } from "framer-motion";
-import { FaFacebookF, FaInstagram, FaLinkedinIn, FaTiktok, FaViber } from "react-icons/fa6";
-import { SiGmail } from "react-icons/si";
-import type { IconType } from "react-icons";
-import { SOCIALS } from "@/lib/portfolio-data";
-import { SectionHeading } from "./SectionHeading";
-import { Stagger, staggerItem } from "./Reveal";
-import React from "react";
+import { useState, type FormEvent } from "react";
+import { Send } from "lucide-react";
+import {
+  SiFacebook,
+  SiInstagram,
+  SiTiktok,
+  SiGmail,
+  SiViber,
+  SiGithub,
+} from "react-icons/si";
+import { FaLinkedinIn } from "react-icons/fa6";
 
-const icons: Record<string, IconType> = {
-  facebook: FaFacebookF,
-  instagram: FaInstagram,
-  tiktok: FaTiktok,
-  linkedin: FaLinkedinIn,
-  gmail: SiGmail,
-  viber: FaViber,
-};
+interface SocialLink {
+  id: string;
+  label: string;
+  handle: string;
+  url: string;
+  icon: typeof SiFacebook;
+  external: boolean;
+}
+
+const SOCIAL_LINKS: SocialLink[] = [
+  {
+    id: "facebook",
+    label: "Facebook",
+    handle: "Keith Ciceron",
+    url: "https://www.facebook.com/keith.ciceron",
+    icon: SiFacebook,
+    external: true,
+  },
+  {
+    id: "instagram",
+    label: "Instagram",
+    handle: "@mon.czii",
+    url: "https://www.instagram.com/mon.czii",
+    icon: SiInstagram,
+    external: true,
+  },
+  {
+    id: "tiktok",
+    label: "TikTok",
+    handle: "@keith_ciceron",
+    url: "https://www.tiktok.com/@keith_ciceron",
+    icon: SiTiktok,
+    external: true,
+  },
+  {
+    id: "linkedin",
+    label: "LinkedIn",
+    handle: "Keith Ciceron",
+    url: "https://www.linkedin.com/in/keith-ciceron",
+    icon: FaLinkedinIn,
+    external: true,
+  },
+  {
+    id: "gmail",
+    label: "Gmail",
+    handle: "ciceronkeith4@gmail.com",
+    url: "mailto:ciceronkeith4@gmail.com",
+    icon: SiGmail,
+    external: false,
+  },
+  {
+    id: "viber",
+    label: "Viber",
+    handle: "+63 9944933136",
+    url: "viber://chat?number=%2B639944933136",
+    icon: SiViber,
+    external: false,
+  },
+  {
+    id: "github",
+    label: "GitHub",
+    handle: "@ciceronkeith4-code",
+    url: "https://github.com/ciceronkeith4-code/ciceronkeith4-code",
+    icon: SiGithub,
+    external: true,
+  },
+];
 
 export function Contact() {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
+    botcheck: false,
+  });
+
+  const [errors, setErrors] = useState<{
+    name?: string;
+    email?: string;
+    message?: string;
+  }>({});
+
+  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
+
+  const validate = () => {
+    const nextErrors: { name?: string; email?: string; message?: string } = {};
+
+    if (!formData.name.trim()) {
+      nextErrors.name = "Name is required.";
+    }
+
+    if (!formData.email.trim()) {
+      nextErrors.email = "Email is required.";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
+      nextErrors.email = "Please enter a valid email address.";
+    }
+
+    if (!formData.message.trim()) {
+      nextErrors.message = "Message is required.";
+    }
+
+    setErrors(nextErrors);
+    return Object.keys(nextErrors).length === 0;
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setStatus(null);
+
+    if (!validate()) {
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const accessKey =
+        (import.meta.env.VITE_WEB3FORMS_KEY as string | undefined) ||
+        "test-access-key";
+
+      const payload = {
+        access_key: accessKey,
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        subject:
+          formData.subject.trim() ||
+          `Portfolio Contact from ${formData.name.trim()}`,
+        message: formData.message.trim(),
+        from_name: "Keith Ciceron Portfolio",
+        botcheck: formData.botcheck ? "true" : "",
+      };
+
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = (await response.json()) as {
+        success?: boolean;
+        message?: string;
+      };
+
+      if (response.ok && data.success) {
+        setStatus({
+          type: "success",
+          message: "Thank you! Your message has been sent successfully.",
+        });
+        setFormData({
+          name: "",
+          email: "",
+          subject: "",
+          message: "",
+          botcheck: false,
+        });
+      } else {
+        setStatus({
+          type: "error",
+          message:
+            data.message ||
+            "Unable to send your message right now. Please try reaching out via email or phone.",
+        });
+      }
+    } catch {
+      setStatus({
+        type: "error",
+        message:
+          "Network error. Please try reaching out directly via email or phone.",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <section id="contact" className="stacked-panel panel-light z-[90] px-4 py-10 sm:py-14">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 opacity-80"
-        style={{
-          backgroundImage:
-            "linear-gradient(to right, rgba(235,94,40,0.055) 1px, transparent 1px), linear-gradient(to bottom, rgba(235,94,40,0.055) 1px, transparent 1px)",
-          backgroundSize: "44px 44px",
-        }}
-      />
-      <div aria-hidden="true" className="pointer-events-none absolute -left-24 top-1/3 h-72 w-72 rounded-full bg-[#E25822]/[0.08] blur-3xl" />
+    <div className="w-full max-w-[620px] flex flex-col justify-center py-2 text-left">
+      {/* Plain Page Title */}
+      <div className="mb-4 sm:mb-5 shrink-0">
+        <span className="font-mono text-[10px] text-[#6E716B] dark:text-[#A3A3A3] uppercase tracking-wider block">
+          Contact
+        </span>
+        <h2 className="font-sans text-[clamp(26px,3.5vh,36px)] font-semibold tracking-tight text-[#161616] dark:text-[#EDEDED] leading-tight">
+          Get in Touch
+        </h2>
+      </div>
 
-      <div className="relative mx-auto w-full max-w-5xl">
-        <SectionHeading
-          eyebrow="Contact"
-          title={
-            <>
-              Let&apos;s <span className="text-[#E25822]">Work Together</span>
-            </>
-          }
-          subtitle="Choose your preferred platform and let&apos;s start a conversation."
-        />
+      {/* Primary Focal Point: Send a Message Form Card */}
+      <div className="rounded-[16px] sm:rounded-[20px] border border-[#E5E5E0] dark:border-[#262626] bg-[#F6F7F4] dark:bg-[#141414] p-[clamp(14px,2vh,20px)] shadow-xs flex flex-col justify-start">
+        <div className="pb-2 border-b border-[#E5E5E0] dark:border-[#262626] shrink-0 mb-3">
+          <span className="font-mono text-[10px] text-[#6E716B] dark:text-[#A3A3A3] uppercase tracking-wider">
+            SEND A MESSAGE
+          </span>
+        </div>
 
-        <Stagger className="mx-auto mt-8 grid max-w-5xl gap-4 sm:grid-cols-2 lg:grid-cols-3" stagger={0.06}>
-          {SOCIALS.map((social) => {
-            const Icon = icons[social.id];
+        <form onSubmit={handleSubmit} className="flex flex-col gap-2.5" noValidate>
+          <input
+            type="checkbox"
+            name="botcheck"
+            className="hidden"
+            style={{ display: "none" }}
+            checked={formData.botcheck}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, botcheck: e.target.checked }))
+            }
+            tabIndex={-1}
+            autoComplete="off"
+          />
 
+          {/* Name Field */}
+          <div>
+            <label
+              htmlFor="contact-name"
+              className="font-mono text-[10px] text-[#6E716B] dark:text-[#A3A3A3] uppercase tracking-wider block mb-1"
+            >
+              Name <span className="text-red-500">*</span>
+            </label>
+            <input
+              id="contact-name"
+              type="text"
+              value={formData.name}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, name: e.target.value }))
+              }
+              placeholder="Your full name"
+              className={`w-full rounded-[8px] border bg-white dark:bg-[#1C1C1C] px-3 py-1.5 text-xs text-[#161616] dark:text-[#EDEDED] placeholder-[#A0A39C] dark:placeholder-[#6E716B] focus:outline-none transition-colors ${
+                errors.name
+                  ? "border-red-400 focus:border-red-500"
+                  : "border-[#E5E5E0] dark:border-[#262626] focus:border-[#161616] dark:focus:border-[#EDEDED]"
+              }`}
+            />
+            {errors.name && (
+              <p className="font-mono text-[10px] text-red-500 mt-0.5">{errors.name}</p>
+            )}
+          </div>
+
+          {/* Email Field */}
+          <div>
+            <label
+              htmlFor="contact-email"
+              className="font-mono text-[10px] text-[#6E716B] dark:text-[#A3A3A3] uppercase tracking-wider block mb-1"
+            >
+              Email <span className="text-red-500">*</span>
+            </label>
+            <input
+              id="contact-email"
+              type="email"
+              value={formData.email}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, email: e.target.value }))
+              }
+              placeholder="your.email@example.com"
+              className={`w-full rounded-[8px] border bg-white dark:bg-[#1C1C1C] px-3 py-1.5 text-xs text-[#161616] dark:text-[#EDEDED] placeholder-[#A0A39C] dark:placeholder-[#6E716B] focus:outline-none transition-colors ${
+                errors.email
+                  ? "border-red-400 focus:border-red-500"
+                  : "border-[#E5E5E0] dark:border-[#262626] focus:border-[#161616] dark:focus:border-[#EDEDED]"
+              }`}
+            />
+            {errors.email && (
+              <p className="font-mono text-[10px] text-red-500 mt-0.5">{errors.email}</p>
+            )}
+          </div>
+
+          {/* Subject Field */}
+          <div>
+            <label
+              htmlFor="contact-subject"
+              className="font-mono text-[10px] text-[#6E716B] dark:text-[#A3A3A3] uppercase tracking-wider block mb-1"
+            >
+              Subject
+            </label>
+            <input
+              id="contact-subject"
+              type="text"
+              value={formData.subject}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, subject: e.target.value }))
+              }
+              placeholder="Project inquiry, role, or collaboration"
+              className="w-full rounded-[8px] border border-[#E5E5E0] dark:border-[#262626] bg-white dark:bg-[#1C1C1C] px-3 py-1.5 text-xs text-[#161616] dark:text-[#EDEDED] placeholder-[#A0A39C] dark:placeholder-[#6E716B] focus:border-[#161616] dark:focus:border-[#EDEDED] focus:outline-none transition-colors"
+            />
+          </div>
+
+          {/* Message Field */}
+          <div>
+            <label
+              htmlFor="contact-message"
+              className="font-mono text-[10px] text-[#6E716B] dark:text-[#A3A3A3] uppercase tracking-wider block mb-1"
+            >
+              Message <span className="text-red-500">*</span>
+            </label>
+            <textarea
+              id="contact-message"
+              rows={3}
+              value={formData.message}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, message: e.target.value }))
+              }
+              placeholder="Describe your inquiry or idea..."
+              className={`w-full rounded-[8px] border bg-white dark:bg-[#1C1C1C] px-3 py-1.5 text-xs text-[#161616] dark:text-[#EDEDED] placeholder-[#A0A39C] dark:placeholder-[#6E716B] focus:outline-none transition-colors resize-none ${
+                errors.message
+                  ? "border-red-400 focus:border-red-500"
+                  : "border-[#E5E5E0] dark:border-[#262626] focus:border-[#161616] dark:focus:border-[#EDEDED]"
+              }`}
+            />
+            {errors.message && (
+              <p className="font-mono text-[10px] text-red-500 mt-0.5">{errors.message}</p>
+            )}
+          </div>
+
+          {/* Status Feedback */}
+          {status && (
+            <div
+              className={`rounded-[8px] p-2 text-xs font-mono ${
+                status.type === "success"
+                  ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800"
+                  : "bg-red-50 dark:bg-red-950/40 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800"
+              }`}
+            >
+              {status.message}
+            </div>
+          )}
+
+          {/* Submit Button Row */}
+          <div className="flex justify-end pt-1 mt-0.5">
+            <button
+              type="submit"
+              disabled={loading}
+              className="inline-flex items-center justify-center gap-2 rounded-md bg-[#161616] text-white dark:bg-[#EDEDED] dark:text-[#161616] hover:bg-[#2E2E2E] dark:hover:bg-white disabled:opacity-60 px-5 py-2 text-xs font-medium transition-colors cursor-pointer shadow-xs shrink-0"
+            >
+              <span>{loading ? "Sending…" : "Send Message"}</span>
+              <Send className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        </form>
+      </div>
+
+      {/* Socials on the Bottom */}
+      <div className="mt-4 sm:mt-5 flex flex-col items-start gap-2 shrink-0">
+        <div className="flex items-center gap-2 flex-wrap">
+          {SOCIAL_LINKS.map((social) => {
+            const Icon = social.icon;
             return (
-              <motion.a
-                variants={staggerItem}
-                whileHover={{ y: -4 }}
-                transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                key={social.id}
-                href={social.url}
-                {...(social.url.startsWith("mailto:") ? {} : { target: "_blank", rel: "noopener noreferrer" })}
-                style={{ "--brand-color": social.color } as React.CSSProperties}
-                className="group relative flex items-center gap-4 overflow-hidden rounded-2xl border border-[#E25822]/20 bg-white/70 p-4 shadow-sm transition-all duration-300 hover:border-[#E25822]/40 hover:bg-white hover:shadow-md"
-              >
-                <div
-                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#F8F1E7]/60 text-[#E25822] transition-all duration-300 group-hover:bg-[var(--brand-color)] group-hover:text-white"
+              <div key={social.id} className="relative group">
+                <a
+                  href={social.url}
+                  {...(social.external
+                    ? { target: "_blank", rel: "noopener noreferrer" }
+                    : {})}
+                  title={`${social.label}: ${social.handle}`}
+                  aria-label={`${social.label} (${social.handle})`}
+                  className="h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-white dark:bg-[#141414] border border-[#E5E5E0] dark:border-[#262626] text-[#161616] dark:text-[#EDEDED] hover:bg-[#161616] hover:text-white dark:hover:bg-white dark:hover:text-[#161616] flex items-center justify-center transition-all shadow-xs cursor-pointer"
                 >
-                  <Icon className="h-5 w-5" />
-                </div>
-
-                <div className="min-w-0 flex-1">
-                  <h3 className="text-sm font-bold tracking-tight text-[#18181A]">{social.label}</h3>
-                  <p className="mt-0.5 truncate text-xs text-[#6f6a62]">{social.detail}</p>
-                </div>
-
-                <span className="text-xs font-bold text-neutral-400 transition-colors duration-300 group-hover:text-[var(--brand-color)] mr-1">
-                  →
+                  <Icon className="h-3.5 w-3.5" />
+                </a>
+                <span className="pointer-events-none absolute left-1/2 -translate-x-1/2 bottom-full mb-2 rounded-[6px] bg-[#1C1C1C] dark:bg-[#262626] border border-white/10 px-2.5 py-1 text-xs font-sans text-white opacity-0 transition-opacity group-hover:opacity-100 whitespace-nowrap z-50 shadow-md">
+                  <span className="font-medium">{social.label}</span>
+                  <span className="text-white/60 ml-1.5 font-mono text-[10px]">{social.handle}</span>
                 </span>
-              </motion.a>
+              </div>
             );
           })}
-        </Stagger>
+        </div>
+
+        <p className="font-sans text-xs text-[#6E716B] dark:text-[#A3A3A3]">
+          Manila, Philippines
+        </p>
       </div>
-    </section>
+    </div>
   );
 }
