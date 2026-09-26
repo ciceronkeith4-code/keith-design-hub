@@ -3,9 +3,9 @@ import { TRAININGS } from "@/lib/portfolio-data";
 export function Trainings() {
   return (
     <div className="w-full flex flex-col text-left">
-      <h2 className="mb-6 sm:mb-8 font-sans text-[clamp(26px,3.5vh,36px)] font-semibold tracking-tight text-[#161616] dark:text-[#EDEDED] leading-tight">
+      <h1 className="mb-6 sm:mb-8 font-sans text-[clamp(26px,3.5vh,36px)] font-semibold tracking-tight text-[#161616] dark:text-[#EDEDED] leading-tight">
         Workshops & Events
-      </h2>
+      </h1>
 
       {/* Simple list separated by thin dividers, no cards */}
       <div className="divide-y divide-[#E5E5E0] dark:divide-[#262626]">

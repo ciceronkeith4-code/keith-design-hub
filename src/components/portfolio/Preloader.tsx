@@ -31,7 +31,10 @@ export function Preloader({ onComplete }: PreloaderProps) {
     let holdTimer = 0;
     const finish = () => {
       if (cancelled) return;
-      holdTimer = window.setTimeout(() => !cancelled && setComplete(true), reduceMotion ? 80 : HOLD_MS);
+      holdTimer = window.setTimeout(
+        () => !cancelled && setComplete(true),
+        reduceMotion ? 80 : HOLD_MS,
+      );
     };
 
     const safety = window.setTimeout(() => !cancelled && setComplete(true), SAFETY_CAP_MS);
@@ -60,12 +63,19 @@ export function Preloader({ onComplete }: PreloaderProps) {
   const overlayVariants: Variants = {
     exit: reduceMotion
       ? { opacity: 0, transition: { duration: 0.2, ease: "easeOut" } }
-      : { clipPath: "inset(0% 0% 100% 0%)", transition: { duration: 0.65, ease: EASE_DRAWER, delay: 0.08 } },
+      : {
+          clipPath: "inset(0% 0% 100% 0%)",
+          transition: { duration: 0.65, ease: EASE_DRAWER, delay: 0.08 },
+        },
   };
   const contentVariants: Variants = {
     exit: reduceMotion
       ? { opacity: 0 }
-      : { opacity: 0, transform: "translateY(-16px)", transition: { duration: 0.3, ease: EASE_OUT } },
+      : {
+          opacity: 0,
+          transform: "translateY(-16px)",
+          transition: { duration: 0.3, ease: EASE_OUT },
+        },
   };
 
   return (
@@ -87,18 +97,27 @@ export function Preloader({ onComplete }: PreloaderProps) {
             className="h-full flex flex-col justify-between p-6 sm:p-10"
           >
             <div className="flex items-center justify-between">
-              <span className="font-sans text-xs font-medium uppercase tracking-wider">Keith Ciceron</span>
-              <span className="font-mono text-xs text-[#62655E] dark:text-[#A3A3A3]">Portfolio / 2026</span>
+              <span className="font-sans text-xs font-medium uppercase tracking-wider">
+                Keith Ciceron
+              </span>
+              <span className="font-mono text-xs text-[#62655E] dark:text-[#A3A3A3]">
+                Portfolio / 2026
+              </span>
             </div>
 
             <div ref={stackRef} className="mx-auto w-full max-w-[340px]" aria-hidden="true">
               {LAYERS.map((layer) => (
-                <div key={layer.label} style={{ "--intro-delay": `${layer.delay}ms` } as CSSProperties}>
+                <div
+                  key={layer.label}
+                  style={{ "--intro-delay": `${layer.delay}ms` } as CSSProperties}
+                >
                   {/* Mask hugs the text line only, so the label is fully hidden until it rises out of its rule */}
                   <div className="pt-4 pb-2.5">
                     <div className="overflow-hidden">
                       <div className="intro-rise flex items-baseline justify-between gap-4">
-                        <span className="font-mono text-xs font-medium uppercase tracking-wider">{layer.label}</span>
+                        <span className="font-mono text-xs font-medium uppercase tracking-wider">
+                          {layer.label}
+                        </span>
                         <span className="font-mono text-[11px] text-[#62655E] dark:text-[#A3A3A3] truncate">
                           {layer.tech}
                         </span>

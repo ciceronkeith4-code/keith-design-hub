@@ -9,12 +9,19 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as SiteRouteImport } from './routes/_site'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SiteIndexRouteImport } from './routes/_site/index'
+import { Route as SiteAboutRouteImport } from './routes/_site/about'
+import { Route as SiteActivitiesRouteImport } from './routes/_site/activities'
+import { Route as SiteContactRouteImport } from './routes/_site/contact'
+import { Route as SiteExperienceRouteImport } from './routes/_site/experience'
+import { Route as SiteSkillsRouteImport } from './routes/_site/skills'
+import { Route as SiteProjectsIndexRouteImport } from './routes/_site/projects/index'
+import { Route as SiteProjectsSlugRouteImport } from './routes/_site/projects/$slug'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const SiteRoute = SiteRouteImport.update({
+  id: '/_site',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -22,40 +29,131 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SiteIndexRoute = SiteIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SiteRoute,
+} as any)
+const SiteAboutRoute = SiteAboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => SiteRoute,
+} as any)
+const SiteActivitiesRoute = SiteActivitiesRouteImport.update({
+  id: '/activities',
+  path: '/activities',
+  getParentRoute: () => SiteRoute,
+} as any)
+const SiteContactRoute = SiteContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => SiteRoute,
+} as any)
+const SiteExperienceRoute = SiteExperienceRouteImport.update({
+  id: '/experience',
+  path: '/experience',
+  getParentRoute: () => SiteRoute,
+} as any)
+const SiteSkillsRoute = SiteSkillsRouteImport.update({
+  id: '/skills',
+  path: '/skills',
+  getParentRoute: () => SiteRoute,
+} as any)
+const SiteProjectsIndexRoute = SiteProjectsIndexRouteImport.update({
+  id: '/projects/',
+  path: '/projects/',
+  getParentRoute: () => SiteRoute,
+} as any)
+const SiteProjectsSlugRoute = SiteProjectsSlugRouteImport.update({
+  id: '/projects/$slug',
+  path: '/projects/$slug',
+  getParentRoute: () => SiteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof SiteIndexRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/about': typeof SiteAboutRoute
+  '/activities': typeof SiteActivitiesRoute
+  '/contact': typeof SiteContactRoute
+  '/experience': typeof SiteExperienceRoute
+  '/skills': typeof SiteSkillsRoute
+  '/projects/$slug': typeof SiteProjectsSlugRoute
+  '/projects/': typeof SiteProjectsIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/about': typeof SiteAboutRoute
+  '/activities': typeof SiteActivitiesRoute
+  '/contact': typeof SiteContactRoute
+  '/experience': typeof SiteExperienceRoute
+  '/skills': typeof SiteSkillsRoute
+  '/': typeof SiteIndexRoute
+  '/projects/$slug': typeof SiteProjectsSlugRoute
+  '/projects': typeof SiteProjectsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
+  '/_site': typeof SiteRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/_site/about': typeof SiteAboutRoute
+  '/_site/activities': typeof SiteActivitiesRoute
+  '/_site/contact': typeof SiteContactRoute
+  '/_site/experience': typeof SiteExperienceRoute
+  '/_site/skills': typeof SiteSkillsRoute
+  '/_site/': typeof SiteIndexRoute
+  '/_site/projects/$slug': typeof SiteProjectsSlugRoute
+  '/_site/projects/': typeof SiteProjectsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/sitemap.xml'
+  fullPaths:
+    | '/'
+    | '/sitemap.xml'
+    | '/about'
+    | '/activities'
+    | '/contact'
+    | '/experience'
+    | '/skills'
+    | '/projects/$slug'
+    | '/projects/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/sitemap.xml'
-  id: '__root__' | '/' | '/sitemap.xml'
+  to:
+    | '/sitemap.xml'
+    | '/about'
+    | '/activities'
+    | '/contact'
+    | '/experience'
+    | '/skills'
+    | '/'
+    | '/projects/$slug'
+    | '/projects'
+  id:
+    | '__root__'
+    | '/_site'
+    | '/sitemap.xml'
+    | '/_site/about'
+    | '/_site/activities'
+    | '/_site/contact'
+    | '/_site/experience'
+    | '/_site/skills'
+    | '/_site/'
+    | '/_site/projects/$slug'
+    | '/_site/projects/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  SiteRoute: typeof SiteRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
+    '/_site': {
+      id: '/_site'
+      path: ''
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+      preLoaderRoute: typeof SiteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -65,11 +163,91 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_site/': {
+      id: '/_site/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof SiteIndexRouteImport
+      parentRoute: typeof SiteRoute
+    }
+    '/_site/about': {
+      id: '/_site/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof SiteAboutRouteImport
+      parentRoute: typeof SiteRoute
+    }
+    '/_site/activities': {
+      id: '/_site/activities'
+      path: '/activities'
+      fullPath: '/activities'
+      preLoaderRoute: typeof SiteActivitiesRouteImport
+      parentRoute: typeof SiteRoute
+    }
+    '/_site/contact': {
+      id: '/_site/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof SiteContactRouteImport
+      parentRoute: typeof SiteRoute
+    }
+    '/_site/experience': {
+      id: '/_site/experience'
+      path: '/experience'
+      fullPath: '/experience'
+      preLoaderRoute: typeof SiteExperienceRouteImport
+      parentRoute: typeof SiteRoute
+    }
+    '/_site/skills': {
+      id: '/_site/skills'
+      path: '/skills'
+      fullPath: '/skills'
+      preLoaderRoute: typeof SiteSkillsRouteImport
+      parentRoute: typeof SiteRoute
+    }
+    '/_site/projects/': {
+      id: '/_site/projects/'
+      path: '/projects'
+      fullPath: '/projects/'
+      preLoaderRoute: typeof SiteProjectsIndexRouteImport
+      parentRoute: typeof SiteRoute
+    }
+    '/_site/projects/$slug': {
+      id: '/_site/projects/$slug'
+      path: '/projects/$slug'
+      fullPath: '/projects/$slug'
+      preLoaderRoute: typeof SiteProjectsSlugRouteImport
+      parentRoute: typeof SiteRoute
+    }
   }
 }
 
+interface SiteRouteChildren {
+  SiteAboutRoute: typeof SiteAboutRoute
+  SiteActivitiesRoute: typeof SiteActivitiesRoute
+  SiteContactRoute: typeof SiteContactRoute
+  SiteExperienceRoute: typeof SiteExperienceRoute
+  SiteSkillsRoute: typeof SiteSkillsRoute
+  SiteIndexRoute: typeof SiteIndexRoute
+  SiteProjectsSlugRoute: typeof SiteProjectsSlugRoute
+  SiteProjectsIndexRoute: typeof SiteProjectsIndexRoute
+}
+
+const SiteRouteChildren: SiteRouteChildren = {
+  SiteAboutRoute: SiteAboutRoute,
+  SiteActivitiesRoute: SiteActivitiesRoute,
+  SiteContactRoute: SiteContactRoute,
+  SiteExperienceRoute: SiteExperienceRoute,
+  SiteSkillsRoute: SiteSkillsRoute,
+  SiteIndexRoute: SiteIndexRoute,
+  SiteProjectsSlugRoute: SiteProjectsSlugRoute,
+  SiteProjectsIndexRoute: SiteProjectsIndexRoute,
+}
+
+const SiteRouteWithChildren = SiteRoute._addFileChildren(SiteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  SiteRoute: SiteRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
 }
 export const routeTree = rootRouteImport

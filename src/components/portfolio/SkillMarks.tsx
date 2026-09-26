@@ -28,7 +28,14 @@ export function AntigravityMark({ className, ...props }: MarkProps) {
   return (
     <svg viewBox="0 0 48 48" aria-hidden="true" className={className} {...props}>
       <defs>
-        <linearGradient id={gradientId} x1="13" y1="5" x2="37" y2="43" gradientUnits="userSpaceOnUse">
+        <linearGradient
+          id={gradientId}
+          x1="13"
+          y1="5"
+          x2="37"
+          y2="43"
+          gradientUnits="userSpaceOnUse"
+        >
           <stop stopColor="#FF5B36" />
           <stop offset="0.26" stopColor="#F2D94E" />
           <stop offset="0.5" stopColor="#62D67A" />

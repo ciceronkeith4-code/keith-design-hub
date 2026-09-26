@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
-import { ExternalLink, Eye, ChevronLeft, ChevronRight } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { ExternalLink, Eye, ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
+import { FaGithub } from "react-icons/fa6";
 import { PROJECTS } from "@/lib/portfolio-data";
 import { Lightbox, type LightboxImage } from "./Lightbox";
 
@@ -10,7 +12,6 @@ const FILTER_TAGS = [
   "Tailwind CSS",
   "PHP",
   "MySQL",
-  "Next.js",
   "Supabase",
 ] as const;
 
@@ -34,9 +35,10 @@ export function Projects({ activeFilter = "All", onFilterChange }: ProjectsProps
     setCurrentPage(1);
   }, [currentFilter]);
 
-  const filteredProjects = currentFilter === "All"
-    ? PROJECTS
-    : PROJECTS.filter((p) => p.tech.some((t) => t.toLowerCase() === currentFilter.toLowerCase()));
+  const filteredProjects =
+    currentFilter === "All"
+      ? PROJECTS
+      : PROJECTS.filter((p) => p.tech.some((t) => t.toLowerCase() === currentFilter.toLowerCase()));
 
   const totalPages = Math.max(1, Math.ceil(filteredProjects.length / ITEMS_PER_PAGE));
   const validPage = Math.min(currentPage, totalPages);
@@ -48,12 +50,16 @@ export function Projects({ activeFilter = "All", onFilterChange }: ProjectsProps
     <div className="w-full flex flex-col text-left">
       {/* Page Title & Filter Pills */}
       <div className="shrink-0 flex flex-col mb-4">
-        <h2 className="mb-6 sm:mb-8 font-sans text-[clamp(26px,3.5vh,36px)] font-semibold tracking-tight text-[#161616] dark:text-[#EDEDED] leading-tight">
+        <h1 className="mb-6 sm:mb-8 font-sans text-[clamp(26px,3.5vh,36px)] font-semibold tracking-tight text-[#161616] dark:text-[#EDEDED] leading-tight">
           Selected Works
-        </h2>
+        </h1>
 
         {/* Filter Pills Row */}
-        <div className="flex items-center gap-1.5 overflow-x-auto card-scrollbar py-0.5" role="group" aria-label="Filter projects by technology">
+        <div
+          className="flex items-center gap-1.5 overflow-x-auto card-scrollbar py-0.5"
+          role="group"
+          aria-label="Filter projects by technology"
+        >
           {FILTER_TAGS.map((tag) => {
             const isActive = currentFilter === tag;
             return (
@@ -102,7 +108,13 @@ export function Projects({ activeFilter = "All", onFilterChange }: ProjectsProps
                   className="flex flex-row items-center gap-4 sm:gap-5 py-4 min-h-0 shrink-0 group"
                 >
                   {/* Thumbnail (Permitted card/thumbnail container) */}
-                  <div className="w-[120px] sm:w-[150px] h-[80px] sm:h-[92px] shrink-0 relative overflow-hidden rounded-lg border border-[#E3E5E0] dark:border-[#262626] bg-[#ECEEEA] dark:bg-[#1A1A1A]">
+                  <Link
+                    to="/projects/$slug"
+                    params={{ slug: project.slug }}
+                    tabIndex={-1}
+                    aria-hidden="true"
+                    className="w-[120px] sm:w-[150px] h-[80px] sm:h-[92px] shrink-0 relative overflow-hidden rounded-lg border border-[#E3E5E0] dark:border-[#262626] bg-[#ECEEEA] dark:bg-[#1A1A1A]"
+                  >
                     <img
                       src={project.image}
                       alt={project.title}
@@ -112,7 +124,7 @@ export function Projects({ activeFilter = "All", onFilterChange }: ProjectsProps
                         e.currentTarget.style.display = "none";
                       }}
                     />
-                  </div>
+                  </Link>
 
                   {/* Text Information */}
                   <div className="flex-1 min-w-0 flex flex-col justify-between">
@@ -125,7 +137,13 @@ export function Projects({ activeFilter = "All", onFilterChange }: ProjectsProps
                         )}
 
                         <h3 className="font-sans text-xs sm:text-sm font-semibold text-[#161616] dark:text-[#EDEDED] leading-snug">
-                          {project.title}
+                          <Link
+                            to="/projects/$slug"
+                            params={{ slug: project.slug }}
+                            className="hover:underline"
+                          >
+                            {project.title}
+                          </Link>
                         </h3>
                       </div>
 
@@ -146,7 +164,17 @@ export function Projects({ activeFilter = "All", onFilterChange }: ProjectsProps
                     </div>
 
                     {/* Action Links */}
-                    <div className="mt-2 flex items-center gap-3">
+                    <div className="mt-2 flex items-center gap-x-3 gap-y-1 flex-wrap">
+                      <Link
+                        to="/projects/$slug"
+                        params={{ slug: project.slug }}
+                        aria-label={`Read the case study for ${project.title}`}
+                        className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#161616] dark:text-[#EDEDED] hover:underline"
+                      >
+                        <span>Case study</span>
+                        <ArrowRight className="h-3 w-3" />
+                      </Link>
+
                       <button
                         type="button"
                         onClick={() =>
@@ -179,6 +207,19 @@ export function Projects({ activeFilter = "All", onFilterChange }: ProjectsProps
                         <span className="font-mono text-[10px] text-[#62655E] dark:text-[#A3A3A3]">
                           (School Project)
                         </span>
+                      )}
+
+                      {project.github && (
+                        <a
+                          href={project.github}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={`Source code for ${project.title} on GitHub`}
+                          className="inline-flex items-center gap-1 text-[11px] font-medium text-[#161616] dark:text-[#EDEDED] hover:underline cursor-pointer"
+                        >
+                          <FaGithub className="h-3 w-3" />
+                          <span>Code</span>
+                        </a>
                       )}
                     </div>
                   </div>

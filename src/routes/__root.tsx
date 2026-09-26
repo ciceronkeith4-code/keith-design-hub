@@ -10,6 +10,7 @@ import {
 import type { ReactNode } from "react";
 
 import appCss from "../styles.css?url";
+import { SITE_DESCRIPTION, SITE_URL } from "@/lib/seo";
 
 function NotFoundComponent() {
   return (
@@ -74,28 +75,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Keith Ciceron | Full Stack Developer" },
-      {
-        name: "description",
-        content:
-          "Keith Czimonne Anderson Ciceron | Full Stack Developer building modern, user-friendly, and scalable web applications.",
-      },
+      { name: "description", content: SITE_DESCRIPTION },
       { name: "author", content: "Keith Czimonne Anderson Ciceron" },
       { name: "theme-color", content: "#ECEEEA" },
       { property: "og:title", content: "Keith Ciceron | Full Stack Developer" },
-      {
-        property: "og:description",
-        content:
-          "Portfolio of Keith Czimonne Anderson Ciceron | Full Stack Developer and UI/UX enthusiast.",
-      },
+      { property: "og:description", content: SITE_DESCRIPTION },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Keith Ciceron | Full Stack Developer" },
-      {
-        name: "twitter:description",
-        content: "Portfolio of Keith Czimonne Anderson Ciceron | Full Stack Developer.",
-      },
-      { property: "og:image", content: "https://keithciceron.vercel.app/og-image.png" },
-      { name: "twitter:image", content: "https://keithciceron.vercel.app/og-image.png" },
+      { name: "twitter:description", content: SITE_DESCRIPTION },
+      { property: "og:image", content: `${SITE_URL}/og-image.png` },
+      { name: "twitter:image", content: `${SITE_URL}/og-image.png` },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
@@ -124,11 +114,22 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 // Applies the saved/system theme before first paint so dark visitors never see a light flash.
 const THEME_BOOTSTRAP = `(function(){try{var t=localStorage.getItem("keith_theme");if(t!=="light"&&t!=="dark"){t=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"}if(t==="dark")document.documentElement.classList.add("dark")}catch(e){}})();`;
 
+// schema.org Person data so search engines can identify who the site belongs to.
+const PERSON_JSON_LD = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "Keith Czimonne Anderson Ciceron",
+  jobTitle: "Full Stack Developer",
+  url: SITE_URL,
+  sameAs: ["https://www.linkedin.com/in/keith-ciceron", "https://github.com/ciceronkeith4-code"],
+});
+
 function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_BOOTSTRAP }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: PERSON_JSON_LD }} />
         <HeadContent />
       </head>
       <body>
@@ -149,4 +150,3 @@ function RootComponent() {
     </QueryClientProvider>
   );
 }
-

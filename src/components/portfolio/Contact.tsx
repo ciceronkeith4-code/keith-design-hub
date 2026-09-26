@@ -34,7 +34,7 @@ const SOCIAL_LINKS: SocialLink[] = [
     id: "github",
     label: "GitHub",
     handle: "@ciceronkeith4-code",
-    url: "https://github.com/ciceronkeith4-code/ciceronkeith4-code",
+    url: "https://github.com/ciceronkeith4-code",
     icon: SiGithub,
     external: true,
   },
@@ -94,16 +94,13 @@ export function Contact() {
 
     try {
       const accessKey =
-        (import.meta.env.VITE_WEB3FORMS_KEY as string | undefined) ||
-        "test-access-key";
+        (import.meta.env.VITE_WEB3FORMS_KEY as string | undefined) || "test-access-key";
 
       const payload = {
         access_key: accessKey,
         name: formData.name.trim(),
         email: formData.email.trim(),
-        subject:
-          formData.subject.trim() ||
-          `Portfolio Contact from ${formData.name.trim()}`,
+        subject: formData.subject.trim() || `Portfolio Contact from ${formData.name.trim()}`,
         message: formData.message.trim(),
         from_name: "Keith Ciceron Portfolio",
         botcheck: formData.botcheck ? "true" : "",
@@ -140,14 +137,13 @@ export function Contact() {
           type: "error",
           message:
             data.message ||
-            "Unable to send your message right now. Please try reaching out via email or phone.",
+            "Unable to send your message right now. Please try reaching out via email or LinkedIn.",
         });
       }
     } catch {
       setStatus({
         type: "error",
-        message:
-          "Network error. Please try reaching out directly via email or phone.",
+        message: "Network error. Please try reaching out directly via email or LinkedIn.",
       });
     } finally {
       setLoading(false);
@@ -156,9 +152,9 @@ export function Contact() {
 
   return (
     <div className="w-full flex flex-col text-left">
-      <h2 className="mb-6 sm:mb-8 font-sans text-[clamp(26px,3.5vh,36px)] font-semibold tracking-tight text-[#161616] dark:text-[#EDEDED] leading-tight">
+      <h1 className="mb-6 sm:mb-8 font-sans text-[clamp(26px,3.5vh,36px)] font-semibold tracking-tight text-[#161616] dark:text-[#EDEDED] leading-tight">
         Get in Touch
-      </h2>
+      </h1>
 
       {/* Primary Focal Point: Message Form Card */}
       <div className="rounded-[16px] sm:rounded-[20px] border border-[#E5E5E0] dark:border-[#262626] bg-[#F6F7F4] dark:bg-[#141414] p-5 sm:p-7 flex flex-col">
@@ -169,9 +165,7 @@ export function Contact() {
             className="hidden"
             style={{ display: "none" }}
             checked={formData.botcheck}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, botcheck: e.target.checked }))
-            }
+            onChange={(e) => setFormData((prev) => ({ ...prev, botcheck: e.target.checked }))}
             tabIndex={-1}
             autoComplete="off"
           />
@@ -189,9 +183,7 @@ export function Contact() {
                 id="contact-name"
                 type="text"
                 value={formData.name}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, name: e.target.value }))
-                }
+                onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
                 placeholder="Your full name"
                 className={`w-full rounded-[8px] border bg-white dark:bg-[#1C1C1C] px-3 py-2 text-base sm:text-sm text-[#161616] dark:text-[#EDEDED] placeholder-[#71746C] dark:placeholder-[#8A8D86] focus:outline-none transition-colors ${
                   errors.name
@@ -215,9 +207,7 @@ export function Contact() {
                 id="contact-email"
                 type="email"
                 value={formData.email}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, email: e.target.value }))
-                }
+                onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
                 placeholder="your.email@example.com"
                 className={`w-full rounded-[8px] border bg-white dark:bg-[#1C1C1C] px-3 py-2 text-base sm:text-sm text-[#161616] dark:text-[#EDEDED] placeholder-[#71746C] dark:placeholder-[#8A8D86] focus:outline-none transition-colors ${
                   errors.email
@@ -243,9 +233,7 @@ export function Contact() {
               id="contact-subject"
               type="text"
               value={formData.subject}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, subject: e.target.value }))
-              }
+              onChange={(e) => setFormData((prev) => ({ ...prev, subject: e.target.value }))}
               placeholder="Project inquiry, role, or collaboration"
               className="w-full rounded-[8px] border border-[#E5E5E0] dark:border-[#262626] bg-white dark:bg-[#1C1C1C] px-3 py-2 text-base sm:text-sm text-[#161616] dark:text-[#EDEDED] placeholder-[#71746C] dark:placeholder-[#8A8D86] focus:border-[#161616] dark:focus:border-[#EDEDED] focus:outline-none transition-colors"
             />
@@ -263,9 +251,7 @@ export function Contact() {
               id="contact-message"
               rows={4}
               value={formData.message}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, message: e.target.value }))
-              }
+              onChange={(e) => setFormData((prev) => ({ ...prev, message: e.target.value }))}
               placeholder="Describe your inquiry or idea..."
               className={`w-full rounded-[8px] border bg-white dark:bg-[#1C1C1C] px-3 py-2 text-base sm:text-sm text-[#161616] dark:text-[#EDEDED] placeholder-[#71746C] dark:placeholder-[#8A8D86] focus:outline-none transition-colors resize-none ${
                 errors.message
@@ -314,9 +300,7 @@ export function Contact() {
               <div key={social.id} className="relative group">
                 <a
                   href={social.url}
-                  {...(social.external
-                    ? { target: "_blank", rel: "noopener noreferrer" }
-                    : {})}
+                  {...(social.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                   title={`${social.label}: ${social.handle}`}
                   aria-label={`${social.label} (${social.handle})`}
                   className="h-10 w-10 sm:h-9 sm:w-9 rounded-full bg-white dark:bg-[#141414] border border-[#E5E5E0] dark:border-[#262626] text-[#161616] dark:text-[#EDEDED] hover:bg-[#161616] hover:text-white dark:hover:bg-white dark:hover:text-[#161616] flex items-center justify-center transition-all shadow-xs cursor-pointer"
@@ -325,16 +309,16 @@ export function Contact() {
                 </a>
                 <span className="pointer-events-none absolute left-1/2 -translate-x-1/2 bottom-full mb-2 rounded-[6px] bg-[#1C1C1C] dark:bg-[#262626] border border-white/10 px-2.5 py-1 text-xs font-sans text-white opacity-0 transition-opacity group-hover:opacity-100 whitespace-nowrap z-50 shadow-md">
                   <span className="font-medium">{social.label}</span>
-                  <span className="text-white/60 ml-1.5 font-mono text-[10px]">{social.handle}</span>
+                  <span className="text-white/60 ml-1.5 font-mono text-[10px]">
+                    {social.handle}
+                  </span>
                 </span>
               </div>
             );
           })}
         </div>
 
-        <p className="font-sans text-xs text-[#62655E] dark:text-[#A3A3A3]">
-          Manila, Philippines
-        </p>
+        <p className="font-sans text-xs text-[#62655E] dark:text-[#A3A3A3]">Manila, Philippines</p>
       </div>
     </div>
   );

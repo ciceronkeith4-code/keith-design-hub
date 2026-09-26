@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import {
   Home,
   User,
@@ -40,6 +41,7 @@ const SECTION_ITEMS: { id: TabId; label: string; icon: typeof Home }[] = [
 ];
 
 export function CommandPalette({ open, onOpenChange, onSelectTab }: CommandPaletteProps) {
+  const navigate = useNavigate();
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if ((e.key === "k" || e.key === "K") && (e.metaKey || e.ctrlKey)) {
@@ -78,9 +80,7 @@ export function CommandPalette({ open, onOpenChange, onSelectTab }: CommandPalet
                   <Icon className="h-4 w-4 opacity-70" />
                   <span>{item.label}</span>
                 </div>
-                <span className="font-mono text-[10px] text-muted-foreground uppercase">
-                  Jump
-                </span>
+                <span className="font-mono text-[10px] text-muted-foreground uppercase">Jump</span>
               </CommandItem>
             );
           })}
@@ -95,7 +95,8 @@ export function CommandPalette({ open, onOpenChange, onSelectTab }: CommandPalet
               key={project.title}
               value={`project ${project.title} ${project.tech.join(" ")}`}
               onSelect={() => {
-                handleSelectSection("projects");
+                onOpenChange(false);
+                navigate({ to: "/projects/$slug", params: { slug: project.slug } });
               }}
               className="cursor-pointer flex items-center justify-between"
             >
@@ -115,9 +116,9 @@ export function CommandPalette({ open, onOpenChange, onSelectTab }: CommandPalet
         {/* Links */}
         <CommandGroup heading="Links & Contact">
           <CommandItem
-            value="github ciceronkeith4-code repository"
+            value="github ciceronkeith4-code profile repositories"
             onSelect={() => {
-              window.open("https://github.com/ciceronkeith4-code/ciceronkeith4-code", "_blank", "noopener,noreferrer");
+              window.open("https://github.com/ciceronkeith4-code", "_blank", "noopener,noreferrer");
               onOpenChange(false);
             }}
             className="cursor-pointer flex items-center justify-between"
@@ -132,7 +133,11 @@ export function CommandPalette({ open, onOpenChange, onSelectTab }: CommandPalet
           <CommandItem
             value="linkedin keith ciceron profile"
             onSelect={() => {
-              window.open("https://www.linkedin.com/in/keith-ciceron", "_blank", "noopener,noreferrer");
+              window.open(
+                "https://www.linkedin.com/in/keith-ciceron",
+                "_blank",
+                "noopener,noreferrer",
+              );
               onOpenChange(false);
             }}
             className="cursor-pointer flex items-center justify-between"
@@ -156,7 +161,9 @@ export function CommandPalette({ open, onOpenChange, onSelectTab }: CommandPalet
               <Mail className="h-4 w-4 opacity-70" />
               <span>Send Email</span>
             </div>
-            <span className="font-mono text-[10px] text-muted-foreground">ciceronkeith4@gmail.com</span>
+            <span className="font-mono text-[10px] text-muted-foreground">
+              ciceronkeith4@gmail.com
+            </span>
           </CommandItem>
         </CommandGroup>
       </CommandList>

@@ -8,9 +8,9 @@ const SUBHEAD =
 export function About() {
   return (
     <div className="w-full flex flex-col text-left">
-      <h2 className="mb-6 sm:mb-8 font-sans text-[clamp(26px,3.5vh,36px)] font-semibold tracking-tight text-[#161616] dark:text-[#EDEDED] leading-tight">
+      <h1 className="mb-6 sm:mb-8 font-sans text-[clamp(26px,3.5vh,36px)] font-semibold tracking-tight text-[#161616] dark:text-[#EDEDED] leading-tight">
         Background & Education
-      </h2>
+      </h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-14 items-start">
         {/* Profile */}
@@ -20,8 +20,9 @@ export function About() {
           </h3>
 
           <p className="mt-3 max-w-[60ch] text-sm leading-relaxed text-[#62655E] dark:text-[#A3A3A3]">
-            I am a full stack developer specializing in building end-to-end applications from crafting intuitive,
-            responsive user interfaces to engineering reliable backend APIs and database architectures.
+            I am a full stack developer specializing in building end-to-end applications from
+            crafting intuitive, responsive user interfaces to engineering reliable backend APIs and
+            database architectures.
           </p>
 
           <div className="mt-8">
@@ -42,7 +43,9 @@ export function About() {
 
         {/* Education */}
         <div className="flex flex-col">
-          <h3 className={`${SUBHEAD} pb-2 border-b border-[#E5E5E0] dark:border-[#262626]`}>Education</h3>
+          <h3 className={`${SUBHEAD} pb-2 border-b border-[#E5E5E0] dark:border-[#262626]`}>
+            Education
+          </h3>
 
           <div className="divide-y divide-[#E5E5E0] dark:divide-[#262626]">
             {EDUCATION.map((edu) => (

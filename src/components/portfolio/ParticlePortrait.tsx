@@ -5,11 +5,11 @@ import type * as ThreeNS from "three";
  * Halftone portrait that assembles from a scattered 3D particle cloud.
  * Sizes and distances are in "portrait heights" (the portrait is 1 world unit tall).
  */
-export const PARTICLE_PORTRAIT_CONFIG = {
+const PARTICLE_PORTRAIT_CONFIG = {
   IMAGE_SRC: "/images/profile/keith-code-portrait.png",
   // The source is 288×388, so step 1 (one particle per inked pixel, ≈57k) is what reproduces the halftone exactly.
   SAMPLE_STEP: 1,
-  // Phones / coarse pointers: 2×2 cells averaged, ≈15k particles.
+  // Phones / coarse pointers: ≈2×2 cells averaged, ≈15k particles (fine-tuned so the dot pitch is whole device pixels).
   MOBILE_SAMPLE_STEP: 2,
   // Luminance 0–255 (after compositing over white) below which a cell becomes a particle.
   // This portrait's face shading is light-gray dots, so 232 keeps it; 128 would drop the midtones and wash the face out.
@@ -151,46 +151,45 @@ function loadImage(src: string) {
 }
 
 /**
- * Pixel sampling: read the image, average each SAMPLE_STEP×SAMPLE_STEP cell, and turn every cell
- * darker than THRESHOLD into a particle. Alpha is composited over white so transparent background
+ * Pixel sampling: scale the image to a `rows`-tall grid (the browser averages each cell), and turn every
+ * cell darker than THRESHOLD into a particle. The grid is drawn over white so transparent background
  * and soft edges read as paper, not ink. Coordinates are centered, Y-flipped, and scaled so the
- * portrait is exactly 1 world unit tall (aspect preserved).
+ * portrait is exactly 1 world unit tall.
  */
-function samplePortrait(img: HTMLImageElement, step: number) {
+function samplePortrait(img: HTMLImageElement, rows: number) {
   const iw = img.naturalWidth;
   const ih = img.naturalHeight;
+  const cols = Math.max(1, Math.round((rows * iw) / ih));
   const canvas = document.createElement("canvas");
-  canvas.width = iw;
-  canvas.height = ih;
+  canvas.width = cols;
+  canvas.height = rows;
   const ctx = canvas.getContext("2d", { willReadFrequently: true });
   if (!ctx) throw new Error("2D canvas unavailable");
-  ctx.drawImage(img, 0, 0);
-  const { data } = ctx.getImageData(0, 0, iw, ih);
+  ctx.fillStyle = "#fff";
+  ctx.fillRect(0, 0, cols, rows);
+  ctx.imageSmoothingQuality = "high";
+  ctx.drawImage(img, 0, 0, cols, rows);
+  const { data } = ctx.getImageData(0, 0, cols, rows);
 
-  const unit = 1 / ih;
+  const unit = 1 / rows;
   const targets: number[] = [];
   const shades: number[] = [];
-  for (let y = 0; y < ih; y += step) {
-    for (let x = 0; x < iw; x += step) {
-      let sum = 0;
-      let n = 0;
-      for (let dy = 0; dy < step && y + dy < ih; dy++) {
-        for (let dx = 0; dx < step && x + dx < iw; dx++) {
-          const i = ((y + dy) * iw + (x + dx)) * 4;
-          const a = data[i + 3] / 255;
-          const l = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
-          sum += 255 - a * (255 - l);
-          n++;
-        }
-      }
-      const lum = sum / n;
+  for (let y = 0; y < rows; y++) {
+    for (let x = 0; x < cols; x++) {
+      const i = (y * cols + x) * 4;
+      const lum = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
       if (lum >= CONFIG.THRESHOLD) continue;
-      targets.push((x + step / 2 - iw / 2) * unit, (ih / 2 - y - step / 2) * unit, 0);
+      targets.push((x + 0.5 - cols / 2) * unit, (rows / 2 - y - 0.5) * unit, 0);
       // Darkness 0–1 of the source pixel itself, so the particle can print its exact tone.
       shades.push(1 - lum / 255);
     }
   }
-  return { targets, shades, aspect: iw / ih, cell: step * unit };
+  return { targets, shades, aspect: iw / ih, cell: unit };
+}
+
+// Portrait height in world units the camera must show so it fills FIT of the canvas (or its width, if narrower).
+function visibleHeight(viewAspect: number, imageAspect: number) {
+  return Math.max(1 / CONFIG.FIT, imageAspect / (CONFIG.FIT * viewAspect));
 }
 
 function isInverted() {
@@ -234,10 +233,23 @@ export function ParticlePortrait({ play = true, className = "", style }: Particl
       if (disposed) return;
 
       const coarse = window.matchMedia("(pointer: coarse), (max-width: 767px)").matches;
-      const { targets, shades, aspect: imageAspect, cell } = samplePortrait(
-        img,
-        coarse ? CONFIG.MOBILE_SAMPLE_STEP : CONFIG.SAMPLE_STEP,
-      );
+      // Full device resolution: a canvas upscaled by the browser (e.g. capped at 2× on a 3× phone) resamples the dot grid into stripes.
+      const pixelRatio = Math.min(window.devicePixelRatio, 3);
+      const imageAspect = img.naturalWidth / img.naturalHeight;
+      const step = coarse ? CONFIG.MOBILE_SAMPLE_STEP : CONFIG.SAMPLE_STEP;
+      let rows = Math.ceil(img.naturalHeight / step);
+      // Coarse grids (phones) are sized so the dot pitch is a whole number of device pixels. Every dot then lands
+      // on the same sub-pixel phase and rasterizes identically; a fractional pitch (≈2.9px) beats against the
+      // pixel grid and shows as darker/lighter bands across the portrait. The camera fit is nudged to match (<1%).
+      let pitch = 0;
+      const ch = container.clientHeight;
+      if (coarse && ch) {
+        const visibleH = visibleHeight(container.clientWidth / ch, imageAspect);
+        const pxPerUnit = Math.floor(ch * pixelRatio) / visibleH;
+        pitch = Math.max(1, Math.round(pxPerUnit / rows));
+        rows = Math.round(pxPerUnit / pitch);
+      }
+      const { targets, shades, cell } = samplePortrait(img, rows);
       const count = shades.length;
 
       const starts = new Float32Array(count * 3);
@@ -255,7 +267,8 @@ export function ParticlePortrait({ play = true, className = "", style }: Particl
         starts[i * 3 + 2] = z > 0 ? z * 0.45 : z;
         delays[i] = Math.random();
         // Darker pixels print marginally larger; kept small so the assembled image stays faithful.
-        sizes[i] = 0.96 + 0.08 * shades[i] + (Math.random() - 0.5) * 0.06;
+        // No random term: on a regular grid, per-dot size noise reads as mottled texture.
+        sizes[i] = 0.96 + 0.08 * shades[i];
       }
 
       const geometry = new THREE.BufferGeometry();
@@ -295,7 +308,11 @@ export function ParticlePortrait({ play = true, className = "", style }: Particl
 
       let renderer: ThreeNS.WebGLRenderer;
       try {
-        renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true, powerPreference: "high-performance" });
+        renderer = new THREE.WebGLRenderer({
+          antialias: false,
+          alpha: true,
+          powerPreference: "high-performance",
+        });
       } catch {
         geometry.dispose();
         material.dispose();
@@ -304,11 +321,12 @@ export function ParticlePortrait({ play = true, className = "", style }: Particl
         return;
       }
       webglWorks = true;
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setPixelRatio(pixelRatio);
       renderer.setClearColor(0x000000, 0);
       const canvas = renderer.domElement;
       canvas.setAttribute("aria-hidden", "true");
-      canvas.style.cssText = "position:absolute;inset:0;width:100%;height:100%;pointer-events:none;";
+      canvas.style.cssText =
+        "position:absolute;inset:0;width:100%;height:100%;pointer-events:none;";
       container.appendChild(canvas);
 
       const tanHalf = Math.tan(THREE.MathUtils.degToRad(FOV / 2));
@@ -320,14 +338,20 @@ export function ParticlePortrait({ play = true, className = "", style }: Particl
         const h = container.clientHeight;
         if (!w || !h) return;
         renderer.setSize(w, h, false);
+        renderer.getDrawingBufferSize(drawSize);
         const viewAspect = w / h;
-        const visibleH = Math.max(1 / CONFIG.FIT, imageAspect / (CONFIG.FIT * viewAspect));
+        let visibleH = visibleHeight(viewAspect, imageAspect);
+        if (pitch) {
+          // Keep the whole-pixel pitch after a resize (e.g. rotation), unless that would visibly change the portrait size.
+          const snap = Math.max(1, Math.round(drawSize.y / visibleH / rows));
+          const snappedH = drawSize.y / (rows * snap);
+          if (Math.abs(snappedH / visibleH - 1) < 0.04) visibleH = snappedH;
+        }
         // Bottom alignment pans the camera (not the particles) so the portrait's bottom (y = -0.5) sits just below the frame.
         const camY = CONFIG.ALIGN === "bottom" ? visibleH / 2 - 0.5 + BOTTOM_BLEED : 0;
         camera.aspect = viewAspect;
         camera.position.set(0, camY, visibleH / (2 * tanHalf));
         camera.updateProjectionMatrix();
-        renderer.getDrawingBufferSize(drawSize);
         uniforms.uSizeScale.value = drawSize.y / (2 * tanHalf);
       };
       resize();
@@ -370,7 +394,10 @@ export function ParticlePortrait({ play = true, className = "", style }: Particl
         uniforms.uInk.value.set(p.ink);
         uniforms.uPaper.value.set(p.paper);
       });
-      themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+      themeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["class"],
+      });
 
       const t0 = performance.now();
       renderer.setAnimationLoop((now: number) => {

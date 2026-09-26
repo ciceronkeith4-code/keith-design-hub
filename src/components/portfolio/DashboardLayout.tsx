@@ -1,16 +1,46 @@
-import { useState, type ReactNode } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Home, User, Code2, Briefcase, FolderOpen, Calendar, Mail, type LucideIcon } from "lucide-react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { Link, useLocation, useNavigate } from "@tanstack/react-router";
+import { motion } from "framer-motion";
+import {
+  Home,
+  User,
+  Code2,
+  Briefcase,
+  FolderOpen,
+  Calendar,
+  Mail,
+  type LucideIcon,
+} from "lucide-react";
 import { TopBar } from "./TopBar";
 import { CommandPalette } from "./CommandPalette";
 import { useTheme } from "@/lib/theme";
 
-export type TabId = "dashboard" | "about" | "skills" | "experience" | "projects" | "activities" | "contact";
+export type TabId =
+  "dashboard" | "about" | "skills" | "experience" | "projects" | "activities" | "contact";
 
 export interface NavSection {
   id: TabId;
   label: string;
   icon: LucideIcon;
+}
+
+// Every section is its own URL, so each one is server-rendered and crawlable.
+export const SECTION_PATHS = {
+  dashboard: "/",
+  about: "/about",
+  skills: "/skills",
+  experience: "/experience",
+  projects: "/projects",
+  activities: "/activities",
+  contact: "/contact",
+} as const satisfies Record<TabId, string>;
+
+function sectionForPath(pathname: string): TabId {
+  const first = pathname.split("/")[1] ?? "";
+  const match = (Object.keys(SECTION_PATHS) as TabId[]).find(
+    (id) => SECTION_PATHS[id] === `/${first}`,
+  );
+  return match ?? "dashboard";
 }
 
 const SECTIONS: NavSection[] = [
@@ -24,18 +54,29 @@ const SECTIONS: NavSection[] = [
 ];
 
 interface DashboardLayoutProps {
-  activeTab: TabId;
-  onTabChange: (tab: TabId) => void;
   children: ReactNode;
 }
 
-export function DashboardLayout({ activeTab, onTabChange, children }: DashboardLayoutProps) {
+export function DashboardLayout({ children }: DashboardLayoutProps) {
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const { toggleTheme } = useTheme();
-  const isHome = activeTab === "dashboard";
+  const navigate = useNavigate();
+  const pathname = useLocation({ select: (l) => l.pathname });
+  const activeTab = sectionForPath(pathname);
+  const isHome = pathname === "/";
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const hydrated = useRef(false);
+  useEffect(() => {
+    hydrated.current = true;
+  }, []);
+
+  // The content pane scrolls, not the window, so the router's scroll restoration can't reset it.
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ top: 0 });
+  }, [pathname]);
 
   const handleSelectTab = (id: TabId) => {
-    onTabChange(id);
+    navigate({ to: SECTION_PATHS[id] });
   };
 
   return (
@@ -44,7 +85,6 @@ export function DashboardLayout({ activeTab, onTabChange, children }: DashboardL
       {/* 1. TOP BAR (Thin bar across top, 1px bottom border, no fill) */}
       {/* ============================================================ */}
       <TopBar
-        onSelectTab={handleSelectTab}
         onOpenCommandPalette={() => setCommandPaletteOpen(true)}
         onToggleTheme={toggleTheme}
       />
@@ -64,10 +104,9 @@ export function DashboardLayout({ activeTab, onTabChange, children }: DashboardL
               const isActive = activeTab === item.id;
               const Icon = item.icon;
               return (
-                <button
+                <Link
                   key={item.id}
-                  type="button"
-                  onClick={() => handleSelectTab(item.id)}
+                  to={SECTION_PATHS[item.id]}
                   aria-current={isActive ? "page" : undefined}
                   className={`w-full flex items-center gap-2.5 text-left px-2.5 py-1.5 text-sm font-medium transition-colors cursor-pointer rounded-md ${
                     isActive
@@ -77,31 +116,35 @@ export function DashboardLayout({ activeTab, onTabChange, children }: DashboardL
                 >
                   <Icon className="h-3.5 w-3.5 shrink-0" strokeWidth={2} />
                   <span>{item.label}</span>
-                </button>
+                </Link>
               );
             })}
           </nav>
         </aside>
 
         {/* MOBILE BOTTOM NAVIGATION BAR: icons for every section, label on the active one, so all seven fit a phone width */}
-        <nav aria-label="Mobile Navigation" className="flex md:hidden fixed bottom-2 inset-x-2 h-14 bg-[#1C1C1C] dark:bg-[#141414] border border-white/10 rounded-full z-50 items-center justify-between px-2 shadow-lg">
+        <nav
+          aria-label="Mobile Navigation"
+          className="flex md:hidden fixed bottom-2 inset-x-2 h-14 bg-[#1C1C1C] dark:bg-[#141414] border border-white/10 rounded-full z-50 items-center justify-between px-2 shadow-lg"
+        >
           {SECTIONS.map((item) => {
             const isActive = activeTab === item.id;
             const Icon = item.icon;
             return (
-              <button
+              <Link
                 key={item.id}
-                type="button"
-                onClick={() => handleSelectTab(item.id)}
+                to={SECTION_PATHS[item.id]}
                 aria-label={item.label}
                 aria-current={isActive ? "page" : undefined}
                 className={`h-10 shrink-0 flex items-center justify-center gap-1.5 rounded-full text-xs transition-colors cursor-pointer ${
-                  isActive ? "px-3.5 bg-white text-[#161616] font-medium" : "w-10 text-white/60 hover:text-white"
+                  isActive
+                    ? "px-3.5 bg-white text-[#161616] font-medium"
+                    : "w-10 text-white/60 hover:text-white"
                 }`}
               >
                 <Icon className="h-4 w-4 shrink-0" strokeWidth={2} />
                 {isActive && <span>{item.label}</span>}
-              </button>
+              </Link>
             );
           })}
         </nav>
@@ -111,19 +154,20 @@ export function DashboardLayout({ activeTab, onTabChange, children }: DashboardL
         {/* titles never jump between tabs; Home fills the height to center */}
         {/* ============================================================ */}
         <main className="flex-1 min-w-0 min-h-0 h-full overflow-hidden flex flex-col">
-          <div className="flex-1 min-h-0 min-w-0 h-full w-full overflow-y-auto card-scrollbar px-6 sm:px-12 lg:px-16 pt-8 sm:pt-12 pb-24 md:pb-12 flex flex-col items-start text-left">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeTab}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.15 }}
-                className={`w-full max-w-[1000px] min-w-0 flex flex-col items-start text-left ${isHome ? "flex-1" : ""}`}
-              >
-                {children}
-              </motion.div>
-            </AnimatePresence>
+          <div
+            ref={scrollRef}
+            className="flex-1 min-h-0 min-w-0 h-full w-full overflow-y-auto card-scrollbar px-6 sm:px-12 lg:px-16 pt-8 sm:pt-12 pb-24 md:pb-12 flex flex-col items-start text-left"
+          >
+            {/* Fade in on navigation only: the server-rendered first page must be visible before hydration */}
+            <motion.div
+              key={pathname}
+              initial={hydrated.current ? { opacity: 0 } : false}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.15 }}
+              className={`w-full max-w-[1000px] min-w-0 flex flex-col items-start text-left ${isHome ? "flex-1" : ""}`}
+            >
+              {children}
+            </motion.div>
           </div>
         </main>
       </div>
