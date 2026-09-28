@@ -2,7 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
 import { ArrowLeft, ArrowRight, ExternalLink } from "lucide-react";
 import { FaGithub } from "react-icons/fa6";
-import { PROJECTS } from "@/lib/portfolio-data";
+import { PROJECTS } from "@/lib/projects";
 import { CASE_STUDIES } from "@/lib/case-studies";
 import { Lightbox, type LightboxImage } from "@/components/portfolio/Lightbox";
 import { pageHead, SITE_URL } from "@/lib/seo";
@@ -23,7 +23,7 @@ export const Route = createFileRoute("/_site/projects/$slug")({
       title: `${project.title} | Keith Ciceron`,
       description: study.summary,
     });
-    const image = `${SITE_URL}${project.image}`;
+    const image = `${SITE_URL}${project.cover}`;
     return {
       ...base,
       meta: [
@@ -57,7 +57,8 @@ function CaseStudyPage() {
   const project = PROJECTS[index];
   const study = CASE_STUDIES[project.slug];
   const next = PROJECTS[(index + 1) % PROJECTS.length];
-  const images: LightboxImage[] = project.shots.map((src) => ({ src, caption: project.title }));
+  const images: LightboxImage[] = project.gallery.map((src) => ({ src, caption: project.title }));
+  const { live, repo } = project.links;
 
   return (
     <>
@@ -81,11 +82,11 @@ function CaseStudyPage() {
             {study.summary}
           </p>
 
-          {(project.demo || project.github) && (
+          {(live || repo) && (
             <div className="mt-6 flex items-center gap-2 flex-wrap">
-              {project.demo && (
+              {live && (
                 <a
-                  href={project.demo}
+                  href={live}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 rounded-md bg-[#161616] text-white dark:bg-[#EDEDED] dark:text-[#161616] hover:bg-[#333333] dark:hover:bg-white px-4 py-2 text-sm font-medium transition-colors"
@@ -94,9 +95,9 @@ function CaseStudyPage() {
                   <ExternalLink className="h-3.5 w-3.5" />
                 </a>
               )}
-              {project.github && (
+              {repo && (
                 <a
-                  href={project.github}
+                  href={repo}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 rounded-md border border-[#E3E5E0] dark:border-[#262626] px-4 py-2 text-sm font-medium text-[#161616] dark:text-[#EDEDED] hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
@@ -116,7 +117,7 @@ function CaseStudyPage() {
           className="w-full overflow-hidden rounded-xl border border-[#E3E5E0] dark:border-[#262626] bg-[#E1E4DD] dark:bg-[#1A1A1A] cursor-zoom-in"
         >
           <img
-            src={project.image}
+            src={project.cover}
             alt={`${project.title} screenshot`}
             className="w-full max-h-[460px] object-cover object-top"
           />
@@ -137,7 +138,7 @@ function CaseStudyPage() {
                 <dt className="font-mono text-[10px] uppercase tracking-wider text-[#62655E] dark:text-[#A3A3A3]">
                   Stack
                 </dt>
-                <dd className="mt-1">{project.tech.join(" · ")}</dd>
+                <dd className="mt-1">{project.stack.join(" · ")}</dd>
               </div>
             </dl>
           </Section>
@@ -179,15 +180,15 @@ function CaseStudyPage() {
             </Section>
           )}
 
-          {project.shots.length > 1 && (
+          {project.gallery.length > 1 && (
             <Section title="Screenshots">
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {project.shots.map((src, i) => (
+                {project.gallery.map((src, i) => (
                   <button
                     key={src}
                     type="button"
                     onClick={() => setLightboxIndex(i)}
-                    aria-label={`Open screenshot ${i + 1} of ${project.shots.length}`}
+                    aria-label={`Open screenshot ${i + 1} of ${project.gallery.length}`}
                     className="aspect-[16/10] overflow-hidden rounded-lg border border-[#E3E5E0] dark:border-[#262626] bg-[#E1E4DD] dark:bg-[#1A1A1A] cursor-zoom-in"
                   >
                     <img

@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { PROJECTS, SKILLS } from "@/lib/portfolio-data";
+import { SKILLS } from "@/lib/portfolio-data";
+import { PROJECTS } from "@/lib/projects";
 
 interface Category {
   id: string;
@@ -59,7 +60,7 @@ function CategoryBlock({ category }: { category: Category }) {
         {category.skills.map((skillName) => {
           const item = SKILLS.find((s) => s.name === skillName);
           const SkillIcon = item?.icon;
-          const usedIn = PROJECTS.filter((p) => p.tech.includes(skillName));
+          const usedIn = PROJECTS.filter((p) => p.stack.includes(skillName));
 
           return (
             <div key={skillName} className="py-1.5 first:pt-2 last:pb-0">

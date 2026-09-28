@@ -1,9 +1,7 @@
-import { useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ExternalLink, Eye, ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
-import { FaGithub } from "react-icons/fa6";
-import { PROJECTS } from "@/lib/portfolio-data";
-import { Lightbox, type LightboxImage } from "./Lightbox";
+import { PROJECTS, type Project } from "@/lib/projects";
+import { DeviceStage } from "./DeviceStage";
 
 const FILTER_TAGS = [
   "All",
@@ -15,63 +13,54 @@ const FILTER_TAGS = [
   "Supabase",
 ] as const;
 
-interface ProjectsProps {
-  activeFilter?: string;
-  onFilterChange?: (filter: string) => void;
-}
+type Filter = (typeof FILTER_TAGS)[number];
 
-const ITEMS_PER_PAGE = 3;
+const pad = (n: number) => String(n).padStart(2, "0");
 
-export function Projects({ activeFilter = "All", onFilterChange }: ProjectsProps) {
-  const [internalFilter, setInternalFilter] = useState("All");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [lightbox, setLightbox] = useState<{ images: LightboxImage[]; index: number } | null>(null);
+const FOCUS_RING =
+  "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3F4A3A] dark:focus-visible:outline-[#B4C0A4]";
 
-  const currentFilter = onFilterChange ? activeFilter : internalFilter;
-  const setFilter = onFilterChange || setInternalFilter;
+const MUTED = "text-[#5E615A] dark:text-[#A3A3A3]";
 
-  // Reset page when filter changes
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [currentFilter]);
-
-  const filteredProjects =
-    currentFilter === "All"
-      ? PROJECTS
-      : PROJECTS.filter((p) => p.tech.some((t) => t.toLowerCase() === currentFilter.toLowerCase()));
-
-  const totalPages = Math.max(1, Math.ceil(filteredProjects.length / ITEMS_PER_PAGE));
-  const validPage = Math.min(currentPage, totalPages);
-
-  const startIndex = (validPage - 1) * ITEMS_PER_PAGE;
-  const paginatedProjects = filteredProjects.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+export function Projects() {
+  const [filter, setFilter] = useState<Filter>("All");
+  const shown = filter === "All" ? PROJECTS : PROJECTS.filter((p) => p.stack.includes(filter));
 
   return (
-    <div className="w-full flex flex-col text-left">
-      {/* Page Title & Filter Pills */}
-      <div className="shrink-0 flex flex-col mb-4">
-        <h1 className="mb-6 sm:mb-8 font-sans text-[clamp(26px,3.5vh,36px)] font-semibold tracking-tight text-[#161616] dark:text-[#EDEDED] leading-tight">
+    <div className="w-full font-display text-[#141414] dark:text-[#EDEDED]">
+      <header>
+        <div className={`flex items-center justify-between gap-4 font-mono text-[11px] ${MUTED}`}>
+          <span>/projects</span>
+          <span aria-live="polite">
+            {pad(shown.length)} {shown.length === 1 ? "project" : "projects"}
+          </span>
+        </div>
+        <h1 className="mt-5 text-[clamp(32px,4.4vw,46px)] font-semibold leading-[1.02] tracking-[-0.035em]">
           Selected Works
         </h1>
+        <p className="mt-3 max-w-[58ch] text-[15px] leading-relaxed text-[#3A3C38] dark:text-[#C8C8C8]">
+          Client systems, school projects, and organization portals, each shown at desktop, tablet,
+          and mobile widths.
+        </p>
 
-        {/* Filter Pills Row */}
+        {/* Plain text filters; the row scrolls sideways on phones instead of wrapping. */}
         <div
-          className="flex items-center gap-1.5 overflow-x-auto card-scrollbar py-0.5"
           role="group"
           aria-label="Filter projects by technology"
+          className="no-scrollbar -mx-6 mt-8 flex gap-5 overflow-x-auto border-b border-black/12 px-6 font-mono text-xs sm:mx-0 sm:flex-wrap sm:gap-x-6 sm:gap-y-1 sm:overflow-visible sm:px-0 dark:border-white/12"
         >
           {FILTER_TAGS.map((tag) => {
-            const isActive = currentFilter === tag;
+            const active = filter === tag;
             return (
               <button
                 key={tag}
                 type="button"
                 onClick={() => setFilter(tag)}
-                aria-pressed={isActive}
-                className={`rounded-full px-3 py-1 text-xs font-medium transition-colors cursor-pointer whitespace-nowrap ${
-                  isActive
-                    ? "bg-[#161616] text-white dark:bg-[#EDEDED] dark:text-[#161616]"
-                    : "bg-white/80 dark:bg-[#141414] text-[#161616] dark:text-[#EDEDED] border border-[#E3E5E0] dark:border-[#262626] hover:bg-[#ECEEEA] dark:hover:bg-[#1F1F1F]"
+                aria-pressed={active}
+                className={`shrink-0 whitespace-nowrap py-3 cursor-pointer underline-offset-[7px] transition-colors ${FOCUS_RING} ${
+                  active
+                    ? "text-[#141414] underline decoration-[#3F4A3A] decoration-2 dark:text-[#EDEDED] dark:decoration-[#B4C0A4]"
+                    : `${MUTED} hover:text-[#141414] dark:hover:text-[#EDEDED]`
                 }`}
               >
                 {tag}
@@ -79,195 +68,160 @@ export function Projects({ activeFilter = "All", onFilterChange }: ProjectsProps
             );
           })}
         </div>
-      </div>
+      </header>
 
-      {/* Main Content Area: Flat Rows separated by thin 1px dividers */}
-      {filteredProjects.length === 0 ? (
-        <div className="flex-1 min-h-0 flex flex-col items-start justify-center py-8">
-          <p className="font-mono text-xs sm:text-sm text-[#62655E] dark:text-[#A3A3A3]">
-            No projects match the selected filter.
-          </p>
+      {shown.length === 0 ? (
+        <div className="py-12">
+          <p className={`font-mono text-xs ${MUTED}`}>No projects tagged {filter} yet.</p>
           <button
             type="button"
             onClick={() => setFilter("All")}
-            className="mt-3 rounded-md bg-[#161616] text-white dark:bg-[#EDEDED] dark:text-[#161616] px-4 py-1.5 text-xs font-medium hover:bg-[#333333] dark:hover:bg-white transition-colors cursor-pointer"
+            className={`mt-3 text-sm font-medium underline decoration-black/30 underline-offset-4 hover:decoration-current cursor-pointer dark:decoration-white/30 ${FOCUS_RING}`}
           >
             Show all projects
           </button>
         </div>
       ) : (
-        <div className="flex-1 min-h-0 flex flex-col justify-between">
-          {/* List of Flat Project Rows */}
-          <div className="divide-y divide-[#E3E5E0] dark:divide-[#262626] border-t border-b border-[#E3E5E0] dark:border-[#262626]">
-            {paginatedProjects.map((project, idx) => {
-              const isFirstCardOnPage1 = validPage === 1 && idx === 0 && currentFilter === "All";
-
-              return (
-                <article
-                  key={project.title}
-                  className="flex flex-row items-center gap-4 sm:gap-5 py-4 min-h-0 shrink-0 group"
-                >
-                  {/* Thumbnail (Permitted card/thumbnail container) */}
-                  <Link
-                    to="/projects/$slug"
-                    params={{ slug: project.slug }}
-                    tabIndex={-1}
-                    aria-hidden="true"
-                    className="w-[120px] sm:w-[150px] h-[80px] sm:h-[92px] shrink-0 relative overflow-hidden rounded-lg border border-[#E3E5E0] dark:border-[#262626] bg-[#ECEEEA] dark:bg-[#1A1A1A]"
-                  >
-                    <img
-                      src={project.image}
-                      alt={project.title}
-                      loading="lazy"
-                      className="h-full w-full object-cover object-top transition-transform duration-300 group-hover:scale-105"
-                      onError={(e) => {
-                        e.currentTarget.style.display = "none";
-                      }}
-                    />
-                  </Link>
-
-                  {/* Text Information */}
-                  <div className="flex-1 min-w-0 flex flex-col justify-between">
-                    <div>
-                      <div className="flex items-center gap-2 flex-wrap">
-                        {isFirstCardOnPage1 && (
-                          <span className="rounded-full bg-[#E3F27A] dark:bg-[#E3F27A] text-[#161616] px-2 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-wider shrink-0">
-                            Featured
-                          </span>
-                        )}
-
-                        <h3 className="font-sans text-xs sm:text-sm font-semibold text-[#161616] dark:text-[#EDEDED] leading-snug">
-                          <Link
-                            to="/projects/$slug"
-                            params={{ slug: project.slug }}
-                            className="hover:underline"
-                          >
-                            {project.title}
-                          </Link>
-                        </h3>
-                      </div>
-
-                      <p className="mt-1 text-[11px] sm:text-xs leading-relaxed text-[#62655E] dark:text-[#A3A3A3] line-clamp-2">
-                        {project.description}
-                      </p>
-
-                      <div className="mt-1.5 flex flex-wrap gap-1">
-                        {project.tech.slice(0, 5).map((tech) => (
-                          <span
-                            key={tech}
-                            className="font-mono text-[10px] text-[#62655E] dark:text-[#A3A3A3] after:content-[','] last:after:content-[''] pr-1"
-                          >
-                            {tech}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Action Links */}
-                    <div className="mt-2 flex items-center gap-x-3 gap-y-1 flex-wrap">
-                      <Link
-                        to="/projects/$slug"
-                        params={{ slug: project.slug }}
-                        aria-label={`Read the case study for ${project.title}`}
-                        className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#161616] dark:text-[#EDEDED] hover:underline"
-                      >
-                        <span>Case study</span>
-                        <ArrowRight className="h-3 w-3" />
-                      </Link>
-
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setLightbox({
-                            images: (project.shots ?? [project.image]).map((src) => ({
-                              src,
-                              caption: `${project.title} — ${project.description}`,
-                            })),
-                            index: 0,
-                          })
-                        }
-                        aria-label={`View screenshots for ${project.title}`}
-                        className="inline-flex items-center gap-1 text-[11px] font-medium text-[#161616] dark:text-[#EDEDED] hover:underline cursor-pointer"
-                      >
-                        <Eye className="h-3 w-3" />
-                        <span>Screenshots</span>
-                      </button>
-
-                      {project.demo ? (
-                        <a
-                          href={project.demo}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-[11px] font-medium text-[#161616] dark:text-[#EDEDED] hover:underline cursor-pointer"
-                        >
-                          <span>Live Demo</span>
-                          <ExternalLink className="h-3 w-3" />
-                        </a>
-                      ) : (
-                        <span className="font-mono text-[10px] text-[#62655E] dark:text-[#A3A3A3]">
-                          (School Project)
-                        </span>
-                      )}
-
-                      {project.github && (
-                        <a
-                          href={project.github}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          aria-label={`Source code for ${project.title} on GitHub`}
-                          className="inline-flex items-center gap-1 text-[11px] font-medium text-[#161616] dark:text-[#EDEDED] hover:underline cursor-pointer"
-                        >
-                          <FaGithub className="h-3 w-3" />
-                          <span>Code</span>
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-
-          {/* Clean Pagination Controls Bar */}
-          {totalPages > 1 && (
-            <div className="pt-4 flex items-center justify-between shrink-0">
-              <button
-                type="button"
-                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                disabled={validPage <= 1}
-                className="inline-flex items-center gap-1 text-xs font-mono text-[#62655E] dark:text-[#A3A3A3] hover:text-[#161616] dark:hover:text-[#EDEDED] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
-              >
-                <ChevronLeft className="h-3.5 w-3.5" />
-                <span>Previous</span>
-              </button>
-
-              <span className="font-mono text-xs text-[#62655E] dark:text-[#A3A3A3] font-medium tracking-wider">
-                {validPage} / {totalPages}
-              </span>
-
-              <button
-                type="button"
-                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                disabled={validPage >= totalPages}
-                className="inline-flex items-center gap-1 text-xs font-mono text-[#62655E] dark:text-[#A3A3A3] hover:text-[#161616] dark:hover:text-[#EDEDED] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
-              >
-                <span>Next</span>
-                <ChevronRight className="h-3.5 w-3.5" />
-              </button>
-            </div>
-          )}
-        </div>
+        <ol>
+          {shown.map((project) => (
+            <ProjectRow key={project.slug} project={project} total={PROJECTS.length} />
+          ))}
+        </ol>
       )}
-
-      {/* Lightbox Modal Overlay */}
-      <Lightbox
-        images={lightbox?.images ?? []}
-        index={lightbox?.index ?? null}
-        onClose={() => setLightbox(null)}
-        onIndexChange={(next) =>
-          setLightbox((current) => (current ? { ...current, index: next } : current))
-        }
-      />
     </div>
   );
+}
+
+function ProjectRow({ project, total }: { project: Project; total: number }) {
+  const [ref, reveal] = useRevealOnScroll<HTMLLIElement>();
+  const titleId = `project-${project.slug}`;
+  const meta = [project.type, project.year, project.role].filter(Boolean);
+  const { live, repo } = project.links;
+
+  return (
+    <li
+      ref={ref}
+      className={`border-b border-black/12 py-10 sm:py-14 dark:border-white/12 ${
+        reveal === "waiting"
+          ? "translate-y-[10px] opacity-0"
+          : reveal === "shown"
+            ? "translate-y-0 opacity-100 transition-[opacity,transform] duration-300 ease-out"
+            : ""
+      }`}
+    >
+      <article
+        aria-labelledby={titleId}
+        className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-10"
+      >
+        <div className="flex flex-col lg:col-span-5">
+          <div className={`flex items-center gap-3 font-mono text-[11px] ${MUTED}`}>
+            <span>
+              <span className="text-[#141414] dark:text-[#EDEDED]">{pad(project.index)}</span> /{" "}
+              {pad(total)}
+            </span>
+            {project.featured && (
+              <span className="rounded-[2px] border border-black/20 px-1.5 py-px uppercase tracking-[0.08em] text-[#141414] dark:border-white/25 dark:text-[#EDEDED]">
+                Featured
+              </span>
+            )}
+          </div>
+
+          <h2
+            id={titleId}
+            className="mt-4 text-[clamp(22px,2.6vw,28px)] font-semibold leading-[1.15] tracking-[-0.025em] text-balance"
+          >
+            {project.title}
+          </h2>
+          <p className="mt-3 max-w-[52ch] text-[15px] leading-relaxed text-[#3A3C38] dark:text-[#C8C8C8]">
+            {project.summary}
+          </p>
+
+          <div
+            className={`mt-6 flex flex-col gap-1.5 font-mono text-[11px] leading-relaxed ${MUTED}`}
+          >
+            <p>{meta.join(" · ")}</p>
+            <p>
+              <span className="sr-only">Built with </span>
+              {project.stack.join(" · ")}
+            </p>
+          </div>
+
+          <div className="mt-6 flex flex-wrap items-baseline gap-x-6 gap-y-2 text-sm">
+            <Link
+              to="/projects/$slug"
+              params={{ slug: project.slug }}
+              className={`font-medium underline decoration-black/30 underline-offset-4 hover:decoration-current dark:decoration-white/30 ${FOCUS_RING}`}
+            >
+              Case study <span aria-hidden="true">→</span>
+              <span className="sr-only">: {project.title}</span>
+            </Link>
+            {live && (
+              <ExternalLink href={live} label={`Live site for ${project.title}`}>
+                Live
+              </ExternalLink>
+            )}
+            {repo && (
+              <ExternalLink href={repo} label={`Source code for ${project.title}`}>
+                Code
+              </ExternalLink>
+            )}
+          </div>
+        </div>
+
+        <div className="min-w-0 lg:col-span-7">
+          <DeviceStage project={project} />
+        </div>
+      </article>
+    </li>
+  );
+}
+
+function ExternalLink({
+  href,
+  label,
+  children,
+}: {
+  href: string;
+  label: string;
+  children: string;
+}) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={`${label} (opens in a new tab)`}
+      className={`${MUTED} hover:text-[#141414] dark:hover:text-[#EDEDED] transition-colors ${FOCUS_RING}`}
+    >
+      {children} <span aria-hidden="true">↗</span>
+    </a>
+  );
+}
+
+/**
+ * Rows already on screen at load render as-is; rows further down wait below the fold and then
+ * fade and rise 10px as they scroll in. Skipped entirely with reduced motion.
+ */
+function useRevealOnScroll<T extends HTMLElement>() {
+  const ref = useRef<T>(null);
+  const [state, setState] = useState<"static" | "waiting" | "shown">("static");
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (el.getBoundingClientRect().top < window.innerHeight) return;
+    setState("waiting");
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        setState("shown");
+        observer.disconnect();
+      },
+      { threshold: 0.12 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return [ref, state] as const;
 }

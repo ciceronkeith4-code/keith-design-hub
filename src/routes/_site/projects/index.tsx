@@ -3,13 +3,25 @@ import { Projects } from "@/components/portfolio/Projects";
 import { pageHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/_site/projects/")({
-  head: () =>
-    pageHead({
+  head: () => {
+    const base = pageHead({
       path: "/projects",
       title: "Projects | Keith Ciceron",
       description:
         "Selected work by Keith Ciceron: client systems, school projects, and organization portals, each with a case study, its stack, and live links.",
-    }),
+    });
+    return {
+      ...base,
+      links: [
+        ...base.links,
+        // Geist is only used here, so only this page pays for it.
+        {
+          rel: "stylesheet",
+          href: "https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap",
+        },
+      ],
+    };
+  },
   component: ProjectsPage,
 });
 

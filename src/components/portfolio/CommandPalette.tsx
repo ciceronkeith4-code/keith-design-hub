@@ -21,7 +21,7 @@ import {
   CommandItem,
   CommandSeparator,
 } from "@/components/ui/command";
-import { PROJECTS } from "@/lib/portfolio-data";
+import { PROJECTS } from "@/lib/projects";
 import type { TabId } from "./DashboardLayout";
 
 interface CommandPaletteProps {
@@ -93,7 +93,7 @@ export function CommandPalette({ open, onOpenChange, onSelectTab }: CommandPalet
           {PROJECTS.map((project) => (
             <CommandItem
               key={project.title}
-              value={`project ${project.title} ${project.tech.join(" ")}`}
+              value={`project ${project.title} ${project.stack.join(" ")}`}
               onSelect={() => {
                 onOpenChange(false);
                 navigate({ to: "/projects/$slug", params: { slug: project.slug } });
@@ -105,7 +105,7 @@ export function CommandPalette({ open, onOpenChange, onSelectTab }: CommandPalet
                 <span className="truncate">{project.title}</span>
               </div>
               <span className="font-mono text-[10px] text-muted-foreground shrink-0">
-                {project.tech[0]}
+                {project.stack[0]}
               </span>
             </CommandItem>
           ))}
