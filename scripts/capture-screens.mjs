@@ -4,6 +4,7 @@
  *
  *   node --experimental-strip-types scripts/capture-screens.mjs                 every live project
  *   node --experimental-strip-types scripts/capture-screens.mjs one-cainta ...  only these slugs
+ *   ... --device=tablet                                                          only these devices
  *
  * No dependencies: it drives a local Chrome or Edge over the DevTools protocol (set CHROME_PATH
  * if yours is somewhere unusual). The flag lets Node 22 import the TypeScript data file.
@@ -223,9 +224,16 @@ async function capture(cdp, url, device, hide = []) {
   }
 }
 
-const only = process.argv.slice(2);
+const args = process.argv.slice(2);
+const only = args.filter((a) => !a.startsWith("--"));
+const deviceArg = args.find((a) => a.startsWith("--device="))?.slice("--device=".length);
+const devices = deviceArg ? deviceArg.split(",") : Object.keys(DEVICES);
+// Projects without a live link, or whose `screens` are empty (e.g. a broken deploy), are skipped.
 const projects = PROJECTS.filter(
-  (p) => p.links.live && (only.length === 0 || only.includes(p.slug)),
+  (p) =>
+    p.links.live &&
+    Object.values(p.screens).some((list) => list.length > 0) &&
+    (only.length === 0 || only.includes(p.slug)),
 );
 if (projects.length === 0) {
   console.error("No matching projects with a live link.");
@@ -237,7 +245,7 @@ let failures = 0;
 try {
   for (const project of projects) {
     await mkdir(path.join(OUT, project.slug), { recursive: true });
-    for (const device of Object.keys(DEVICES)) {
+    for (const device of devices) {
       const name = `${project.slug}/${device}-1.webp`;
       try {
         const image = await capture(browser.cdp, project.links.live, device, HIDE[project.slug]);

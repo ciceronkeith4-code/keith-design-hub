@@ -6,46 +6,69 @@ import {
   useState,
   type CSSProperties,
   type KeyboardEvent,
+  type ReactNode,
 } from "react";
 import { DEVICES, type Device, type Project } from "@/lib/projects";
 import { Lightbox, type LightboxImage } from "./Lightbox";
+import { DEVICE_NOUN, LAPTOP, PHONE, TABLET, screenAlt, siteName } from "./device-geometry";
+import {
+  LaptopMockup,
+  PhoneMockup,
+  TabletMockup,
+  type DeviceProps,
+  type ScreenSyncLike,
+} from "./RealisticDeviceMockups";
 
 const DEVICE_ORDER: Device[] = ["desktop", "tablet", "mobile"];
 
-/** "all" is the composed arrangement; a device name brings that one forward on its own. */
+/** "all" is the composed scene; a device name shows that one alone, straight on. */
 type View = "all" | Device;
 
+const MOCKUP: Record<Device, (props: DeviceProps & { tilt?: boolean }) => ReactNode> = {
+  desktop: LaptopMockup,
+  tablet: TabletMockup,
+  mobile: PhoneMockup,
+};
+
 /**
- * Where each frame sits on the composed stage, in % of the stage box. The stage is 1800 × 1600
- * device pixels, so frames keep the true relative scale of their viewports: the desktop spans
- * 1460 of those, the tablet 850, the phone 410. `shiftY` is a translateY in % of the frame's own
- * height, which lets the tablet and phone anchor to the bottom edge whatever their bezel adds.
+ * The composed scene, laid out in a fixed 760 × 440 box that's scaled to the column as one unit.
+ * Each device is placed at a scale that keeps real-life proportions: the tablet's screen is 55% of
+ * the laptop's screen width, and the phone stands about 78% of the tablet's height.
  */
-type Placement = { left: number; top: number; width: number; shiftY: number };
+const SCENE = { w: 760, h: 440 };
+const LAPTOP_SCALE = 0.72;
+const TABLET_SCALE = (LAPTOP.screen.w * LAPTOP_SCALE * 0.55) / TABLET.screen.w;
+const PHONE_SCALE = (TABLET.h * TABLET_SCALE * 0.78) / PHONE.h;
 
-const STAGE_RATIO = "1800 / 1600";
+/** Top-left corner of each device, with its bottom edge at `bottom` (in scene px). */
+const placeAt = (x: number, bottom: number, height: number, scale: number) => ({
+  x,
+  y: bottom - height * scale,
+  scale,
+});
 
-const COMPOSED: Record<Device, Placement> = {
-  desktop: { left: 18.89, top: 0, width: 81.11, shiftY: 0 },
-  tablet: { left: 0, top: 100, width: 47.22, shiftY: -100 },
-  mobile: { left: 77.22, top: 97, width: 22.78, shiftY: -100 },
+const SCENE_PLACEMENT: Record<Device, { x: number; y: number; scale: number; z: number }> = {
+  // Back left.
+  desktop: { ...placeAt(20, 388, LAPTOP.h, LAPTOP_SCALE), z: 2 },
+  // Back right, partly behind the laptop's lid.
+  tablet: { ...placeAt(470, 338, TABLET.h, TABLET_SCALE), z: 1 },
+  // Standing in front, overlapping both near center-right.
+  mobile: { ...placeAt(505, 404, PHONE.h, PHONE_SCALE), z: 3 },
 };
 
-/** A single device, centered and as large as the stage allows. */
-const FOCUSED: Record<Device, Placement> = {
-  desktop: { left: 0, top: 50, width: 100, shiftY: -50 },
-  tablet: { left: 21.39, top: 50, width: 57.22, shiftY: -50 },
-  mobile: { left: 31.11, top: 50, width: 37.78, shiftY: -50 },
+/** Single-device views: the device at its true size (plus room for its shadow), scaled to fit. */
+const FOCUS_BOX: Record<Device, { w: number; h: number }> = {
+  desktop: { w: LAPTOP.w, h: LAPTOP.h + 28 },
+  tablet: { w: TABLET.w, h: TABLET.h + 20 },
+  mobile: { w: PHONE.w, h: PHONE.h + 20 },
 };
-
-const LAYER: Record<Device, number> = { desktop: 1, tablet: 2, mobile: 3 };
-
-/** Frame widths when one device shows at a time (phone widths): the phone is ~70% of the screen. */
-const SINGLE_WIDTH: Record<Device, string> = {
-  desktop: "w-full",
-  tablet: "w-[86%]",
-  mobile: "w-[70vw] max-w-full",
-};
+const CAPTION_H = 36;
+/**
+ * The largest a single device is drawn, relative to its true size. On phones it may grow a little
+ * past true size, so the phone fills ~60% of the screen width.
+ */
+const MAX_FOCUS_SCALE = 0.85;
+const COMPACT_MAX_FOCUS_SCALE = 1.1;
 
 const EASE = "ease-[cubic-bezier(0.23,1,0.32,1)]";
 
@@ -55,63 +78,66 @@ const FOCUS_RING =
 const prefersReducedMotion = () =>
   typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-const screenAlt = (project: Project, device: Device, n: number, total: number) =>
-  `${project.title}, full page at ${DEVICES[device].label.toLowerCase()} width (${DEVICES[device].width} px)` +
-  (total > 1 ? `, screen ${n} of ${total}` : "");
-
 export function DeviceStage({ project }: { project: Project }) {
+  const [view, setView] = useState<View>("all");
   const [lightbox, setLightbox] = useState<{ device: Device; index: number } | null>(null);
-  const openLightbox = (device: Device) => setLightbox({ device, index: 0 });
+  const [sync] = useState(() => new ScreenSync());
+  useEffect(() => () => sync.dispose(), [sync]);
+  const [stageRef, { width, compact }] = useStageSize();
+  const id = useId();
+
+  const sceneScale = width / SCENE.w;
+  const sceneH = SCENE.h * sceneScale;
+  const widthFit = (device: Device) =>
+    Math.min(width / FOCUS_BOX[device].w, compact ? COMPACT_MAX_FOCUS_SCALE : MAX_FOCUS_SCALE);
+  // Phones: the stage grows or shrinks to fit each view. Wider: one height for every tab (the
+  // laptop's, if taller than the scene) so switching never moves the page, and the scene centers.
+  const fixedH = Math.max(sceneH, FOCUS_BOX.desktop.h * widthFit("desktop") + CAPTION_H);
+  const focusScale = (device: Device) =>
+    compact
+      ? widthFit(device)
+      : Math.min(widthFit(device), (fixedH - CAPTION_H) / FOCUS_BOX[device].h);
+  const stageH = !compact
+    ? fixedH
+    : view === "all"
+      ? sceneH
+      : FOCUS_BOX[view].h * focusScale(view) + CAPTION_H;
+
+  const hasShots = (device: Device) => project.screens[device].length > 0;
+
+  /** What clicking a device does: on phones the scene's devices switch tabs; otherwise open. */
+  const activation = (device: Device, inScene: boolean) => {
+    const name = siteName(project);
+    if (inScene && compact) {
+      return {
+        onActivate: () => setView(device),
+        label: `Show ${name} on a ${DEVICE_NOUN[device]}`,
+      };
+    }
+    if (!hasShots(device)) return {};
+    return {
+      onActivate: () => setLightbox({ device, index: 0 }),
+      label: `Open ${DEVICE_NOUN[device]} screenshots of ${name}`,
+    };
+  };
 
   const images: LightboxImage[] = lightbox
-    ? project.screens[lightbox.device].map((src, i, all) => ({
-        src,
-        alt: screenAlt(project, lightbox.device, i + 1, all.length),
-        caption: `${DEVICES[lightbox.device].label} · ${DEVICES[lightbox.device].width} × ${DEVICES[lightbox.device].height}`,
-        width: DEVICES[lightbox.device].width,
-        height: DEVICES[lightbox.device].height,
-      }))
+    ? project.screens[lightbox.device].map((src, i, all) => {
+        const spec = DEVICES[lightbox.device];
+        return {
+          src,
+          alt:
+            screenAlt(project, lightbox.device) +
+            (all.length > 1 ? `, ${i + 1} of ${all.length}` : ""),
+          caption: `${spec.label} — ${spec.width} × ${spec.height}`,
+          width: spec.width,
+          height: spec.height,
+        };
+      })
     : [];
 
   return (
-    <>
-      {/* Both layouts are server-rendered and CSS picks one, so there's no flash on hydration. */}
-      <div className="hidden md:block">
-        <ComposedStage project={project} onOpen={openLightbox} />
-      </div>
-      <div className="md:hidden">
-        <SingleStage project={project} onOpen={openLightbox} />
-      </div>
-
-      <Lightbox
-        images={images}
-        index={lightbox?.index ?? null}
-        label={
-          lightbox
-            ? `${project.title}, ${DEVICES[lightbox.device].label.toLowerCase()} screenshots`
-            : undefined
-        }
-        onClose={() => setLightbox(null)}
-        onIndexChange={(index) =>
-          setLightbox((current) => (current ? { ...current, index } : current))
-        }
-      />
-    </>
-  );
-}
-
-interface StageProps {
-  project: Project;
-  onOpen: (device: Device) => void;
-}
-
-/** Tablet and up: all three frames arranged together, or one brought forward. */
-function ComposedStage({ project, onOpen }: StageProps) {
-  const [view, setView] = useState<View>("all");
-  const id = useId();
-
-  return (
-    <div>
+    <div className="w-full">
       <DeviceTabs
         id={id}
         label={`Device preview of ${project.title}`}
@@ -119,103 +145,282 @@ function ComposedStage({ project, onOpen }: StageProps) {
         value={view}
         onChange={setView}
       />
+
       <div
+        ref={stageRef}
         id={`${id}-panel`}
         role="tabpanel"
         aria-labelledby={`${id}-tab-${view}`}
-        className="relative mt-6"
-        style={{ aspectRatio: STAGE_RATIO }}
+        className={`relative mt-6 w-full overflow-hidden transition-[height] duration-300 ${EASE}`}
+        // Until it's measured, reserve the scene's shape so the page doesn't jump.
+        style={width ? { height: stageH } : { aspectRatio: `${SCENE.w} / ${SCENE.h}` }}
       >
-        {DEVICE_ORDER.map((device) => {
-          const focused = view === device;
-          const visible = view === "all" || focused;
-          const place = focused ? FOCUSED[device] : COMPOSED[device];
-          return (
-            <DeviceFrame
-              key={device}
-              device={device}
-              project={project}
-              onOpen={onOpen}
-              hidden={!visible}
-              className={`absolute transition-[left,top,width,transform,opacity] duration-[260ms] ${EASE}`}
-              style={{
-                left: `${place.left}%`,
-                top: `${place.top}%`,
-                width: `${place.width}%`,
-                transform: `translateY(${place.shiftY}%)`,
-                zIndex: focused ? 4 : LAYER[device],
-                opacity: visible ? 1 : 0,
-              }}
-            />
-          );
-        })}
+        {width > 0 && (
+          <>
+            <Layer active={view === "all"}>
+              <Scaled
+                left={0}
+                top={compact ? 0 : (stageH - sceneH) / 2}
+                width={SCENE.w}
+                height={SCENE.h}
+                scale={sceneScale}
+              >
+                {/* The whole group sits in perspective, turned slightly. */}
+                <div className="h-full w-full" style={{ perspective: 2200 }}>
+                  <div className="relative h-full w-full" style={{ transform: "rotateY(-10deg)" }}>
+                    {DEVICE_ORDER.map((device) => {
+                      const place = SCENE_PLACEMENT[device];
+                      const Mockup = MOCKUP[device];
+                      return (
+                        <Mockup
+                          key={device}
+                          project={project}
+                          sync={sync}
+                          tilt={device === "desktop"}
+                          {...activation(device, true)}
+                          style={{
+                            position: "absolute",
+                            left: 0,
+                            top: 0,
+                            zIndex: place.z,
+                            transformOrigin: "0 0",
+                            transform: `translate(${place.x}px, ${place.y}px) scale(${place.scale})`,
+                          }}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
+              </Scaled>
+            </Layer>
+
+            {DEVICE_ORDER.map((device) => {
+              const box = FOCUS_BOX[device];
+              const scale = focusScale(device);
+              const boxW = box.w * scale;
+              const boxH = box.h * scale;
+              const top = compact ? 0 : Math.max(0, (stageH - boxH - CAPTION_H) / 2);
+              const spec = DEVICES[device];
+              const Mockup = MOCKUP[device];
+              return (
+                <Layer key={device} active={view === device}>
+                  <Scaled
+                    left={(width - boxW) / 2}
+                    top={top}
+                    width={box.w}
+                    height={box.h}
+                    scale={scale}
+                  >
+                    <div className="flex justify-center">
+                      <Mockup project={project} sync={sync} {...activation(device, false)} />
+                    </div>
+                  </Scaled>
+                  <p
+                    className="absolute left-0 right-0 text-center font-mono text-xs text-[#5E615A] dark:text-[#A3A3A3]"
+                    style={{ top: top + boxH + 8 }}
+                  >
+                    {spec.label} — {spec.width} × {spec.height}
+                  </p>
+                </Layer>
+              );
+            })}
+          </>
+        )}
       </div>
+
+      <Lightbox
+        images={images}
+        index={lightbox?.index ?? null}
+        label={
+          lightbox ? `${project.title}, ${DEVICE_NOUN[lightbox.device]} screenshots` : undefined
+        }
+        onClose={() => setLightbox(null)}
+        onIndexChange={(index) =>
+          setLightbox((current) => (current ? { ...current, index } : current))
+        }
+      />
     </div>
   );
 }
 
-/** Phone widths: one device at a time, switched by the tabs or a horizontal swipe. */
-function SingleStage({ project, onOpen }: StageProps) {
-  const [device, setDevice] = useState<Device>("desktop");
-  const id = useId();
-  const swipeStart = useRef<{ x: number; y: number } | null>(null);
-  const swiped = useRef(false);
-
-  const step = (dir: 1 | -1) => {
-    const next = DEVICE_ORDER.indexOf(device) + dir;
-    if (next >= 0 && next < DEVICE_ORDER.length) setDevice(DEVICE_ORDER[next]);
-  };
-
+/** One view of the stage. Views crossfade with a slight scale; hidden ones can't be reached. */
+function Layer({ active, children }: { active: boolean; children: ReactNode }) {
   return (
-    <div>
-      <DeviceTabs
-        id={id}
-        label={`Device preview of ${project.title}`}
-        options={DEVICE_ORDER}
-        value={device}
-        onChange={(v) => setDevice(v as Device)}
-      />
-      <div
-        id={`${id}-panel`}
-        role="tabpanel"
-        aria-labelledby={`${id}-tab-${device}`}
-        className="mt-5 flex touch-pan-y justify-center"
-        onPointerDown={(e) => {
-          swipeStart.current = { x: e.clientX, y: e.clientY };
-          swiped.current = false;
-        }}
-        onPointerUp={(e) => {
-          const start = swipeStart.current;
-          swipeStart.current = null;
-          if (!start) return;
-          const dx = e.clientX - start.x;
-          const dy = e.clientY - start.y;
-          if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy) * 1.5) {
-            swiped.current = true;
-            step(dx < 0 ? 1 : -1);
-          }
-        }}
-        onPointerCancel={() => {
-          swipeStart.current = null;
-        }}
-        // A swipe that ends on the frame shouldn't also open the lightbox.
-        onClickCapture={(e) => {
-          if (swiped.current) {
-            e.stopPropagation();
-            swiped.current = false;
-          }
-        }}
-      >
-        <DeviceFrame
-          key={device}
-          device={device}
-          project={project}
-          onOpen={onOpen}
-          className={`device-in ${SINGLE_WIDTH[device]}`}
-        />
-      </div>
+    <div
+      inert={!active}
+      className={`absolute inset-0 transition-[opacity,transform] duration-300 ${EASE}`}
+      style={{ opacity: active ? 1 : 0, transform: active ? "none" : "scale(0.97)" }}
+    >
+      {children}
     </div>
   );
+}
+
+/** A fixed-size box drawn at `scale`, placed at `left`/`top` in stage pixels. */
+function Scaled({
+  left,
+  top,
+  width,
+  height,
+  scale,
+  children,
+}: {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+  scale: number;
+  children: ReactNode;
+}) {
+  const style: CSSProperties = {
+    left,
+    top,
+    width,
+    height,
+    transform: `scale(${scale})`,
+    transformOrigin: "0 0",
+  };
+  return (
+    <div className="absolute" style={style}>
+      {children}
+    </div>
+  );
+}
+
+/** The stage's width, and whether the viewport is phone-sized (under 768px). */
+function useStageSize() {
+  const ref = useRef<HTMLDivElement>(null);
+  const [size, setSize] = useState({ width: 0, compact: false });
+
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const query = window.matchMedia("(max-width: 767px)");
+    const update = () => {
+      const width = el.clientWidth;
+      const compact = query.matches;
+      setSize((prev) =>
+        prev.width === width && prev.compact === compact ? prev : { width, compact },
+      );
+    };
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(el);
+    query.addEventListener("change", update);
+    return () => {
+      observer.disconnect();
+      query.removeEventListener("change", update);
+    };
+  }, []);
+
+  return [ref, size] as const;
+}
+
+/** How fast the hover scroll moves through the real site, in its own CSS pixels per second. */
+const SITE_PX_PER_SECOND = 450;
+
+/**
+ * Keeps every screen on a stage at the same point of its page (as a fraction of the scroll), so
+ * the laptop, tablet, and phone show the same section. Hovering a screen with a mouse slowly
+ * scrolls them all; leaving rewinds to the top. Scrolling by hand (wheel, drag) takes over and
+ * the others follow. No hover scroll with reduced motion.
+ */
+class ScreenSync implements ScreenSyncLike {
+  private screens = new Map<HTMLElement, { deviceWidth: number; expected: number }>();
+  private progress = 0;
+  private frame = 0;
+  private delay = 0;
+
+  attach(el: HTMLElement, deviceWidth: number) {
+    const entry = { deviceWidth, expected: el.scrollTop };
+    this.screens.set(el, entry);
+
+    const onScroll = () => {
+      // Ignore the scroll events our own writes cause.
+      if (Math.abs(el.scrollTop - entry.expected) < 2) return;
+      this.stop();
+      const range = el.scrollHeight - el.clientHeight;
+      entry.expected = el.scrollTop;
+      this.progress = range > 0 ? el.scrollTop / range : 0;
+      this.apply(el);
+    };
+    const onEnter = (e: PointerEvent) => {
+      if (e.pointerType === "mouse" && !prefersReducedMotion()) this.play(el, entry.deviceWidth);
+    };
+    const onLeave = (e: PointerEvent) => {
+      if (e.pointerType === "mouse") this.rewind();
+    };
+    const onTakeOver = () => this.stop();
+
+    el.addEventListener("scroll", onScroll, { passive: true });
+    el.addEventListener("pointerenter", onEnter);
+    el.addEventListener("pointerleave", onLeave);
+    el.addEventListener("wheel", onTakeOver, { passive: true });
+    el.addEventListener("touchstart", onTakeOver, { passive: true });
+    return () => {
+      el.removeEventListener("scroll", onScroll);
+      el.removeEventListener("pointerenter", onEnter);
+      el.removeEventListener("pointerleave", onLeave);
+      el.removeEventListener("wheel", onTakeOver);
+      el.removeEventListener("touchstart", onTakeOver);
+      this.screens.delete(el);
+    };
+  }
+
+  dispose() {
+    this.stop();
+  }
+
+  private stop() {
+    cancelAnimationFrame(this.frame);
+    clearTimeout(this.delay);
+  }
+
+  /** Moves every screen (except the one the user is scrolling) to the current progress. */
+  private apply(except?: HTMLElement) {
+    for (const [el, entry] of this.screens) {
+      if (el === except) continue;
+      el.scrollTop = this.progress * Math.max(0, el.scrollHeight - el.clientHeight);
+      entry.expected = el.scrollTop;
+    }
+  }
+
+  private play(driver: HTMLElement, deviceWidth: number) {
+    this.stop();
+    // A short wait so a cursor passing over doesn't set it off.
+    this.delay = window.setTimeout(() => {
+      let last = 0;
+      const tick = (now: number) => {
+        const range = driver.scrollHeight - driver.clientHeight;
+        if (range <= 0) return;
+        const siteRange = (range * deviceWidth) / driver.clientWidth;
+        const dt = last ? now - last : 16;
+        last = now;
+        this.progress = Math.min(1, this.progress + (SITE_PX_PER_SECOND * dt) / 1000 / siteRange);
+        this.apply();
+        if (this.progress < 1) this.frame = requestAnimationFrame(tick);
+      };
+      this.frame = requestAnimationFrame(tick);
+    }, 300);
+  }
+
+  private rewind() {
+    this.stop();
+    if (prefersReducedMotion() || this.progress === 0) {
+      this.progress = 0;
+      this.apply();
+      return;
+    }
+    const from = this.progress;
+    const start = performance.now();
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - start) / 450);
+      this.progress = from * (1 - t) ** 3;
+      this.apply();
+      if (t < 1) this.frame = requestAnimationFrame(tick);
+    };
+    this.frame = requestAnimationFrame(tick);
+  }
 }
 
 interface DeviceTabsProps {
@@ -226,7 +431,7 @@ interface DeviceTabsProps {
   onChange: (view: View) => void;
 }
 
-/** Desktop · Tablet · Mobile as a real tablist, with an underline that slides to the active tab. */
+/** All · Desktop · Tablet · Mobile as a real tablist, with an underline that slides between tabs. */
 function DeviceTabs({ id, label, options, value, onChange }: DeviceTabsProps) {
   const listRef = useRef<HTMLDivElement>(null);
   const [bar, setBar] = useState<{ left: number; width: number } | null>(null);
@@ -246,7 +451,7 @@ function DeviceTabs({ id, label, options, value, onChange }: DeviceTabsProps) {
       if (tab) setBar({ left: tab.offsetLeft, width: tab.offsetWidth });
     };
     measure();
-    // Re-measure when the web font lands or the list goes from hidden to shown.
+    // Re-measure when the web font lands.
     const observer = new ResizeObserver(measure);
     observer.observe(list);
     return () => observer.disconnect();
@@ -271,16 +476,14 @@ function DeviceTabs({ id, label, options, value, onChange }: DeviceTabsProps) {
     listRef.current?.querySelectorAll<HTMLElement>('[role="tab"]')[target]?.focus();
   };
 
-  const spec = value === "all" ? null : DEVICES[value];
-
   return (
-    <div className="flex items-end justify-between gap-4 border-b border-black/12 dark:border-white/12">
+    <div className="border-b border-black/12 dark:border-white/12">
       <div
         ref={listRef}
         role="tablist"
         aria-label={label}
         onKeyDown={onKeyDown}
-        className="relative flex items-center font-mono text-[11px]"
+        className="relative inline-flex items-center font-mono text-[11px]"
       >
         {options.map((option, i) => {
           const selected = option === value;
@@ -299,7 +502,7 @@ function DeviceTabs({ id, label, options, value, onChange }: DeviceTabsProps) {
                 aria-controls={`${id}-panel`}
                 tabIndex={selected ? 0 : -1}
                 onClick={() => onChange(option)}
-                className={`py-2.5 cursor-pointer transition-colors ${FOCUS_RING} ${
+                className={`cursor-pointer py-2.5 transition-colors ${FOCUS_RING} ${
                   selected
                     ? "text-[#141414] dark:text-[#EDEDED]"
                     : "text-[#5E615A] hover:text-[#141414] dark:text-[#A3A3A3] dark:hover:text-[#EDEDED]"
@@ -318,161 +521,6 @@ function DeviceTabs({ id, label, options, value, onChange }: DeviceTabsProps) {
           style={{ left: bar?.left ?? 0, width: bar?.width ?? 0, opacity: bar ? 1 : 0 }}
         />
       </div>
-      <span className="hidden pb-2.5 font-mono text-[11px] text-[#5E615A] dark:text-[#A3A3A3] sm:block">
-        {spec ? `${spec.width} × ${spec.height}` : "3 viewports"}
-      </span>
     </div>
   );
-}
-
-interface DeviceFrameProps {
-  device: Device;
-  project: Project;
-  onOpen: (device: Device) => void;
-  /** Faded out behind a focused device: no pointer, focus, or screen reader access. */
-  hidden?: boolean;
-  className?: string;
-  style?: CSSProperties;
-}
-
-const BEZEL: Record<Device, string> = {
-  desktop: "px-[3px] pb-[3px]",
-  tablet: "p-[6px]",
-  mobile: "p-[4px]",
-};
-
-/** A minimal CSS device: 1px outline, thin even bezel, and a three-dot bar on the desktop. */
-function DeviceFrame({ device, project, onOpen, hidden, className = "", style }: DeviceFrameProps) {
-  const spec = DEVICES[device];
-  const screens = project.screens[device];
-  const [failed, setFailed] = useState(false);
-  const imgRef = useRef<HTMLImageElement>(null);
-  const hasShot = screens.length > 0 && !failed;
-  const scrollRef = useHoverScroll(hasShot);
-
-  // An image that failed before hydration never fires React's onError.
-  useEffect(() => {
-    const img = imgRef.current;
-    if (img?.complete && img.naturalWidth === 0) setFailed(true);
-  }, []);
-
-  const interactive = hasShot && !hidden;
-
-  return (
-    <div
-      className={`rounded-[4px] border border-black/30 bg-[#F6F7F4] dark:border-white/25 dark:bg-[#141414] ${BEZEL[device]} ${
-        interactive ? `cursor-zoom-in ${FOCUS_RING}` : ""
-      } ${className}`}
-      style={style}
-      inert={hidden}
-      role={hasShot ? "button" : undefined}
-      tabIndex={hasShot ? 0 : undefined}
-      aria-label={
-        hasShot
-          ? `Open ${spec.label.toLowerCase()} screenshots of ${project.title}${screens.length > 1 ? ` (${screens.length})` : ""}`
-          : undefined
-      }
-      onClick={() => interactive && onOpen(device)}
-      onKeyDown={(e) => {
-        if (interactive && (e.key === "Enter" || e.key === " ")) {
-          e.preventDefault();
-          onOpen(device);
-        }
-      }}
-    >
-      {device === "desktop" && (
-        <div aria-hidden="true" className="flex h-4 items-center gap-[3px] px-[3px]">
-          {[0, 1, 2].map((dot) => (
-            <span key={dot} className="h-[5px] w-[5px] rounded-full bg-black/15 dark:bg-white/20" />
-          ))}
-        </div>
-      )}
-      <div
-        className="relative overflow-hidden rounded-[2px] border border-black/12 bg-white dark:border-white/12 dark:bg-[#1C1C1C]"
-        style={{ aspectRatio: `${spec.width} / ${spec.height}` }}
-      >
-        {hasShot ? (
-          <div
-            ref={scrollRef}
-            className="screen-scrollbar absolute inset-0 touch-pan-y overflow-y-auto overflow-x-hidden"
-          >
-            <img
-              ref={imgRef}
-              src={screens[0]}
-              alt={screenAlt(project, device, 1, screens.length)}
-              width={spec.width}
-              height={spec.height}
-              loading="lazy"
-              decoding="async"
-              draggable={false}
-              onError={() => setFailed(true)}
-              className="block h-auto w-full"
-            />
-          </div>
-        ) : (
-          <p className="absolute inset-0 flex items-center justify-center p-2 text-center font-mono text-[10px] leading-snug text-[#5E615A] dark:text-[#A3A3A3]">
-            Screenshot coming soon
-          </p>
-        )}
-      </div>
-    </div>
-  );
-}
-
-/**
- * Hovering a screen with a mouse slowly scrolls the page inside it, then returns to the top on
- * leave. Wheel or click hands control back. Off for touch (people drag instead) and reduced motion.
- */
-function useHoverScroll(enabled: boolean) {
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!enabled || !el) return;
-    const SPEED = 110; // px per second
-    let frame = 0;
-    let delay = 0;
-    let last = 0;
-    let pos = 0;
-
-    const stop = () => {
-      cancelAnimationFrame(frame);
-      clearTimeout(delay);
-      frame = 0;
-    };
-    const tick = (now: number) => {
-      pos += (SPEED * (last ? now - last : 16)) / 1000;
-      last = now;
-      el.scrollTop = pos;
-      if (pos < el.scrollHeight - el.clientHeight) frame = requestAnimationFrame(tick);
-    };
-    const onEnter = (e: PointerEvent) => {
-      if (e.pointerType !== "mouse" || prefersReducedMotion()) return;
-      // A short wait so passing the cursor over a frame doesn't set it off.
-      delay = window.setTimeout(() => {
-        pos = el.scrollTop;
-        last = 0;
-        frame = requestAnimationFrame(tick);
-      }, 350);
-    };
-    const onLeave = (e: PointerEvent) => {
-      if (e.pointerType !== "mouse") return;
-      stop();
-      if (!prefersReducedMotion()) el.scrollTo({ top: 0, behavior: "smooth" });
-    };
-
-    el.addEventListener("pointerenter", onEnter);
-    el.addEventListener("pointerleave", onLeave);
-    el.addEventListener("wheel", stop, { passive: true });
-    el.addEventListener("pointerdown", stop);
-    return () => {
-      stop();
-      el.removeEventListener("pointerenter", onEnter);
-      el.removeEventListener("pointerleave", onLeave);
-      el.removeEventListener("wheel", stop);
-      el.removeEventListener("pointerdown", stop);
-    };
-  }, [enabled]);
-
-  return ref;
 }

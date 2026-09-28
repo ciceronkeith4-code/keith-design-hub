@@ -12,7 +12,7 @@ export type Device = "desktop" | "tablet" | "mobile";
 /** The viewport each device's screenshots are captured at, in CSS pixels. */
 export const DEVICES: Record<Device, { label: string; width: number; height: number }> = {
   desktop: { label: "Desktop", width: 1440, height: 900 },
-  tablet: { label: "Tablet", width: 834, height: 1194 },
+  tablet: { label: "Tablet", width: 1194, height: 834 },
   mobile: { label: "Mobile", width: 390, height: 844 },
 };
 
