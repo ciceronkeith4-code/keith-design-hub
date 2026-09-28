@@ -31,6 +31,12 @@ export type Project = {
   role: string;
   stack: string[];
   featured?: boolean;
+  /** The device shown largest and in front of the scene. */
+  heroDevice: Device;
+  /** Only the devices the project is actually used on. Defaults to all three. */
+  devices?: Device[];
+  /** A real photo of the work; when set, the "All" tab shows it instead of the device scene. */
+  photo?: string;
   /** caseStudy is always /projects/<slug>; that page's write-up lives in case-studies.ts. */
   links: { caseStudy: string; live?: string; repo?: string };
   /** Full-page captures per device. An empty list shows a "Screenshot coming soon" frame. */
@@ -63,6 +69,7 @@ export const PROJECTS: Project[] = [
     role: "", // TODO(Keith): e.g. "Solo developer"
     stack: ["HTML5", "CSS3", "JavaScript"],
     featured: true,
+    heroDevice: "desktop",
     links: {
       caseStudy: "/projects/nclex-amplified-interns",
       live: "https://interns.nclexamplifiedreviewcenter.com",
@@ -89,6 +96,7 @@ export const PROJECTS: Project[] = [
     year: "", // TODO(Keith)
     role: "", // TODO(Keith)
     stack: ["JavaScript", "Node.js", "Express", "HTML5", "CSS3"],
+    heroDevice: "tablet",
     links: {
       caseStudy: "/projects/iconic-cards-pos",
       live: "https://iconiccards.vercel.app/",
@@ -108,6 +116,7 @@ export const PROJECTS: Project[] = [
     year: "", // TODO(Keith)
     role: "", // TODO(Keith)
     stack: ["PHP", "JavaScript", "HTML5", "CSS3", "MySQL"],
+    heroDevice: "mobile",
     links: { caseStudy: "/projects/one-cainta", live: "https://onecainta.com" },
     screens: captures("one-cainta"),
     cover: "/images/projects/onecainta.png",
@@ -124,6 +133,7 @@ export const PROJECTS: Project[] = [
     year: "", // TODO(Keith)
     role: "", // TODO(Keith)
     stack: ["React", "Vite", "Tailwind CSS", "Supabase", "Vercel"],
+    heroDevice: "desktop",
     links: { caseStudy: "/projects/jpcs-sscr-manila", live: "https://jpcs-sscrmnl.vercel.app/" },
     screens: captures("jpcs-sscr-manila"),
     cover: "/images/projects/sscrmnl-itdept-1.png",
@@ -144,6 +154,7 @@ export const PROJECTS: Project[] = [
     year: "", // TODO(Keith)
     role: "", // TODO(Keith)
     stack: ["React", "TypeScript", "TanStack Start", "Tailwind CSS", "Vercel"],
+    heroDevice: "desktop",
     links: {
       caseStudy: "/projects/cicerra-realty",
       live: "https://cicerra-realty-services.vercel.app/",
@@ -163,6 +174,7 @@ export const PROJECTS: Project[] = [
     year: "", // TODO(Keith)
     role: "", // TODO(Keith)
     stack: ["React", "TypeScript", "Tailwind CSS", "Shadcn UI", "Supabase", "Vite"],
+    heroDevice: "desktop",
     links: { caseStudy: "/projects/sscrecoletos-connect" },
     // No public deployment to capture yet.
     screens: NO_SCREENS,
@@ -180,6 +192,7 @@ export const PROJECTS: Project[] = [
     year: "", // TODO(Keith)
     role: "", // TODO(Keith)
     stack: ["React", "TypeScript", "Tailwind CSS", "Shadcn UI", "Vite"],
+    heroDevice: "desktop",
     links: {
       caseStudy: "/projects/sscr-library",
       live: "https://final-sscr-library.vercel.app/",

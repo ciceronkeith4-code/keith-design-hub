@@ -30,8 +30,9 @@
   --color-ring: var(--ring);
   --font-sans: "General Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: "JetBrains Mono", SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  /* Headings and text on /projects; the route loads the font itself. */
+  /* Text and mono labels on /projects; the route loads both fonts itself. */
   --font-display: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-display-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
 :root {

@@ -29,7 +29,9 @@ export function Projects() {
   return (
     <div className="w-full font-display text-[#141414] dark:text-[#EDEDED]">
       <header>
-        <div className={`flex items-center justify-between gap-4 font-mono text-[11px] ${MUTED}`}>
+        <div
+          className={`flex items-center justify-between gap-4 font-display-mono text-[11px] ${MUTED}`}
+        >
           <span>/projects</span>
           <span aria-live="polite">
             {pad(shown.length)} {shown.length === 1 ? "project" : "projects"}
@@ -47,7 +49,7 @@ export function Projects() {
         <div
           role="group"
           aria-label="Filter projects by technology"
-          className="no-scrollbar -mx-6 mt-8 flex gap-5 overflow-x-auto border-b border-black/12 px-6 font-mono text-xs sm:mx-0 sm:flex-wrap sm:gap-x-6 sm:gap-y-1 sm:overflow-visible sm:px-0 dark:border-white/12"
+          className="no-scrollbar -mx-6 mt-8 flex gap-5 overflow-x-auto border-b border-black/12 px-6 font-display-mono text-xs sm:mx-0 sm:flex-wrap sm:gap-x-6 sm:gap-y-1 sm:overflow-visible sm:px-0 dark:border-white/12"
         >
           {FILTER_TAGS.map((tag) => {
             const active = filter === tag;
@@ -72,7 +74,7 @@ export function Projects() {
 
       {shown.length === 0 ? (
         <div className="py-12">
-          <p className={`font-mono text-xs ${MUTED}`}>No projects tagged {filter} yet.</p>
+          <p className={`font-display-mono text-xs ${MUTED}`}>No projects tagged {filter} yet.</p>
           <button
             type="button"
             onClick={() => setFilter("All")}
@@ -109,12 +111,14 @@ function ProjectRow({ project, total }: { project: Project; total: number }) {
             : ""
       }`}
     >
+      {/* Desktop: text | scene on one grid row with bottoms aligned; the tabs sit on a second
+          row under the scene. Narrower: text, scene, tabs stacked. */}
       <article
         aria-labelledby={titleId}
-        className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-10"
+        className="grid grid-cols-1 lg:grid-cols-12 lg:items-end lg:gap-x-10"
       >
-        <div className="flex flex-col lg:col-span-5">
-          <div className={`flex items-center gap-3 font-mono text-[11px] ${MUTED}`}>
+        <div className="flex flex-col lg:col-span-5 lg:row-start-1">
+          <div className={`flex items-center gap-3 font-display-mono text-[11px] ${MUTED}`}>
             <span>
               <span className="text-[#141414] dark:text-[#EDEDED]">{pad(project.index)}</span> /{" "}
               {pad(total)}
@@ -137,7 +141,7 @@ function ProjectRow({ project, total }: { project: Project; total: number }) {
           </p>
 
           <div
-            className={`mt-6 flex flex-col gap-1.5 font-mono text-[11px] leading-relaxed ${MUTED}`}
+            className={`mt-6 flex flex-col gap-1.5 font-display-mono text-[11px] leading-relaxed ${MUTED}`}
           >
             <p>{meta.join(" · ")}</p>
             <p>
@@ -168,9 +172,11 @@ function ProjectRow({ project, total }: { project: Project; total: number }) {
           </div>
         </div>
 
-        <div className="min-w-0 lg:col-span-7">
-          <DeviceStage project={project} />
-        </div>
+        <DeviceStage
+          project={project}
+          stageClassName="mt-10 min-w-0 lg:col-span-7 lg:col-start-6 lg:row-start-1 lg:mt-0"
+          tabsClassName="mt-4 min-w-0 lg:col-span-7 lg:col-start-6 lg:row-start-2"
+        />
       </article>
     </li>
   );

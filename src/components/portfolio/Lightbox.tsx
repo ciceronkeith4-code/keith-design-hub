@@ -20,6 +20,8 @@ interface LightboxProps {
   onIndexChange: (i: number) => void;
   /** Accessible name for the dialog. */
   label?: string;
+  /** Font for the counter and caption, to match the page it opens from. */
+  fontClassName?: string;
 }
 
 const FOCUSABLE = 'button:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])';
@@ -35,6 +37,7 @@ export function Lightbox({
   onClose,
   onIndexChange,
   label = "Image viewer",
+  fontClassName = "font-mono",
 }: LightboxProps) {
   const open = index !== null;
   const dialogRef = useRef<HTMLDivElement>(null);
@@ -112,7 +115,7 @@ export function Lightbox({
           aria-label={label}
         >
           <div className="flex shrink-0 items-center justify-between gap-4">
-            <span className="font-mono text-xs text-[#B5B5B5]">
+            <span className={`${fontClassName} text-xs text-[#B5B5B5]`}>
               {pad(index + 1)} / {pad(images.length)}
             </span>
             <button
@@ -179,7 +182,9 @@ export function Lightbox({
                 />
               </div>
               {image.caption && (
-                <figcaption className="mt-3 shrink-0 text-center font-mono text-xs text-[#B5B5B5]">
+                <figcaption
+                  className={`mt-3 shrink-0 text-center ${fontClassName} text-xs text-[#B5B5B5]`}
+                >
                   {image.caption}
                 </figcaption>
               )}

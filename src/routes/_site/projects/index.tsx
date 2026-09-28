@@ -14,10 +14,10 @@ export const Route = createFileRoute("/_site/projects/")({
       ...base,
       links: [
         ...base.links,
-        // Geist is only used here, so only this page pays for it.
+        // Geist and Geist Mono are only used here, so only this page pays for them.
         {
           rel: "stylesheet",
-          href: "https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap",
+          href: "https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap",
         },
       ],
     };
