@@ -15,15 +15,10 @@ function HeroLink({ slug, children }: { slug: string; children: ReactNode }) {
   );
 }
 
-interface BentoDashboardProps {
-  /** False while the intro overlay still covers the page, so the particle fly-in isn't played behind it. */
-  introReady?: boolean;
-}
-
 // Organic silhouette for the portrait frame; must match ParticlePortrait's COLORS.normal.paper fill (#E1E4DD).
 const PORTRAIT_SHAPE = "68% 32% 58% 42% / 44% 56% 44% 56%";
 
-export function BentoDashboard({ introReady = true }: BentoDashboardProps) {
+export function BentoDashboard() {
   return (
     <div className="w-full flex-1 flex flex-col">
       {/* my-auto centers the hero in the free height but never clips it when the viewport is shorter than the content */}
@@ -51,7 +46,7 @@ export function BentoDashboard({ introReady = true }: BentoDashboardProps) {
               to="/projects"
               className="rounded-md bg-[#161616] text-white dark:bg-[#EDEDED] dark:text-[#161616] hover:bg-[#333333] dark:hover:bg-white px-5 py-2.5 text-sm font-medium transition-colors cursor-pointer"
             >
-              View Projects
+              View work
             </Link>
 
             <Link
@@ -67,7 +62,7 @@ export function BentoDashboard({ introReady = true }: BentoDashboardProps) {
         {/* Particle portrait inside an organic shape: particles swirl in within the outline, and the curve clips the
             portrait's flat bottom cut. The shape stays light in both themes so the dots read as a true positive. */}
         <ParticlePortrait
-          play={introReady}
+          play
           className="shrink-0 h-[300px] sm:h-[360px] lg:h-[min(62vh,500px)] aspect-[4/5] overflow-hidden bg-[#E1E4DD] isolate"
           style={{ borderRadius: PORTRAIT_SHAPE }}
         />

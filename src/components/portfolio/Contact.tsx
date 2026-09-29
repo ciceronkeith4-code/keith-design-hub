@@ -123,7 +123,7 @@ export function Contact() {
       if (response.ok && data.success) {
         setStatus({
           type: "success",
-          message: "Thank you! Your message has been sent successfully.",
+          message: "Thanks. Your message was sent.",
         });
         setFormData({
           name: "",
@@ -152,9 +152,12 @@ export function Contact() {
 
   return (
     <div className="w-full flex flex-col text-left">
-      <h1 className="mb-6 sm:mb-8 font-sans text-[clamp(26px,3.5vh,36px)] font-semibold tracking-tight text-[#161616] dark:text-[#EDEDED] leading-tight">
-        Get in Touch
+      <h1 className="font-sans text-[clamp(26px,3.5vh,36px)] font-semibold tracking-tight text-[#161616] dark:text-[#EDEDED] leading-tight">
+        Contact
       </h1>
+      <p className="mt-2 mb-6 sm:mb-8 text-sm text-[#62655E] dark:text-[#A3A3A3]">
+        Open to freelance projects and remote roles.
+      </p>
 
       {/* Primary Focal Point: Message Form Card */}
       <div className="rounded-[16px] sm:rounded-[20px] border border-[#E5E5E0] dark:border-[#262626] bg-[#F6F7F4] dark:bg-[#141414] p-5 sm:p-7 flex flex-col">

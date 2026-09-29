@@ -53,7 +53,8 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 
 /**
  * Every case study has the same sections in the same order: header, at a glance, what I built,
- * technical decisions, screenshots, next project. A section with no data is skipped.
+ * technical decisions (or "How it works" when there is only one), screenshots, next project.
+ * A section with no data is skipped.
  */
 function CaseStudyPage() {
   const { index } = Route.useLoaderData();
@@ -72,7 +73,7 @@ function CaseStudyPage() {
   const glance = [
     { term: "Client", value: project.client },
     { term: "Role", value: project.role },
-    { term: "Year", value: project.year },
+    { term: "Timeline", value: project.timeline },
     { term: "Status", value: project.status },
     { term: "Stack", value: project.stack.join(" · ") },
   ].filter((row) => row.value);
@@ -161,7 +162,7 @@ function CaseStudyPage() {
             </Section>
           )}
 
-          {project.decisions.length > 0 && (
+          {project.decisions.length >= 2 && (
             <Section title="Technical decisions">
               <div className="max-w-[68ch] flex flex-col gap-4">
                 {project.decisions.map((d) => (
@@ -171,6 +172,12 @@ function CaseStudyPage() {
                   </div>
                 ))}
               </div>
+            </Section>
+          )}
+
+          {project.decisions.length === 1 && (
+            <Section title="How it works">
+              <p className="max-w-[68ch]">{project.decisions[0].body}</p>
             </Section>
           )}
 

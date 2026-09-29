@@ -8,7 +8,7 @@ export const Route = createFileRoute("/_site/about")({
       path: "/about",
       title: "About | Keith Ciceron",
       description:
-        "Keith Ciceron is a full stack developer and BSIT student at San Sebastian College Recoletos Manila. Background, education, and core specializations.",
+        "Keith Ciceron builds web systems for clients as a freelancer and is finishing a BSIT at San Sebastian College Recoletos Manila. Education and the stack behind each project.",
     }),
   component: About,
 });

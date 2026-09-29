@@ -3,7 +3,8 @@
  * the command palette, and the sitemap all read from this file.
  *
  * TODO(Keith): fill in the empty fields below.
- *   - role and year: every project
+ *   - role and timeline (e.g. "Jan to Apr 2025"): every project
+ *   - Freelance Web Developer start month and year: src/lib/portfolio-data.ts
  *   - status: SSCRecoletos Connect (no public deployment yet)
  *   - status: SSCR Library (the live URL loads a blank page; its assets 404 under the
  *     /FINAL-SSCR-LIBRARY/ base path)
@@ -27,24 +28,21 @@ export type Project = {
   name: string;
   /** Short sentence-case label shown above the name. */
   type: string;
-  /** One sentence, 25 words at most, for the list page. */
-  summary: string;
-  /** Two sentences at most, for the top of the case study. */
+  /** Two sentences at most, for the top of the case study. The first also describes the project on /projects. */
   intro: string;
   client: string;
   role: string;
-  year: string;
+  /** e.g. "Jan to Apr 2025". Empty hides it. */
+  timeline: string;
   status: string;
   stack: string[];
   /** 3 to 5 bullets for "What I built". */
   built: string[];
-  /** 1 to 3 items for "Technical decisions". */
+  /** Two or more show as "Technical decisions"; a single one shows as "How it works". */
   decisions: { title: string; body: string }[];
   links: { live?: string; code?: string };
   /** The first image is the case study hero and the link preview image. */
   images: { src: string; alt: string }[];
-  /** Only one project may be featured. */
-  featured: boolean;
   /** The device shown largest and in front of the preview scene. */
   heroDevice: Device;
   /** Only the devices the project is used on. Defaults to all three. */
@@ -91,13 +89,11 @@ const projects: Project[] = [
     slug: "nclex-amplified-interns",
     name: "NCLEX Amplified Interns",
     type: "Internship landing page",
-    summary:
-      "The internship and OJT landing page for NCLEX Amplified Review Center, with a 500-hour IT/CS curriculum roadmap and a multi-step application form.",
     intro:
       "I built the official landing page for the NCLEX Amplified internship and OJT program. It walks BSIT and BSCS students through the 500-hour IT/CS track and each department, then takes their application.",
     client: "NCLEX Amplified Review Center",
     role: "",
-    year: "",
+    timeline: "",
     status: "Live",
     stack: ["HTML", "CSS", "JavaScript"],
     built: [
@@ -144,21 +140,18 @@ const projects: Project[] = [
         alt: "Closing call to apply above the footer with navigation, working hours, and contact details",
       },
     ],
-    featured: true,
     heroDevice: "mobile",
     screens: captures("nclex-amplified-interns"),
   },
   {
     slug: "iconic-cards-pos",
     name: "Iconic Cards PH",
-    type: "Point of sale system",
-    summary:
-      "A point-of-sale and ordering system for a trading card shop, with a searchable catalog, cart and checkout, and an admin panel with Excel export.",
+    type: "Point of sale",
     intro:
       "I built a point-of-sale and ordering system for Iconic Cards PH that works on desktop and mobile. Customers browse the card catalog and place orders, and staff manage products and orders from an admin panel.",
     client: "Iconic Cards PH",
     role: "",
-    year: "",
+    timeline: "",
     status: "Live",
     stack: ["HTML", "CSS", "JavaScript", "Node.js", "Express"],
     built: [
@@ -185,7 +178,6 @@ const projects: Project[] = [
         alt: "Mobile catalog with the card search bar, one card listing, and a bottom bar with Home and My Cart",
       },
     ],
-    featured: false,
     heroDevice: "mobile",
     screens: captures("iconic-cards-pos"),
   },
@@ -193,13 +185,11 @@ const projects: Project[] = [
     slug: "one-cainta",
     name: "One Cainta",
     type: "Municipal portal",
-    summary:
-      "A municipal portal for Cainta, Rizal where residents find public announcements, community services, and local government resources in one place.",
     intro:
       "One Cainta puts the town's public announcements, digital community services, and local government resources on one site. Residents can install it on their phones like an app.",
     client: "Municipality of Cainta, Rizal",
     role: "",
-    year: "",
+    timeline: "",
     status: "Live",
     stack: ["HTML", "CSS", "JavaScript", "PHP", "MySQL"],
     built: [
@@ -221,21 +211,18 @@ const projects: Project[] = [
         alt: "Dashboard with a Hello, Cainteño greeting card, the latest announcements heading, and an hourly weather forecast for Cainta",
       },
     ],
-    featured: false,
     heroDevice: "mobile",
     screens: captures("one-cainta"),
   },
   {
     slug: "jpcs-sscr-manila",
     name: "SSCR Manila IT Department",
-    type: "Department website and student portal",
-    summary:
-      "The public website and student portal for the IT Department and JPCS chapter at SSCR Manila, with grade records and a grade simulator.",
+    type: "Department website",
     intro:
       "This is the public website and student portal of the Junior Philippine Computer Society chapter at SSCR Manila. Behind the login, students track their grades against the BSIT curriculum.",
     client: "JPCS, San Sebastian College Recoletos Manila",
     role: "",
-    year: "",
+    timeline: "",
     status: "Live",
     stack: ["React", "Vite", "Tailwind CSS", "Supabase", "Vercel"],
     built: [
@@ -274,7 +261,6 @@ const projects: Project[] = [
         alt: "About the department section with a large headline beside a photo of two speakers at a podium",
       },
     ],
-    featured: false,
     heroDevice: "mobile",
     screens: captures("jpcs-sscr-manila"),
   },
@@ -282,13 +268,11 @@ const projects: Project[] = [
     slug: "cicerra-realty",
     name: "Cicerra Realty",
     type: "Real estate website",
-    summary:
-      "A marketing and listings site for a real estate brokerage, with property search, detailed listings, and an admin panel for managing properties.",
     intro:
       "I built the website for Cicerra Realty Services, a real estate brokerage. Visitors search and browse listings, and the broker adds, edits, and removes properties from an admin panel without a developer.",
     client: "Cicerra Realty Services",
     role: "",
-    year: "",
+    timeline: "",
     status: "Live",
     stack: ["React", "TypeScript", "TanStack Start", "Tailwind CSS", "Vercel"],
     built: [
@@ -315,21 +299,18 @@ const projects: Project[] = [
         alt: "Home page hero over a photo of a house at dusk, with buy, rent, and sell tabs and a property search bar",
       },
     ],
-    featured: false,
     heroDevice: "mobile",
     screens: captures("cicerra-realty"),
   },
   {
     slug: "sscrecoletos-connect",
     name: "SSCRecoletos Connect",
-    type: "Survey and evaluation portal",
-    summary:
-      "A monitoring and evaluation portal for outreach programs, where organizers build satisfaction surveys, share them by link or QR code, and read the results.",
+    type: "Survey portal",
     intro:
       "SSCRecoletos Connect helps outreach organizers at San Sebastian College Recoletos collect feedback. They build a survey, share it by link or QR code, and read the responses on a dashboard.",
     client: "San Sebastian College Recoletos (school project)",
     role: "",
-    year: "",
+    timeline: "",
     status: "",
     stack: ["React", "TypeScript", "Vite", "Tailwind CSS", "Shadcn UI", "Supabase"],
     built: [
@@ -356,7 +337,6 @@ const projects: Project[] = [
         alt: "Dashboard loading, with placeholder cards under a red banner and two published forms in the Recent Forms list",
       },
     ],
-    featured: false,
     heroDevice: "mobile",
     // No public deployment to capture yet.
     screens: NO_SCREENS,
@@ -364,14 +344,12 @@ const projects: Project[] = [
   {
     slug: "sscr-library",
     name: "SSCR Library",
-    type: "Library management system",
-    summary:
-      "A library management prototype for the school library, with separate dashboards for borrowers, librarians, and a supervisor.",
+    type: "Library system",
     intro:
       "I built a library management prototype for the SSCR school library. Students and faculty borrow books, each librarian manages the books for their year level, and a supervisor manages accounts.",
     client: "San Sebastian College Recoletos (school project)",
     role: "",
-    year: "",
+    timeline: "",
     status: "",
     stack: ["React", "TypeScript", "Vite", "Tailwind CSS", "Shadcn UI"],
     built: [
@@ -397,7 +375,6 @@ const projects: Project[] = [
         alt: "Sign-in page with the San Sebastian College Recoletos seal and a school ID and password form",
       },
     ],
-    featured: false,
     heroDevice: "mobile",
     // The live deploy renders blank; switch to captures("sscr-library") once it's fixed.
     screens: NO_SCREENS,
@@ -408,6 +385,3 @@ export const PROJECTS: Project[] = projects.map((p) => ({
   ...p,
   stack: [...p.stack].sort(byStackOrder),
 }));
-
-/** Every tag used by at least one project, in display order. */
-export const STACK_TAGS = STACK_ORDER.filter((tag) => PROJECTS.some((p) => p.stack.includes(tag)));

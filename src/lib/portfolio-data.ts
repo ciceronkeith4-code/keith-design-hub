@@ -7,19 +7,17 @@ import {
   SiTailwindcss,
   SiNodedotjs,
   SiMysql,
-  SiFirebase,
-  SiFigma,
-  SiGit,
-  SiGithub,
   SiVercel,
   SiSupabase,
   SiPhp,
   SiExpress,
 } from "react-icons/si";
-import { VscVscode } from "react-icons/vsc";
 import { TbUserSearch } from "react-icons/tb";
-import { PhotoshopMark } from "@/components/portfolio/SkillMarks";
 
+/**
+ * The Stack section on /about. Each entry lists the projects that used it (from src/data/projects.ts),
+ * and an entry no project uses is hidden. QA Testing points to the Opoli entry on /experience instead.
+ */
 export const SKILLS = [
   { name: "HTML", icon: SiHtml5, group: "Frontend" },
   { name: "CSS", icon: SiCss, group: "Frontend" },
@@ -31,41 +29,40 @@ export const SKILLS = [
   { name: "Express", icon: SiExpress, group: "Backend" },
   { name: "PHP", icon: SiPhp, group: "Backend" },
   { name: "MySQL", icon: SiMysql, group: "Database" },
-  { name: "Firebase", icon: SiFirebase, group: "Database" },
   { name: "Supabase", icon: SiSupabase, group: "Database" },
-  { name: "Figma", icon: SiFigma, group: "Design" },
-  { name: "Photoshop", icon: PhotoshopMark, group: "Design" },
-  { name: "Git", icon: SiGit, group: "Tools & DevOps" },
-  { name: "GitHub", icon: SiGithub, group: "Tools & DevOps" },
-  { name: "Vercel", icon: SiVercel, group: "Tools & DevOps" },
-  { name: "VS Code", icon: VscVscode, group: "Tools & DevOps" },
-  { name: "QA Testing", icon: TbUserSearch, group: "Additional Skills" },
+  { name: "Vercel", icon: SiVercel, group: "Hosting" },
+  { name: "QA Testing", icon: TbUserSearch, group: "Testing" },
 ];
 
+/** Work history on /experience, newest first. `id` is the anchor other pages link to. */
 export const EXPERIENCE = [
   {
-    role: "Dev Assistant",
-    company: "Opoli Technology Inc.",
-    period: "Sep 2022 to Dec 2025",
-    image: "/images/ojt/opoli-bounty.jpg",
+    id: "freelance",
+    role: "Freelance Web Developer",
+    company: "Self-employed",
+    // TODO(Keith): start month and year, e.g. "Jan 2025 to present".
+    period: "",
     points: [
-      "Performed manual testing on web and mobile applications.",
-      "Identified bugs, functional defects, and usability issues.",
-      "Created detailed bug reports with clear reproduction steps.",
-      "Assisted quality assurance processes across releases.",
+      "Built the point-of-sale and ordering system for Iconic Cards PH, a trading card shop.",
+      "Customers order from a searchable card catalog. Staff manage products and export orders to Excel from an admin panel.",
     ],
   },
   {
-    role: "Freelance Photo & Video Editor",
-    company: "Self-Employed",
-    period: "Jan 2023 to Apr 2024",
-    image: "/images/profile/keith-brown-shirt.jpg",
+    id: "opoli",
+    role: "Dev Assistant",
+    company: "Opoli Technology Inc.",
+    period: "Sep 2022 to Dec 2025",
     points: [
-      "Edited social media content for multiple platforms.",
-      "Produced marketing visuals and digital media.",
-      "Enhanced photos and videos through post-production.",
-      "Improved digital media quality and visual consistency.",
+      "Tested web and mobile apps by hand across releases.",
+      "Logged bugs, functional defects, and usability issues, each with clear steps to reproduce it.",
     ],
+  },
+  {
+    id: "editing",
+    role: "Freelance Photo & Video Editor",
+    company: "Self-employed",
+    period: "Jan 2023 to Apr 2024",
+    points: ["Edited social media photos and videos."],
   },
 ];
 

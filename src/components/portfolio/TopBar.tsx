@@ -1,16 +1,14 @@
 import { useState, useEffect } from "react";
 import { Link } from "@tanstack/react-router";
-import { Search, Sun, Moon, ArrowUpRight } from "lucide-react";
+import { Sun, Moon, ArrowUpRight } from "lucide-react";
 
-// Easy-to-edit brand name constant (e.g. "keithciceron.dev" or "Keith Ciceron")
-export const BRAND_NAME = "keithciceron.dev";
+const BRAND_NAME = "Keith Ciceron";
 
 interface TopBarProps {
-  onOpenCommandPalette: () => void;
   onToggleTheme: () => void;
 }
 
-export function TopBar({ onOpenCommandPalette, onToggleTheme }: TopBarProps) {
+export function TopBar({ onToggleTheme }: TopBarProps) {
   const [manilaTime, setManilaTime] = useState<string>("");
 
   useEffect(() => {
@@ -72,23 +70,6 @@ export function TopBar({ onOpenCommandPalette, onToggleTheme }: TopBarProps) {
         </div>
 
         <div className="flex items-center gap-1 sm:gap-6 lg:gap-8">
-          {/* Search: icon-only on phones, full field with shortcut hint from sm up */}
-          <button
-            type="button"
-            onClick={onOpenCommandPalette}
-            className="h-8 w-8 sm:w-[240px] flex items-center justify-center sm:justify-between rounded-md sm:border border-[#E5E5E0] dark:border-[#262626] bg-transparent hover:bg-black/5 dark:hover:bg-white/5 sm:px-3 text-xs text-[#62655E] dark:text-[#A3A3A3] transition-colors cursor-pointer"
-            title="Search sections (Ctrl+K)"
-            aria-label="Search sections"
-          >
-            <span className="flex items-center gap-2 overflow-hidden">
-              <Search className="h-4 w-4 sm:h-3.5 sm:w-3.5 sm:opacity-60 shrink-0" />
-              <span className="hidden sm:inline truncate">Search sections…</span>
-            </span>
-            <kbd className="pointer-events-none hidden sm:inline-flex h-4 select-none items-center rounded border border-[#E5E5E0] dark:border-[#333333] px-1 font-mono text-[9px] text-[#62655E] dark:text-[#888888] shrink-0">
-              Ctrl K
-            </kbd>
-          </button>
-
           {manilaTime && (
             <div
               className="hidden lg:flex items-center gap-2 text-xs cursor-default"

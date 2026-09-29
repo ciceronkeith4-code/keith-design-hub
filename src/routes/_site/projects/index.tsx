@@ -6,7 +6,7 @@ export const Route = createFileRoute("/_site/projects/")({
   head: () => {
     const base = pageHead({
       path: "/projects",
-      title: "Projects | Keith Ciceron",
+      title: "Work | Keith Ciceron",
       description:
         "Selected work by Keith Ciceron: client systems, school projects, and organization portals, each with a case study, its stack, and live links.",
     });
