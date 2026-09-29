@@ -1,19 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { PROJECTS, type Project } from "@/lib/projects";
+import { PROJECTS, STACK_TAGS, type Project } from "@/data/projects";
 import { DeviceStage } from "./DeviceStage";
 
-const FILTER_TAGS = [
-  "All",
-  "React",
-  "TypeScript",
-  "Tailwind CSS",
-  "PHP",
-  "MySQL",
-  "Supabase",
-] as const;
-
-type Filter = (typeof FILTER_TAGS)[number];
+/** Only tags some project actually uses, in stack order. */
+const FILTER_TAGS = ["All", ...STACK_TAGS];
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
@@ -23,7 +14,7 @@ const FOCUS_RING =
 const MUTED = "text-[#5E615A] dark:text-[#A3A3A3]";
 
 export function Projects() {
-  const [filter, setFilter] = useState<Filter>("All");
+  const [filter, setFilter] = useState("All");
   const shown = filter === "All" ? PROJECTS : PROJECTS.filter((p) => p.stack.includes(filter));
 
   return (
@@ -38,7 +29,7 @@ export function Projects() {
           </span>
         </div>
         <h1 className="mt-5 text-[clamp(32px,4.4vw,46px)] font-semibold leading-[1.02] tracking-[-0.035em]">
-          Selected Works
+          Selected works
         </h1>
         <p className="mt-3 max-w-[58ch] text-[15px] leading-relaxed text-[#3A3C38] dark:text-[#C8C8C8]">
           Client systems, school projects, and organization portals, each shown at desktop, tablet,
@@ -86,7 +77,12 @@ export function Projects() {
       ) : (
         <ol>
           {shown.map((project) => (
-            <ProjectRow key={project.slug} project={project} total={PROJECTS.length} />
+            <ProjectRow
+              key={project.slug}
+              project={project}
+              number={PROJECTS.indexOf(project) + 1}
+              total={PROJECTS.length}
+            />
           ))}
         </ol>
       )}
@@ -94,11 +90,19 @@ export function Projects() {
   );
 }
 
-function ProjectRow({ project, total }: { project: Project; total: number }) {
+function ProjectRow({
+  project,
+  number,
+  total,
+}: {
+  project: Project;
+  number: number;
+  total: number;
+}) {
   const [ref, reveal] = useRevealOnScroll<HTMLLIElement>();
   const titleId = `project-${project.slug}`;
-  const meta = [project.type, project.year, project.role].filter(Boolean);
-  const { live, repo } = project.links;
+  const meta = [project.status, project.year, project.role].filter(Boolean);
+  const { live, code } = project.links;
 
   return (
     <li
@@ -120,21 +124,22 @@ function ProjectRow({ project, total }: { project: Project; total: number }) {
         <div className="flex flex-col lg:col-span-5 lg:row-start-1">
           <div className={`flex items-center gap-3 font-display-mono text-[11px] ${MUTED}`}>
             <span>
-              <span className="text-[#141414] dark:text-[#EDEDED]">{pad(project.index)}</span> /{" "}
+              <span className="text-[#141414] dark:text-[#EDEDED]">{pad(number)}</span> /{" "}
               {pad(total)}
             </span>
             {project.featured && (
-              <span className="rounded-[2px] border border-black/20 px-1.5 py-px uppercase tracking-[0.08em] text-[#141414] dark:border-white/25 dark:text-[#EDEDED]">
+              <span className="rounded-[2px] border border-black/20 px-1.5 py-px text-[#141414] dark:border-white/25 dark:text-[#EDEDED]">
                 Featured
               </span>
             )}
           </div>
 
+          <p className={`mt-4 font-display-mono text-[11px] ${MUTED}`}>{project.type}</p>
           <h2
             id={titleId}
-            className="mt-4 text-[clamp(22px,2.6vw,28px)] font-semibold leading-[1.15] tracking-[-0.025em] text-balance"
+            className="mt-1.5 text-[clamp(22px,2.6vw,28px)] font-semibold leading-[1.15] tracking-[-0.025em] text-balance"
           >
-            {project.title}
+            {project.name}
           </h2>
           <p className="mt-3 max-w-[52ch] text-[15px] leading-relaxed text-[#3A3C38] dark:text-[#C8C8C8]">
             {project.summary}
@@ -143,7 +148,7 @@ function ProjectRow({ project, total }: { project: Project; total: number }) {
           <div
             className={`mt-6 flex flex-col gap-1.5 font-display-mono text-[11px] leading-relaxed ${MUTED}`}
           >
-            <p>{meta.join(" · ")}</p>
+            {meta.length > 0 && <p>{meta.join(" · ")}</p>}
             <p>
               <span className="sr-only">Built with </span>
               {project.stack.join(" · ")}
@@ -157,15 +162,15 @@ function ProjectRow({ project, total }: { project: Project; total: number }) {
               className={`font-medium underline decoration-black/30 underline-offset-4 hover:decoration-current dark:decoration-white/30 ${FOCUS_RING}`}
             >
               Case study <span aria-hidden="true">→</span>
-              <span className="sr-only">: {project.title}</span>
+              <span className="sr-only"> for {project.name}</span>
             </Link>
             {live && (
-              <ExternalLink href={live} label={`Live site for ${project.title}`}>
-                Live
+              <ExternalLink href={live} label={`Live site for ${project.name}`}>
+                Live site
               </ExternalLink>
             )}
-            {repo && (
-              <ExternalLink href={repo} label={`Source code for ${project.title}`}>
+            {code && (
+              <ExternalLink href={code} label={`Code for ${project.name}`}>
                 Code
               </ExternalLink>
             )}

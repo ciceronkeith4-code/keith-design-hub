@@ -21,8 +21,7 @@ export function About() {
 
           <p className="mt-3 max-w-[60ch] text-sm leading-relaxed text-[#62655E] dark:text-[#A3A3A3]">
             I am a full stack developer specializing in building end-to-end applications from
-            crafting intuitive, responsive user interfaces to engineering reliable backend APIs and
-            database architectures.
+            responsive user interfaces to reliable backend APIs and database architectures.
           </p>
 
           <div className="mt-8">

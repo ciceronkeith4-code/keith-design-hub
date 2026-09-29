@@ -1,6 +1,6 @@
 /**
  * Captures each project's live site full-page at the three preview viewports (see DEVICES in
- * src/lib/projects.ts) and saves them as public/images/projects/<slug>/<device>-1.webp.
+ * src/data/projects.ts) and saves them as public/images/projects/<slug>/<device>-1.webp.
  *
  *   node --experimental-strip-types scripts/capture-screens.mjs                 every live project
  *   node --experimental-strip-types scripts/capture-screens.mjs one-cainta ...  only these slugs
@@ -16,7 +16,7 @@ import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { DEVICES, PROJECTS } from "../src/lib/projects.ts";
+import { DEVICES, PROJECTS } from "../src/data/projects.ts";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const OUT = path.join(ROOT, "public", "images", "projects");

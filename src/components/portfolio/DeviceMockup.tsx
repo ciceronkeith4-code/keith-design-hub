@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { DEVICE_FRAMES } from "@/data/deviceFrames";
-import { DEVICES, type Device, type Project } from "@/lib/projects";
+import { DEVICES, type Device, type Project } from "@/data/projects";
 import { screenAlt } from "./device-labels";
 import type { ScreenSync } from "./screen-sync";
 

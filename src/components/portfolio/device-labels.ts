@@ -1,4 +1,4 @@
-import type { Device, Project } from "@/lib/projects";
+import type { Device, Project } from "@/data/projects";
 
 export const DEVICE_NOUN: Record<Device, string> = {
   desktop: "laptop",
@@ -6,9 +6,10 @@ export const DEVICE_NOUN: Record<Device, string> = {
   mobile: "phone",
 };
 
-/** "NCLEX Amplified Interns" from "NCLEX Amplified Interns – Internship Landing Page". */
-export const siteName = (project: Project) => project.title.split(" – ")[0];
-
-/** e.g. "Iconic Cards PH on a tablet". */
+/** e.g. "Iconic Cards PH home page on a tablet". */
 export const screenAlt = (project: Project, device: Device) =>
-  `${siteName(project)} on a ${DEVICE_NOUN[device]}`;
+  `${project.name} home page on a ${DEVICE_NOUN[device]}`;
+
+/** e.g. "Tablet at 1194 × 834". */
+export const viewportCaption = (spec: { label: string; width: number; height: number }) =>
+  `${spec.label} at ${spec.width} × ${spec.height}`;

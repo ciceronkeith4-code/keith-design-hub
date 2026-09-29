@@ -9,9 +9,9 @@ import {
   type ReactNode,
 } from "react";
 import { DEVICE_FRAMES } from "@/data/deviceFrames";
-import { DEVICES, type Device, type Project } from "@/lib/projects";
+import { DEVICES, type Device, type Project } from "@/data/projects";
 import { DeviceMockup } from "./DeviceMockup";
-import { DEVICE_NOUN, screenAlt, siteName } from "./device-labels";
+import { DEVICE_NOUN, screenAlt, viewportCaption } from "./device-labels";
 import { layoutScene } from "./device-scene";
 import { Lightbox, type LightboxImage } from "./Lightbox";
 import { ScreenSync } from "./screen-sync";
@@ -59,7 +59,7 @@ export function DeviceStage({
   useEffect(() => () => sync.dispose(), [sync]);
   const [stageRef, { width, compact }] = useStageSize();
   const id = useId();
-  const name = siteName(project);
+  const name = project.name;
 
   // "All": the whole scene scaled as one unit to fit the column.
   const sceneScale = width
@@ -101,7 +101,7 @@ export function DeviceStage({
           alt:
             screenAlt(project, lightbox.device) +
             (all.length > 1 ? `, ${i + 1} of ${all.length}` : ""),
-          caption: `${spec.label} — ${spec.width} × ${spec.height}`,
+          caption: viewportCaption(spec),
           width: spec.width,
           height: spec.height,
         };
@@ -186,7 +186,7 @@ export function DeviceStage({
                       className="flex shrink-0 items-end font-display-mono text-xs text-[#5E615A] dark:text-[#A3A3A3]"
                       style={{ height: CAPTION_H }}
                     >
-                      {spec.label} — {spec.width} × {spec.height}
+                      {viewportCaption(spec)}
                     </p>
                   </div>
                 </Layer>
@@ -199,7 +199,7 @@ export function DeviceStage({
       <div className={tabsClassName}>
         <DeviceTabs
           id={id}
-          label={`Device preview of ${project.title}`}
+          label={`Device preview of ${project.name}`}
           options={["all", ...devices]}
           value={view}
           onChange={setView}
@@ -209,9 +209,7 @@ export function DeviceStage({
       <Lightbox
         images={images}
         index={lightbox?.index ?? null}
-        label={
-          lightbox ? `${project.title}, ${DEVICE_NOUN[lightbox.device]} screenshots` : undefined
-        }
+        label={lightbox ? `${project.name} ${DEVICE_NOUN[lightbox.device]} screenshots` : undefined}
         fontClassName="font-display-mono"
         onClose={() => setLightbox(null)}
         onIndexChange={(index) =>

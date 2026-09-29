@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
-import { PROJECTS } from "@/lib/projects";
+import { PROJECTS } from "@/data/projects";
 
 const BASE_URL = "https://keithciceron.vercel.app";
 
@@ -24,7 +24,7 @@ export const Route = createFileRoute("/sitemap.xml")({
             }),
           ),
           ...PROJECTS.map((p) => ({
-            path: p.links.caseStudy,
+            path: `/projects/${p.slug}`,
             changefreq: "monthly" as const,
             priority: "0.7",
           })),

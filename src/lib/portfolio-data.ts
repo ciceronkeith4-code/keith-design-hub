@@ -21,8 +21,8 @@ import { TbUserSearch } from "react-icons/tb";
 import { PhotoshopMark } from "@/components/portfolio/SkillMarks";
 
 export const SKILLS = [
-  { name: "HTML5", icon: SiHtml5, group: "Frontend" },
-  { name: "CSS3", icon: SiCss, group: "Frontend" },
+  { name: "HTML", icon: SiHtml5, group: "Frontend" },
+  { name: "CSS", icon: SiCss, group: "Frontend" },
   { name: "JavaScript", icon: SiJavascript, group: "Frontend" },
   { name: "TypeScript", icon: SiTypescript, group: "Frontend" },
   { name: "React", icon: SiReact, group: "Frontend" },

@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { SKILLS } from "@/lib/portfolio-data";
-import { PROJECTS } from "@/lib/projects";
+import { PROJECTS } from "@/data/projects";
 
 interface Category {
   id: string;
@@ -12,7 +12,7 @@ const COLUMN_1_CATEGORIES: Category[] = [
   {
     id: "frontend",
     title: "Front-end Development",
-    skills: ["HTML5", "CSS3", "JavaScript", "TypeScript", "React", "Tailwind CSS"],
+    skills: ["HTML", "CSS", "JavaScript", "TypeScript", "React", "Tailwind CSS"],
   },
 ];
 
@@ -89,7 +89,7 @@ function CategoryBlock({ category }: { category: Category }) {
                         params={{ slug: p.slug }}
                         className="underline decoration-[#C9CCC4] dark:decoration-[#3A3A3A] underline-offset-2 hover:text-[#161616] dark:hover:text-[#EDEDED] hover:decoration-current"
                       >
-                        {p.shortTitle}
+                        {p.name}
                       </Link>
                     </span>
                   ))}

@@ -21,7 +21,7 @@ import {
   CommandItem,
   CommandSeparator,
 } from "@/components/ui/command";
-import { PROJECTS } from "@/lib/projects";
+import { PROJECTS } from "@/data/projects";
 import type { TabId } from "./DashboardLayout";
 
 interface CommandPaletteProps {
@@ -92,8 +92,8 @@ export function CommandPalette({ open, onOpenChange, onSelectTab }: CommandPalet
         <CommandGroup heading="Projects">
           {PROJECTS.map((project) => (
             <CommandItem
-              key={project.title}
-              value={`project ${project.title} ${project.stack.join(" ")}`}
+              key={project.slug}
+              value={`project ${project.name} ${project.type} ${project.stack.join(" ")}`}
               onSelect={() => {
                 onOpenChange(false);
                 navigate({ to: "/projects/$slug", params: { slug: project.slug } });
@@ -102,7 +102,7 @@ export function CommandPalette({ open, onOpenChange, onSelectTab }: CommandPalet
             >
               <div className="flex items-center gap-2.5 min-w-0 pr-2">
                 <Code2 className="h-4 w-4 shrink-0 opacity-70" />
-                <span className="truncate">{project.title}</span>
+                <span className="truncate">{project.name}</span>
               </div>
               <span className="font-mono text-[10px] text-muted-foreground shrink-0">
                 {project.stack[0]}

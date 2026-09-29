@@ -1,5 +1,5 @@
 import { DEVICE_FRAMES } from "@/data/deviceFrames";
-import type { Device } from "@/lib/projects";
+import type { Device } from "@/data/projects";
 
 /**
  * Lays out a project's devices as one scene, in scene units (1 unit = 1px at scale 1).
