@@ -1,7 +1,7 @@
 import type { Device, Project } from "@/data/projects";
 
 export const DEVICE_NOUN: Record<Device, string> = {
-  desktop: "laptop",
+  desktop: "desktop monitor",
   tablet: "tablet",
   mobile: "phone",
 };

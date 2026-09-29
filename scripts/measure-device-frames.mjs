@@ -3,7 +3,7 @@
  *
  *   node scripts/measure-device-frames.mjs
  *
- * Reads public/devices/laptop.png, tablet.png, and phone.png. Each must be a front-facing PNG with
+ * Reads public/devices/monitor.png, tablet.png, and phone.png. Each must be a front-facing PNG with
  * a transparent background AND a transparent (cut-out) screen: the screen is found as the largest
  * see-through area enclosed by the device. Swap in any device images and re-run; no dependencies.
  */
@@ -13,7 +13,7 @@ import { fileURLToPath } from "node:url";
 import { inflateSync } from "node:zlib";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const IMAGES = { desktop: "laptop.png", tablet: "tablet.png", mobile: "phone.png" };
+const IMAGES = { desktop: "monitor.png", tablet: "tablet.png", mobile: "phone.png" };
 // Pixels with less alpha than this count as see-through.
 const SEE_THROUGH = 24;
 

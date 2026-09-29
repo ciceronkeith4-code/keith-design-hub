@@ -145,7 +145,7 @@ const projects: Project[] = [
       },
     ],
     featured: true,
-    heroDevice: "desktop",
+    heroDevice: "mobile",
     screens: captures("nclex-amplified-interns"),
   },
   {
@@ -186,7 +186,7 @@ const projects: Project[] = [
       },
     ],
     featured: false,
-    heroDevice: "tablet",
+    heroDevice: "mobile",
     screens: captures("iconic-cards-pos"),
   },
   {
@@ -275,7 +275,7 @@ const projects: Project[] = [
       },
     ],
     featured: false,
-    heroDevice: "desktop",
+    heroDevice: "mobile",
     screens: captures("jpcs-sscr-manila"),
   },
   {
@@ -316,7 +316,7 @@ const projects: Project[] = [
       },
     ],
     featured: false,
-    heroDevice: "desktop",
+    heroDevice: "mobile",
     screens: captures("cicerra-realty"),
   },
   {
@@ -357,7 +357,7 @@ const projects: Project[] = [
       },
     ],
     featured: false,
-    heroDevice: "desktop",
+    heroDevice: "mobile",
     // No public deployment to capture yet.
     screens: NO_SCREENS,
   },
@@ -398,7 +398,7 @@ const projects: Project[] = [
       },
     ],
     featured: false,
-    heroDevice: "desktop",
+    heroDevice: "mobile",
     // The live deploy renders blank; switch to captures("sscr-library") once it's fixed.
     screens: NO_SCREENS,
   },

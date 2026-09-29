@@ -4,7 +4,7 @@ import type { Device } from "@/data/projects";
 /**
  * Lays out a project's devices as one scene, in scene units (1 unit = 1px at scale 1).
  *
- * Sizes keep true relative scale: the tablet's screen is 72% of the laptop screen's width and the
+ * Sizes keep true relative scale: the tablet's screen is 72% of the monitor screen's width and the
  * phone stands 45% of the tablet's height. The hero device is in front; the others sit behind it
  * to the sides, raised slightly and smaller, as if further back. Each is slid as close as it can
  * go while the hero covers no more than COVERAGE of its screen.
@@ -27,8 +27,8 @@ export type Scene = {
   devices: SceneDevice[];
 };
 
-/** Width of the laptop image at true scale; everything else is sized from it. */
-const LAPTOP_WIDTH = 640;
+/** Width of the desktop monitor image at true scale; everything else is sized from it. */
+const DESKTOP_WIDTH = 640;
 /** How much of a background screen the hero may cover (the hard limit is 15%). */
 const COVERAGE = 0.08;
 /** Background devices are drawn at most this size, relative to true scale. */
@@ -46,11 +46,11 @@ const heightAt = (device: Device, width: number) =>
 /** Each device's image width at true relative scale. */
 function trueWidths(): Record<Device, number> {
   const { desktop, tablet, mobile } = DEVICE_FRAMES;
-  const laptopScreen = (LAPTOP_WIDTH * desktop.screen.width) / 100;
-  const tabletWidth = (0.72 * laptopScreen) / (tablet.screen.width / 100);
+  const desktopScreen = (DESKTOP_WIDTH * desktop.screen.width) / 100;
+  const tabletWidth = (0.72 * desktopScreen) / (tablet.screen.width / 100);
   const phoneHeight = 0.45 * heightAt("tablet", tabletWidth);
   return {
-    desktop: LAPTOP_WIDTH,
+    desktop: DESKTOP_WIDTH,
     tablet: tabletWidth,
     mobile: (phoneHeight * mobile.naturalWidth) / mobile.naturalHeight,
   };

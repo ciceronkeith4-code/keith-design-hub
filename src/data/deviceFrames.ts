@@ -12,15 +12,15 @@ export type DeviceFrame = {
 
 export const DEVICE_FRAMES: Record<Device, DeviceFrame> = {
   desktop: {
-    src: "/devices/laptop.png",
-    naturalWidth: 1520,
-    naturalHeight: 976,
+    src: "/devices/monitor.png",
+    naturalWidth: 1328,
+    naturalHeight: 1060,
     screen: {
-      top: 3.279,
-      left: 7.895,
-      width: 84.211,
-      height: 81.967,
-      radius: 0.449,
+      top: 2.264,
+      left: 1.807,
+      width: 96.386,
+      height: 75.472,
+      radius: 0.514,
     },
   },
   tablet: {
