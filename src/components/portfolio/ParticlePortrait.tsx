@@ -485,19 +485,17 @@ export function ParticlePortrait({ play = true, className = "", style }: Particl
         uniforms.uPoseW.value = oneHot(k);
       };
 
-      // The pose whose direction is nearest the cursor's direction from the portrait's center. Inside the dead
-      // zone, or until the cursor is clearly past a boundary, the current pose holds.
-      const canHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+      // Turn to the pose whose direction is nearest the point's direction from the portrait's center. Inside the
+      // dead zone, or (with hysteresis) until the point is clearly past a boundary, the current pose holds.
       const angleGap = (a: number, b: number) => Math.abs(((a - b + 540) % 360) - 180);
-      const onPointerMove = (event: PointerEvent) => {
-        if (event.pointerType === "touch") return;
+      const lookToward = (clientX: number, clientY: number, hysteresis: number) => {
         const rect = container.getBoundingClientRect();
-        const dx = event.clientX - (rect.left + rect.width / 2);
-        const dy = event.clientY - (rect.top + rect.height / 2);
+        const dx = clientX - (rect.left + rect.width / 2);
+        const dy = clientY - (rect.top + rect.height / 2);
         if (Math.hypot(dx, dy) < CONFIG.DEAD_ZONE) return;
         const angle = THREE.MathUtils.radToDeg(Math.atan2(dy, dx));
         let best = pose;
-        let bestGap = angleGap(angle, CONFIG.POSES[pose].angle) - CONFIG.HYSTERESIS;
+        let bestGap = angleGap(angle, CONFIG.POSES[pose].angle) - hysteresis;
         CONFIG.POSES.forEach((p, k) => {
           const gap = angleGap(angle, p.angle);
           if (gap < bestGap) {
@@ -507,6 +505,13 @@ export function ParticlePortrait({ play = true, className = "", style }: Particl
         });
         turnTo(best);
       };
+
+      // Mouse and trackpad: follow the cursor.
+      const canHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+      const onPointerMove = (event: PointerEvent) => {
+        if (event.pointerType === "mouse")
+          lookToward(event.clientX, event.clientY, CONFIG.HYSTERESIS);
+      };
       // Cursor leaves the window: back to the resting pose.
       const onPointerLeave = () => turnTo(CONFIG.REST_POSE);
       if (canHover) {
@@ -514,6 +519,12 @@ export function ParticlePortrait({ play = true, className = "", style }: Particl
         document.documentElement.addEventListener("pointerleave", onPointerLeave);
         window.addEventListener("blur", onPointerLeave);
       }
+      // Touch and pen: look toward wherever the screen is tapped. A tap is deliberate, so no hysteresis.
+      // Passive, so taps and scrolls behave exactly as before.
+      const onPointerDown = (event: PointerEvent) => {
+        if (event.pointerType !== "mouse") lookToward(event.clientX, event.clientY, 0);
+      };
+      window.addEventListener("pointerdown", onPointerDown, { passive: true });
 
       const t0 = performance.now();
       renderer.setAnimationLoop((now: number) => {
@@ -535,6 +546,7 @@ export function ParticlePortrait({ play = true, className = "", style }: Particl
       teardown = () => {
         renderer.setAnimationLoop(null);
         window.removeEventListener("pointermove", onPointerMove);
+        window.removeEventListener("pointerdown", onPointerDown);
         document.documentElement.removeEventListener("pointerleave", onPointerLeave);
         window.removeEventListener("blur", onPointerLeave);
         io.disconnect();
