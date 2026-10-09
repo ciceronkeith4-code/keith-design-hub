@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
+import { ExternalLinkIcon } from "lucide-react";
 import { PROJECTS, type Project } from "@/data/projects";
 import { DeviceStage } from "./DeviceStage";
 
@@ -21,8 +22,8 @@ export function Projects() {
           Work
         </h1>
         <p className="mt-3 max-w-[58ch] text-[15px] leading-relaxed text-[#3A3C38] dark:text-[#C8C8C8]">
-          Client systems, school projects, and organization portals, each shown at desktop, tablet,
-          and mobile widths.
+          Web systems for businesses, a local government, and schools. Each has a case study and is
+          shown at desktop, tablet, and mobile sizes.
         </p>
       </header>
 
@@ -96,7 +97,7 @@ function ProjectRow({
             <Link
               to="/projects/$slug"
               params={{ slug: project.slug }}
-              className={`font-medium underline decoration-black/30 underline-offset-4 hover:decoration-current dark:decoration-white/30 ${FOCUS_RING}`}
+              className={`font-medium transition-opacity hover:opacity-70 ${FOCUS_RING}`}
             >
               Case study <span aria-hidden="true">→</span>
               <span className="sr-only"> for {project.name}</span>
@@ -139,9 +140,10 @@ function ExternalLink({
       target="_blank"
       rel="noopener noreferrer"
       aria-label={`${label} (opens in a new tab)`}
-      className={`${MUTED} hover:text-[#141414] dark:hover:text-[#EDEDED] transition-colors ${FOCUS_RING}`}
+      className={`inline-flex items-center gap-1.5 ${MUTED} hover:text-[#141414] dark:hover:text-[#EDEDED] transition-colors ${FOCUS_RING}`}
     >
-      {children} <span aria-hidden="true">↗</span>
+      {children}
+      <ExternalLinkIcon aria-hidden="true" className="h-3.5 w-3.5" />
     </a>
   );
 }

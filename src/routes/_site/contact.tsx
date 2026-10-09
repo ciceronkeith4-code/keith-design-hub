@@ -8,7 +8,7 @@ export const Route = createFileRoute("/_site/contact")({
       path: "/contact",
       title: "Contact | Keith Ciceron",
       description:
-        "Get in touch with Keith Ciceron by email, on LinkedIn, or through the contact form.",
+        "Work with Keith Ciceron on your next web project, or reach out about a role, by email, on LinkedIn, or through the contact form.",
     }),
   component: Contact,
 });

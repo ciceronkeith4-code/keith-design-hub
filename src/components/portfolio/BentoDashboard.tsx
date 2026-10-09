@@ -34,11 +34,15 @@ export function BentoDashboard() {
 
           {/* Concrete proof over adjectives. The project names are real links, so crawlers reach the case studies from Home. */}
           <p className="mt-6 text-sm sm:text-base text-[#62655E] dark:text-[#A3A3A3] max-w-[58ch] leading-relaxed">
-            I build and ship web systems for real clients: a point-of-sale system for{" "}
-            <HeroLink slug="iconic-cards-pos">Iconic Cards PH</HeroLink>, a municipal portal for{" "}
-            <HeroLink slug="one-cainta">Cainta, Rizal</HeroLink>, and a listings site for{" "}
-            <HeroLink slug="cicerra-realty">Cicerra Realty</HeroLink>. Backed by 3+ years testing
-            web and mobile apps as a Dev Assistant at Opoli Technology.
+            I build complete web systems for businesses and organizations, from the customer-facing
+            site to the admin tools that run it. Recent work includes a point-of-sale system for{" "}
+            <HeroLink slug="iconic-cards-pos">Iconic Cards PH</HeroLink>, a multi-store delivery
+            platform for <HeroLink slug="mgl-food-hub">MGL Food Hub</HeroLink>, and a municipal
+            portal for <HeroLink slug="one-cainta">Cainta, Rizal</HeroLink>.
+          </p>
+          <p className="mt-3 text-sm sm:text-base text-[#62655E] dark:text-[#A3A3A3] max-w-[58ch] leading-relaxed">
+            Before freelancing, I spent 3+ years in QA for one of the leading ride-hailing apps in
+            the US, so I test every release before it reaches your users.
           </p>
 
           <div className="mt-10 flex items-center gap-2 flex-wrap">

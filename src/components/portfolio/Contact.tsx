@@ -156,7 +156,8 @@ export function Contact() {
         Contact
       </h1>
       <p className="mt-2 mb-6 sm:mb-8 text-sm text-[#62655E] dark:text-[#A3A3A3]">
-        Open to freelance projects and remote roles.
+        Available for freelance projects and remote roles. Tell me what you're building, and I'll
+        get back to you.
       </p>
 
       {/* Primary Focal Point: Message Form Card */}
@@ -255,7 +256,7 @@ export function Contact() {
               rows={4}
               value={formData.message}
               onChange={(e) => setFormData((prev) => ({ ...prev, message: e.target.value }))}
-              placeholder="Describe your inquiry or idea..."
+              placeholder="What are you building, and when do you need it?"
               className={`w-full rounded-[8px] border bg-white dark:bg-[#1C1C1C] px-3 py-2 text-base sm:text-sm text-[#161616] dark:text-[#EDEDED] placeholder-[#71746C] dark:placeholder-[#8A8D86] focus:outline-none transition-colors resize-none ${
                 errors.message
                   ? "border-red-400 focus:border-red-500"

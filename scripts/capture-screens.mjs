@@ -41,9 +41,18 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // Overlays that never clear in a headless browser (splash screens, cookie banners, chat widgets),
 // hidden per project by CSS selector.
+// Pages to capture instead of the home page, e.g. when the home page is a login screen.
+const CAPTURE_PATH = {
+  // A published survey on the public respondent page.
+  "sscrecoletos-connect": "/f/53ad78acb78a416199765fc0ca3189ca",
+};
+
 const HIDE = {
   "nclex-amplified-interns": ["#page-intro-overlay"],
   "jpcs-sscr-manila": [".site-intro-overlay"],
+  // The ordering guidelines dialog and its backdrop (shown on every visit), and the fixed mobile
+  // tab bar, which would land mid-page in a full-page shot.
+  "mgl-food-hub": ['[role="dialog"]', ".bg-navy\\/50", "nav.fixed.bottom-0"],
 };
 
 // Runs before the site's own scripts: every observed element reports as on screen, so
@@ -248,7 +257,8 @@ try {
     for (const device of devices) {
       const name = `${project.slug}/${device}-1.webp`;
       try {
-        const image = await capture(browser.cdp, project.links.live, device, HIDE[project.slug]);
+        const url = new URL(CAPTURE_PATH[project.slug] ?? "", project.links.live).href;
+        const image = await capture(browser.cdp, url, device, HIDE[project.slug]);
         await writeFile(path.join(OUT, project.slug, `${device}-1.webp`), image);
         console.log(`${name}  ${Math.round(image.length / 1024)} KB`);
       } catch (error) {

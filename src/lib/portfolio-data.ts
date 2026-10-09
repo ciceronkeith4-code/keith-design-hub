@@ -11,12 +11,14 @@ import {
   SiSupabase,
   SiPhp,
   SiExpress,
+  SiGooglegemini,
+  SiRedis,
 } from "react-icons/si";
 import { TbUserSearch } from "react-icons/tb";
 
 /**
  * The Stack section on /about. Each entry lists the projects that used it (from src/data/projects.ts),
- * and an entry no project uses is hidden. QA Testing points to the Opoli entry on /experience instead.
+ * and an entry no project uses is hidden. QA Testing points to the QA entry on /experience instead.
  */
 export const SKILLS = [
   { name: "HTML", icon: SiHtml5, group: "Frontend" },
@@ -28,8 +30,10 @@ export const SKILLS = [
   { name: "Node.js", icon: SiNodedotjs, group: "Backend" },
   { name: "Express", icon: SiExpress, group: "Backend" },
   { name: "PHP", icon: SiPhp, group: "Backend" },
+  { name: "Gemini API", icon: SiGooglegemini, group: "Backend" },
   { name: "MySQL", icon: SiMysql, group: "Database" },
   { name: "Supabase", icon: SiSupabase, group: "Database" },
+  { name: "Redis", icon: SiRedis, group: "Database" },
   { name: "Vercel", icon: SiVercel, group: "Hosting" },
   { name: "QA Testing", icon: TbUserSearch, group: "Testing" },
 ];
@@ -43,18 +47,19 @@ export const EXPERIENCE = [
     // TODO(Keith): start month and year, e.g. "Jan 2025 to present".
     period: "",
     points: [
-      "Built the point-of-sale and ordering system for Iconic Cards PH, a trading card shop.",
-      "Customers order from a searchable card catalog. Staff manage products and export orders to Excel from an admin panel.",
+      "Design, build, and launch web systems for businesses and organizations, from the database to the public site.",
+      "Delivered a point-of-sale and ordering system for Iconic Cards PH, a multi-store delivery platform for MGL Food Hub, and a listings site for Cicerra Realty.",
+      "Build admin panels so clients manage their own products, listings, and orders without needing a developer.",
     ],
   },
   {
-    id: "opoli",
+    id: "qa",
     role: "Dev Assistant",
-    company: "Opoli Technology Inc.",
+    company: "One of the leading ride-hailing apps in the US",
     period: "Sep 2022 to Dec 2025",
     points: [
-      "Tested web and mobile apps by hand across releases.",
-      "Logged bugs, functional defects, and usability issues, each with clear steps to reproduce it.",
+      "Manually tested the company's web and mobile apps across releases, covering new features, functionality, and usability.",
+      "Reported bugs, functional defects, and usability issues with clear steps to reproduce, so developers could confirm and fix them quickly.",
     ],
   },
   {
@@ -62,7 +67,7 @@ export const EXPERIENCE = [
     role: "Freelance Photo & Video Editor",
     company: "Self-employed",
     period: "Jan 2023 to Apr 2024",
-    points: ["Edited social media photos and videos."],
+    points: ["Edited photos and videos for social media content."],
   },
 ];
 

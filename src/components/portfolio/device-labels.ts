@@ -6,9 +6,9 @@ export const DEVICE_NOUN: Record<Device, string> = {
   mobile: "phone",
 };
 
-/** e.g. "Iconic Cards PH home page on a tablet". */
+/** e.g. "Iconic Cards PH on a tablet". */
 export const screenAlt = (project: Project, device: Device) =>
-  `${project.name} home page on a ${DEVICE_NOUN[device]}`;
+  `${project.name} on a ${DEVICE_NOUN[device]}`;
 
 /** e.g. "Tablet at 1194 × 834". */
 export const viewportCaption = (spec: { label: string; width: number; height: number }) =>

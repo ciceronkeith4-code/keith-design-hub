@@ -8,7 +8,7 @@ export const Route = createFileRoute("/_site/projects/")({
       path: "/projects",
       title: "Work | Keith Ciceron",
       description:
-        "Selected work by Keith Ciceron: client systems, school projects, and organization portals, each with a case study, its stack, and live links.",
+        "Selected work by Keith Ciceron: web systems for businesses, a local government, and schools, each with a case study, its stack, and live links.",
     });
     return {
       ...base,

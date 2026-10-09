@@ -2,7 +2,7 @@ export const SITE_URL = "https://keithciceron.vercel.app";
 
 // Default description (search results, LinkedIn/Messenger, X) so previews never disagree.
 export const SITE_DESCRIPTION =
-  "Full Stack Developer in Manila. Built a POS for Iconic Cards PH, a municipal portal for Cainta, and a realty site, plus 3+ years of QA at Opoli Technology.";
+  "Full stack developer in Manila. Built a POS for Iconic Cards PH, a delivery platform for MGL Food Hub, and Cainta's municipal portal, backed by 3+ years of QA for a leading US ride-hailing app.";
 
 /**
  * Per-page title, description, canonical URL, and their Open Graph / Twitter twins.

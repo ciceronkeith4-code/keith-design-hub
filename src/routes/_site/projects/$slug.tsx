@@ -1,5 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
+import { ExternalLinkIcon } from "lucide-react";
 import { PROJECTS } from "@/data/projects";
 import { Lightbox, type LightboxImage } from "@/components/portfolio/Lightbox";
 import { pageHead, SITE_URL } from "@/lib/seo";
@@ -106,7 +107,7 @@ function CaseStudyPage() {
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 rounded-[4px] bg-[#161616] text-white dark:bg-[#EDEDED] dark:text-[#161616] hover:bg-[#333333] dark:hover:bg-white px-4 py-2 text-sm font-medium transition-colors"
                 >
-                  Live site <span aria-hidden="true">↗</span>
+                  Live site <ExternalLinkIcon aria-hidden="true" className="h-3.5 w-3.5" />
                 </a>
               )}
               {code && (
@@ -116,7 +117,7 @@ function CaseStudyPage() {
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 rounded-[4px] border border-[#E3E5E0] dark:border-[#262626] px-4 py-2 text-sm font-medium text-[#161616] dark:text-[#EDEDED] hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
                 >
-                  Code <span aria-hidden="true">↗</span>
+                  Code <ExternalLinkIcon aria-hidden="true" className="h-3.5 w-3.5" />
                 </a>
               )}
             </div>

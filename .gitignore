@@ -33,3 +33,6 @@ dist-ssr
 
 .vercel
 .env*
+
+# Local-only files that must not be published
+not-published/

@@ -5,7 +5,6 @@
  * TODO(Keith): fill in the empty fields below.
  *   - role and timeline (e.g. "Jan to Apr 2025"): every project
  *   - Freelance Web Developer start month and year: src/lib/portfolio-data.ts
- *   - status: SSCRecoletos Connect (no public deployment yet)
  *   - status: SSCR Library (the live URL loads a blank page; its assets 404 under the
  *     /FINAL-SSCR-LIBRARY/ base path)
  *
@@ -67,9 +66,11 @@ export const STACK_ORDER = [
   "Node.js",
   "Express",
   "PHP",
+  "Gemini API",
   "MySQL",
   "Supabase",
   "Firebase",
+  "Redis",
   "Vercel",
 ];
 
@@ -85,6 +86,143 @@ function captures(slug: string, count = 1): Project["screens"] {
 const NO_SCREENS: Project["screens"] = { desktop: [], tablet: [], mobile: [] };
 
 const projects: Project[] = [
+  {
+    slug: "mgl-food-hub",
+    name: "MGL Food Hub",
+    type: "Food delivery",
+    intro:
+      "I built MGL Food Hub, a scheduled food delivery site where customers order from 13 Malabon stores in one cart. They pick a delivery date and time slot, pay by cash on delivery or GCash, MariBank, or GoTyme, and track the order from a private link.",
+    client: "MGL Food Hub",
+    role: "",
+    timeline: "",
+    status: "Live",
+    stack: ["React", "Vite", "Tailwind CSS", "Supabase", "Vercel"],
+    built: [
+      "One cart across all 13 partner stores, with menus, product search, and extra toppings.",
+      "A checkout that books a delivery date and time slot and takes a payment screenshot for online payments.",
+      "Private order tracking by link, with order lookup by order number and phone, re-uploading payment proof, and cancellation requests.",
+      "An admin dashboard with live new orders, payments to verify, COD orders to call, and a delivery calendar.",
+      "A daily prep list of what to order from each merchant, revenue reports, and CSV export.",
+    ],
+    decisions: [
+      {
+        title: "Realtime orders from Supabase",
+        body: "Orders, products, and settings live in Supabase Postgres, and payment screenshots go to Supabase Storage. The admin dashboard subscribes to database changes, so new orders appear without a refresh.",
+      },
+      {
+        title: "Ordering rules as settings",
+        body: "The next-day cutoff time, how far ahead customers can book, blocked dates, the per-phone daily order limit, and the ordering guidelines are all edited from the admin panel. Checkout reads the same settings, so changing a rule needs no code change.",
+      },
+    ],
+    links: { live: "https://mglfoodhub.vercel.app/" },
+    images: [
+      {
+        src: "/images/projects/mgl-food-hub/desktop-1.webp",
+        alt: "Home page with the headline Malabon's favorites, a Start your order button, and the partner stores below",
+      },
+    ],
+    heroDevice: "mobile",
+    screens: captures("mgl-food-hub"),
+  },
+  {
+    slug: "kabisadeck",
+    name: "Kabisadeck",
+    type: "Board exam reviewer",
+    intro:
+      "Kabisadeck is a board exam reviewer for nursing students. Students upload their own reviewer as a PDF or pick a nursing topic, and it builds a timed practice quiz with a rationale for every answer.",
+    client: "Personal project",
+    role: "",
+    timeline: "",
+    status: "Live",
+    stack: ["HTML", "CSS", "JavaScript", "Node.js", "Express", "Gemini API", "Redis", "Vercel"],
+    built: [
+      "Quizzes from an uploaded PDF or any nursing topic, in 10 to 50 questions across four difficulty levels.",
+      "Grading on the server, so correct answers never reach the browser before the quiz is submitted.",
+      "A Review Mistakes deck that turns every missed question into a flashcard.",
+      "Exam rules: copy and right-click are blocked, each question is watermarked with the username, and leaving fullscreen or switching tabs three times forfeits the quiz.",
+      "A dashboard with scores, pass rate, study time, topic mastery, and a full quiz history.",
+    ],
+    decisions: [
+      {
+        title: "Every question is checked twice",
+        body: "One AI pass writes the questions, and code rejects any without four distinct choices and a rationale for each. A second pass fact-checks every question and answer, and wrong or repeated items are replaced.",
+      },
+      {
+        title: "Built to run on Gemini's free tier",
+        body: "A 10-question deck takes only a few large AI calls. When one Gemini model reaches its daily limit, the server switches to the next one, so students can keep reviewing.",
+      },
+      {
+        title: "PDFs never leave the device",
+        body: "The PDF is read in the browser with pdf.js, and only its text is sent to the server.",
+      },
+    ],
+    links: {
+      live: "https://kabisadeck.vercel.app/",
+      code: "https://github.com/ciceronkeith4-code/kabisadeck",
+    },
+    images: [
+      {
+        src: "/images/projects/kabisadeck/desktop-1.webp",
+        alt: "Choose a topic screen with nursing subjects such as Pharmacology and Pediatric Nursing, and a field for a custom topic",
+      },
+      {
+        src: "/images/projects/kabisadeck/desktop-2.webp",
+        alt: "Upload your reviewer screen with a drag and drop area for a PDF of up to 20 MB",
+      },
+      {
+        src: "/images/projects/kabisadeck/desktop-3.webp",
+        alt: "Kabisadeck sign-in card with username and password fields",
+      },
+    ],
+    heroDevice: "mobile",
+    // Captured from a local run, since the live site opens on the login: topic picker, PDF upload, login.
+    screens: captures("kabisadeck", 3),
+  },
+  {
+    slug: "freelanceos",
+    name: "FreelanceOS",
+    type: "Freelance CRM",
+    intro:
+      "FreelanceOS is a CRM I built to run a freelance IT business in one place. It follows each job from lead to quotation, project, invoice, and payment, and tracks renewals, expenses, and profit along the way.",
+    client: "Personal project",
+    role: "",
+    timeline: "",
+    status: "Live",
+    stack: ["React", "TypeScript", "Vite", "Tailwind CSS", "Shadcn UI", "Supabase", "Vercel"],
+    built: [
+      "A sales pipeline with a drag-and-drop lead board, and quotations that become projects in one click.",
+      "Projects with milestones, tasks, time logs, change requests, and a note of where each client login is kept, never the password itself.",
+      "Quotations and invoices with automatic numbers like INV-2026-0001, discounts, and a print-ready layout.",
+      "Hosting, domain, and software renewals: marking one renewed records the payment and its cost, then sets the next due date.",
+      "A dashboard and reports for income, unpaid balances, profit, and the effective hourly rate on each project.",
+    ],
+    decisions: [
+      {
+        title: "Business rules in the database",
+        body: "Document numbers, renewals, and the dashboard and report figures run as Postgres functions and views. A renewal is one transaction, so a payment is never saved without its expense and new due date.",
+      },
+      {
+        title: "Row-level security instead of a custom API",
+        body: "Every table only returns rows owned by the signed-in user. The app queries Supabase directly from the browser, with no backend server to run.",
+      },
+      {
+        title: "Sample data on demand",
+        body: "One button in Settings fills the app with example leads, clients, projects, and invoices for a demo. Another removes them without touching real records.",
+      },
+    ],
+    links: {
+      live: "https://crm-freelance-six.vercel.app/",
+      code: "https://github.com/ciceronkeith4-code/CRM-FREELANCE",
+    },
+    images: [
+      {
+        src: "/images/projects/freelanceos/desktop-1.webp",
+        alt: "FreelanceOS sign-in page",
+      },
+    ],
+    heroDevice: "mobile",
+    screens: captures("freelanceos"),
+  },
   {
     slug: "nclex-amplified-interns",
     name: "NCLEX Amplified Interns",
@@ -311,7 +449,7 @@ const projects: Project[] = [
     client: "San Sebastian College Recoletos (school project)",
     role: "",
     timeline: "",
-    status: "",
+    status: "Live",
     stack: ["React", "TypeScript", "Vite", "Tailwind CSS", "Shadcn UI", "Supabase"],
     built: [
       "A form builder with 13 question types, including text, choice, ranking, date, and several rating styles.",
@@ -330,16 +468,19 @@ const projects: Project[] = [
         body: "Every form gets a readable slug, so the same link works typed, clicked, or scanned from the QR code. Respondents don't need an account.",
       },
     ],
-    links: {},
+    links: { live: "https://satisfactionsystem.vercel.app/" },
     images: [
+      {
+        src: "/images/projects/sscrecoletos-connect/desktop-1.webp",
+        alt: "Start of the outreach program evaluation form for organizers, with a privacy notice, step 1 of 7, and a Begin Survey button",
+      },
       {
         src: "/images/projects/connect-dashboard.png",
         alt: "Dashboard loading, with placeholder cards under a red banner and two published forms in the Recent Forms list",
       },
     ],
     heroDevice: "mobile",
-    // No public deployment to capture yet.
-    screens: NO_SCREENS,
+    screens: captures("sscrecoletos-connect"),
   },
   {
     slug: "sscr-library",
@@ -374,10 +515,22 @@ const projects: Project[] = [
         src: "/images/projects/library-login.png",
         alt: "Sign-in page with the San Sebastian College Recoletos seal and a school ID and password form",
       },
+      {
+        src: "/images/projects/sscr-library/desktop-1.webp",
+        alt: "Student dashboard with active loans, the next due date, library hours, and a book list with Borrow buttons",
+      },
+      {
+        src: "/images/projects/sscr-library/desktop-2.webp",
+        alt: "Librarian catalog with tabs for borrowers and reservations, an Add Book button, and edit and delete actions",
+      },
+      {
+        src: "/images/projects/sscr-library/desktop-3.webp",
+        alt: "Supervisor user management with catalog and borrower counts and a table of student accounts",
+      },
     ],
     heroDevice: "mobile",
-    // The live deploy renders blank; switch to captures("sscr-library") once it's fixed.
-    screens: NO_SCREENS,
+    // Captured from a local build (the live deploy renders blank): student, librarian, supervisor.
+    screens: captures("sscr-library", 3),
   },
 ];
 

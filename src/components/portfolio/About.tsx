@@ -33,12 +33,20 @@ export function About() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-14 items-start">
         <div className="flex flex-col gap-3 max-w-[60ch] text-sm leading-relaxed text-[#3A3C38] dark:text-[#C8C8C8]">
           <p>
-            I spent September 2022 to December 2025 as a Dev Assistant at Opoli Technology, testing
-            web and mobile apps.
+            I'm a full stack developer in Manila. I build web systems end to end for clients: the
+            database and API, the admin tools their staff use every day, and the site their
+            customers see. My work spans retail, food delivery, real estate, local government, and
+            education.
           </p>
           <p>
-            I now build web systems for clients as a freelancer while finishing my BSIT at San
-            Sebastian College Recoletos Manila.
+            From September 2022 to December 2025, I was a Dev Assistant for one of the leading
+            ride-hailing apps in the US, testing its web and mobile apps across releases. That work
+            shapes how I build: I plan for edge cases early and check every release before I hand it
+            over.
+          </p>
+          <p>
+            I'm finishing my BSIT at San Sebastian College Recoletos Manila as a Dean's Lister, and
+            I take on freelance projects alongside my studies.
           </p>
         </div>
 
@@ -99,8 +107,8 @@ export function About() {
                         className={`mt-0.5 pl-[22px] font-mono text-[10px] leading-relaxed ${MUTED}`}
                       >
                         {skill.name === "QA Testing" ? (
-                          <Link to="/experience" hash="opoli" className={LINK}>
-                            Dev Assistant at Opoli Technology
+                          <Link to="/experience" hash="qa" className={LINK}>
+                            Dev Assistant for a leading US ride-hailing app
                           </Link>
                         ) : (
                           usedIn.map((p, i) => (

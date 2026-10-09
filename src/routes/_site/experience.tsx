@@ -8,7 +8,7 @@ export const Route = createFileRoute("/_site/experience")({
       path: "/experience",
       title: "Experience | Keith Ciceron",
       description:
-        "Work history of Keith Ciceron: freelance web development, 3+ years testing web and mobile apps at Opoli Technology Inc., and workshops and events.",
+        "Keith Ciceron's experience: freelance full stack development for businesses and organizations, 3+ years of QA for one of the leading ride-hailing apps in the US, and workshops and events.",
     }),
   component: Experience,
 });
