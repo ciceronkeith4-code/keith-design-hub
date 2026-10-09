@@ -1,22 +1,35 @@
-import type { ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowUpRight, ArrowRight } from "lucide-react";
 import { ParticlePortrait } from "./ParticlePortrait";
-
-function HeroLink({ slug, children }: { slug: string; children: ReactNode }) {
-  return (
-    <Link
-      to="/projects/$slug"
-      params={{ slug }}
-      className="font-medium text-[#161616] dark:text-[#EDEDED] underline decoration-[#C9CCC4] dark:decoration-[#3A3A3A] underline-offset-[3px] hover:decoration-current transition-colors"
-    >
-      {children}
-    </Link>
-  );
-}
+import { Typed } from "./Typewriter";
+import { typeSchedule, type TypeSegment } from "@/lib/typewriter";
 
 // Organic silhouette for the portrait frame; must match ParticlePortrait's COLORS.normal.paper fill (#E1E4DD).
 const PORTRAIT_SHAPE = "68% 32% 58% 42% / 44% 56% 44% 56%";
+
+// The hero copy, typed out in this order each time Home mounts. Speeds are ms per character.
+const HERO_COPY: TypeSegment[] = [
+  { text: "Keith Ciceron", speed: 60 },
+  { text: "Full Stack Developer", speed: 35 },
+  {
+    text: "I'm Keith Ciceron, a full-stack developer who builds modern websites and web apps, and these days I use AI to build faster and smarter.",
+    speed: 14,
+  },
+  {
+    text: "I've worked on one of the leading ride-hailing apps in the US, and right now I'm building cool new stuff every day. I love turning rough ideas into things people actually use.",
+    speed: 14,
+  },
+];
+
+const HERO_STARTS = typeSchedule(HERO_COPY);
+const typed = (i: number) => (
+  <Typed
+    text={HERO_COPY[i].text}
+    start={HERO_STARTS[i]}
+    speed={HERO_COPY[i].speed}
+    last={i === HERO_COPY.length - 1}
+  />
+);
 
 export function BentoDashboard() {
   return (
@@ -25,24 +38,18 @@ export function BentoDashboard() {
       <div className="my-auto w-full flex flex-col-reverse lg:flex-row items-start lg:justify-between gap-10 lg:gap-16 py-4">
         <div className="flex flex-col items-start text-left max-w-[620px]">
           <h1 className="font-sans text-[clamp(40px,6.5vw,72px)] font-semibold tracking-tight text-[#161616] dark:text-[#EDEDED] leading-none">
-            Keith Ciceron
+            {typed(0)}
           </h1>
 
           <p className="mt-4 font-semibold text-sm sm:text-base text-[#62655E] dark:text-[#A3A3A3]">
-            Full Stack Developer
+            {typed(1)}
           </p>
 
-          {/* Concrete proof over adjectives. The project names are real links, so crawlers reach the case studies from Home. */}
           <p className="mt-6 text-sm sm:text-base text-[#62655E] dark:text-[#A3A3A3] max-w-[58ch] leading-relaxed">
-            I build complete web systems for businesses and organizations, from the customer-facing
-            site to the admin tools that run it. Recent work includes a point-of-sale system for{" "}
-            <HeroLink slug="iconic-cards-pos">Iconic Cards PH</HeroLink>, a multi-store delivery
-            platform for <HeroLink slug="mgl-food-hub">MGL Food Hub</HeroLink>, and a municipal
-            portal for <HeroLink slug="one-cainta">Cainta, Rizal</HeroLink>.
+            {typed(2)}
           </p>
           <p className="mt-3 text-sm sm:text-base text-[#62655E] dark:text-[#A3A3A3] max-w-[58ch] leading-relaxed">
-            Before freelancing, I spent 3+ years in QA for one of the leading ride-hailing apps in
-            the US, so I test every release before it reaches your users.
+            {typed(3)}
           </p>
 
           <div className="mt-10 flex items-center gap-2 flex-wrap">

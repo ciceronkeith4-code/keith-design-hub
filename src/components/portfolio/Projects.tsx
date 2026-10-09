@@ -1,4 +1,3 @@
-import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ExternalLinkIcon } from "lucide-react";
 import { PROJECTS, type Project } from "@/data/projects";
@@ -45,22 +44,12 @@ function ProjectRow({
   number: number;
   total: number;
 }) {
-  const [ref, reveal] = useRevealOnScroll<HTMLLIElement>();
   const titleId = `project-${project.slug}`;
   const meta = [project.status, project.timeline, project.role].filter(Boolean);
   const { live, code } = project.links;
 
   return (
-    <li
-      ref={ref}
-      className={`border-b border-black/12 py-10 sm:py-14 dark:border-white/12 ${
-        reveal === "waiting"
-          ? "translate-y-[10px] opacity-0"
-          : reveal === "shown"
-            ? "translate-y-0 opacity-100 transition-[opacity,transform] duration-300 ease-out"
-            : ""
-      }`}
-    >
+    <li className="border-b border-black/12 py-10 sm:py-14 dark:border-white/12">
       {/* Desktop: text | scene on one grid row with bottoms aligned; the tabs sit on a second
           row under the scene. Narrower: text, scene, tabs stacked. */}
       <article
@@ -146,32 +135,4 @@ function ExternalLink({
       <ExternalLinkIcon aria-hidden="true" className="h-3.5 w-3.5" />
     </a>
   );
-}
-
-/**
- * Rows already on screen at load render as-is; rows further down wait below the fold and then
- * fade and rise 10px as they scroll in. Skipped entirely with reduced motion.
- */
-function useRevealOnScroll<T extends HTMLElement>() {
-  const ref = useRef<T>(null);
-  const [state, setState] = useState<"static" | "waiting" | "shown">("static");
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    if (el.getBoundingClientRect().top < window.innerHeight) return;
-    setState("waiting");
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry.isIntersecting) return;
-        setState("shown");
-        observer.disconnect();
-      },
-      { threshold: 0.12 },
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  return [ref, state] as const;
 }

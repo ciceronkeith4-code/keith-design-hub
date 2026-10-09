@@ -112,8 +112,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
-// Applies the saved/system theme before first paint so dark visitors never see a light flash.
-const THEME_BOOTSTRAP = `(function(){try{var t=localStorage.getItem("keith_theme");if(t!=="light"&&t!=="dark"){t=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"}if(t==="dark")document.documentElement.classList.add("dark")}catch(e){}})();`;
+// Before first paint: marks that JavaScript runs (html.js), and applies the saved/system theme so dark visitors
+// never see a light flash.
+const THEME_BOOTSTRAP = `(function(){document.documentElement.classList.add("js");try{var t=localStorage.getItem("keith_theme");if(t!=="light"&&t!=="dark"){t=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"}if(t==="dark")document.documentElement.classList.add("dark")}catch(e){}})();`;
 
 // schema.org Person data so search engines can identify who the site belongs to.
 const PERSON_JSON_LD = JSON.stringify({

@@ -1,0 +1,18 @@
+{
+  "rules": {
+    "presence": {
+      ".read": true,
+      "$uid": {
+        ".write": "auth != null && auth.uid === $uid",
+        "$connection": {
+          ".validate": "newData.hasChild('at') && newData.child('at').isNumber()",
+          "at": { ".validate": "newData.isNumber()" },
+          "name": { ".validate": "newData.isString() && newData.val().length <= 80" },
+          "avatar": { ".validate": "newData.isString() && newData.val().beginsWith('https://') && newData.val().length <= 500" },
+          "$other": { ".validate": false }
+        }
+      }
+    },
+    "$other": { ".read": false, ".write": false }
+  }
+}

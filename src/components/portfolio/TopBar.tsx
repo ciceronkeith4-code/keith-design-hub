@@ -1,8 +1,58 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "@tanstack/react-router";
-import { Sun, Moon, ArrowUpRight } from "lucide-react";
+import { Sun, Moon, ArrowUpRight, Volume2, VolumeX } from "lucide-react";
+import { CLICKABLE, playClick, readSoundOn, saveSoundOn } from "@/lib/click-sound";
+import { pixelThemeTransition } from "@/lib/pixel-transition";
 
 const BRAND_NAME = "Keith Ciceron";
+
+const ICON_BUTTON =
+  "h-8 w-8 rounded-md flex items-center justify-center text-[#62655E] dark:text-[#A3A3A3] hover:text-[#161616] dark:hover:text-[#EDEDED] hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer";
+
+/** Click sounds for every link and button on the site, and the switch that turns them on and off. */
+function SoundToggle() {
+  // On until the saved choice is read after mount, so server and client markup match.
+  const [on, setOn] = useState(true);
+  const onRef = useRef(true);
+
+  useEffect(() => {
+    const saved = readSoundOn();
+    setOn(saved);
+    onRef.current = saved;
+    const onClick = (event: MouseEvent) => {
+      if (!onRef.current || !(event.target instanceof Element)) return;
+      const target = event.target.closest(CLICKABLE);
+      if (!target || target.closest("[data-no-click-sound]")) return;
+      if (target instanceof HTMLButtonElement && target.disabled) return;
+      playClick();
+    };
+    // Capture phase, so the sound plays even when a handler stops the click from bubbling.
+    document.addEventListener("click", onClick, true);
+    return () => document.removeEventListener("click", onClick, true);
+  }, []);
+
+  const toggle = () => {
+    const next = !on;
+    setOn(next);
+    onRef.current = next;
+    saveSoundOn(next);
+    if (next) playClick("on");
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={toggle}
+      data-no-click-sound
+      aria-pressed={on}
+      aria-label="Click sounds"
+      title={on ? "Click sounds on" : "Click sounds off"}
+      className={ICON_BUTTON}
+    >
+      {on ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+    </button>
+  );
+}
 
 interface TopBarProps {
   onToggleTheme: () => void;
@@ -83,17 +133,30 @@ export function TopBar({ onToggleTheme }: TopBarProps) {
             </div>
           )}
 
-          {/* Icon follows the html.dark class (set before paint), so server and client markup always match */}
-          <button
-            type="button"
-            onClick={onToggleTheme}
-            title="Toggle theme"
-            aria-label="Toggle theme"
-            className="h-8 w-8 rounded-md flex items-center justify-center text-[#62655E] dark:text-[#A3A3A3] hover:text-[#161616] dark:hover:text-[#EDEDED] hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer"
-          >
-            <Moon className="h-4 w-4 dark:hidden" />
-            <Sun className="h-4 w-4 hidden dark:block" />
-          </button>
+          {/* data-tour: the tour points at this group */}
+          <div className="flex items-center gap-1" data-tour="controls">
+            <SoundToggle />
+
+            {/* Icon follows the html.dark class (set before paint), so server and client markup always match */}
+            <button
+              type="button"
+              onClick={(event) => {
+                const box = event.currentTarget.getBoundingClientRect();
+                const next = document.documentElement.classList.contains("dark") ? "light" : "dark";
+                pixelThemeTransition(
+                  next,
+                  { x: box.left + box.width / 2, y: box.top + box.height / 2 },
+                  onToggleTheme,
+                );
+              }}
+              title="Toggle theme"
+              aria-label="Toggle theme"
+              className={ICON_BUTTON}
+            >
+              <Moon className="h-4 w-4 dark:hidden" />
+              <Sun className="h-4 w-4 hidden dark:block" />
+            </button>
+          </div>
         </div>
       </div>
     </header>

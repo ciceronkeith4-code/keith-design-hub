@@ -64,6 +64,8 @@ const PARTICLE_PORTRAIT_CONFIG = {
 
 const CONFIG = PARTICLE_PORTRAIT_CONFIG;
 const FOV = 30;
+// Show the still portrait if the 3D view hasn't started after this long (ms).
+const SLOW_LOAD_MS = 2500;
 // How far past the canvas bottom the portrait extends when bottom-aligned (portrait heights).
 const BOTTOM_BLEED = 0.012;
 // The static fallback image mirrors the particle colors for the same INVERT_COLORS setting.
@@ -278,7 +280,8 @@ export function ParticlePortrait({ play = true, className = "", style }: Particl
   const containerRef = useRef<HTMLDivElement>(null);
   const startRef = useRef<(() => void) | null>(null);
   const playRef = useRef(play);
-  const [ready, setReady] = useState(webglWorks);
+  // "pending" until the 3D view is up ("live") or can't run ("static": the still image shows instead).
+  const [mode, setMode] = useState<"pending" | "live" | "static">(webglWorks ? "live" : "pending");
 
   useEffect(() => {
     playRef.current = play;
@@ -290,12 +293,18 @@ export function ParticlePortrait({ play = true, className = "", style }: Particl
     if (!container) return;
     // Reduced motion: the static image is the whole experience; no WebGL, no fly-in, no pose changes.
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setReady(false);
+      setMode("static");
       return;
     }
 
     let disposed = false;
     let teardown = () => {};
+    // On a slow connection or device, show the still portrait rather than an empty frame while the 3D view
+    // loads; the fly-in then takes over from it.
+    const slow = window.setTimeout(
+      () => setMode((m) => (m === "pending" ? "static" : m)),
+      SLOW_LOAD_MS,
+    );
 
     (async () => {
       const [THREE, sprite] = await Promise.all([import("three"), loadImage(CONFIG.POSES_SRC)]);
@@ -401,7 +410,7 @@ export function ParticlePortrait({ play = true, className = "", style }: Particl
         geometry.dispose();
         material.dispose();
         webglWorks = false;
-        setReady(false); // no WebGL: show the static image
+        setMode("static"); // no WebGL: show the static image
         return;
       }
       webglWorks = true;
@@ -541,7 +550,7 @@ export function ParticlePortrait({ play = true, className = "", style }: Particl
         renderer.render(scene, camera);
       });
 
-      setReady(true);
+      setMode("live");
 
       teardown = () => {
         renderer.setAnimationLoop(null);
@@ -560,11 +569,12 @@ export function ParticlePortrait({ play = true, className = "", style }: Particl
       };
     })().catch(() => {
       // Image or module failed to load: show the static portrait.
-      if (!disposed) setReady(false);
+      if (!disposed) setMode("static");
     });
 
     return () => {
       disposed = true;
+      window.clearTimeout(slow);
       teardown();
     };
   }, []);
@@ -579,7 +589,7 @@ export function ParticlePortrait({ play = true, className = "", style }: Particl
         alt="Keith Ciceron as a dithered gray portrait"
         width={CONFIG.FRAME.WIDTH}
         height={CONFIG.FRAME.HEIGHT}
-        className={`absolute left-1/2 -translate-x-1/2 w-auto max-w-none [image-rendering:pixelated] transition-opacity duration-300 ${FALLBACK_INVERT} ${ready ? "opacity-0" : "opacity-100"}`}
+        className={`portrait-fallback absolute left-1/2 -translate-x-1/2 w-auto max-w-none [image-rendering:pixelated] transition-opacity duration-300 ${FALLBACK_INVERT} ${mode === "live" ? "opacity-0" : mode === "static" ? "portrait-fallback-show" : ""}`}
         style={{
           height: `${CONFIG.FIT * 100}%`,
           ...(CONFIG.ALIGN === "bottom"

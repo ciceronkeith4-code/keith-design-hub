@@ -81,7 +81,9 @@
     border-color: var(--color-border);
     box-sizing: border-box;
   }
-  html, body, #root {
+  html,
+  body,
+  #root {
     margin: 0;
     padding: 0;
     height: 100%;
@@ -98,16 +100,24 @@
     border-top: 0 !important;
     outline: none !important;
     box-shadow: none !important;
-    transition: background-color 200ms ease, color 200ms ease;
+    transition:
+      background-color 200ms ease,
+      color 200ms ease;
   }
-  b, strong, .font-bold {
+  b,
+  strong,
+  .font-bold {
     font-weight: 600;
   }
-  button, a {
+  button,
+  a {
     -webkit-tap-highlight-color: transparent;
     font-family: var(--font-sans);
   }
-  button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible {
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible {
     outline: 2px solid #1c1c1c;
     outline-offset: 2px;
   }
@@ -138,7 +148,8 @@
   .font-mono {
     font-family: var(--font-mono);
   }
-  .custom-scrollbar, .card-scrollbar {
+  .custom-scrollbar,
+  .card-scrollbar {
     scrollbar-width: thin;
     scrollbar-color: #d0d0d0 transparent;
   }
@@ -185,10 +196,115 @@
   }
 }
 
+/* Fade-in on scroll (src/lib/scroll-reveal.ts): only opacity and transform, so it runs on the compositor. */
+.reveal {
+  opacity: 0;
+  transform: translate3d(0, 14px, 0);
+  transition:
+    opacity 600ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal.is-revealed {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* Hero typewriter (components/portfolio/Typewriter.tsx), pure CSS so it starts with the first paint.
+   Each character appears at --d; its ::after is the cursor, shown from --d for --s. */
+.tw-char {
+  position: relative;
+  opacity: 0;
+  animation: tw-char-in 1ms linear var(--d) forwards;
+}
+@keyframes tw-char-in {
+  to {
+    opacity: 1;
+  }
+}
+.tw-char::after {
+  content: "";
+  position: absolute;
+  left: 100%;
+  top: 0.08em;
+  height: 1em;
+  width: max(2px, 0.08em);
+  margin-left: 0.04em;
+  background: currentColor;
+  opacity: 0;
+  animation: tw-caret-here var(--s) steps(1) var(--d);
+}
+@keyframes tw-caret-here {
+  0%,
+  100% {
+    opacity: 1;
+  }
+}
+/* The very last character keeps a blinking cursor. */
+.tw-end::after {
+  animation: tw-caret-blink 1s steps(1) var(--d) infinite;
+}
+@keyframes tw-caret-blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tw-char {
+    opacity: 1;
+    animation: none;
+  }
+  .tw-char::after {
+    display: none;
+  }
+}
+
+/* Tour speech bubble (components/portfolio/tour/Tour3D.tsx). */
+.tour-bubble {
+  animation: tour-bubble-in 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  transform-origin: bottom center;
+}
+@keyframes tour-bubble-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.96);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tour-bubble {
+    animation: none;
+  }
+}
+
+/* The portrait's still image is hidden on first paint whenever JavaScript runs, so the fly-in assembles an
+   empty frame instead of replacing a finished picture. It shows without JavaScript, for reduced motion, and
+   when the 3D view can't start (.portrait-fallback-show). */
+.js .portrait-fallback:not(.portrait-fallback-show) {
+  opacity: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .js .portrait-fallback {
+    opacity: 1;
+  }
+}
+
 /* A device swapped in on the one-at-a-time (phone-width) preview stage. */
 @keyframes device-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 .device-in {
   animation: device-in 240ms cubic-bezier(0.23, 1, 0.32, 1) both;
@@ -213,7 +329,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;

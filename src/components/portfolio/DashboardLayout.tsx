@@ -3,7 +3,10 @@ import { Link, useLocation } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { Home, User, Briefcase, FolderOpen, Mail, type LucideIcon } from "lucide-react";
 import { TopBar } from "./TopBar";
+import { LiveViewers } from "./LiveViewers";
+import { TourLauncher } from "./TourLauncher";
 import { useTheme } from "@/lib/theme";
+import { useScrollReveal } from "@/lib/scroll-reveal";
 
 // Every section is its own URL, so each one is server-rendered and crawlable.
 const SECTIONS: { path: string; label: string; icon: LucideIcon }[] = [
@@ -29,6 +32,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const isHome = pathname === "/";
   const scrollRef = useRef<HTMLDivElement>(null);
   const hydrated = useRef(false);
+  useScrollReveal(scrollRef, pathname);
   useEffect(() => {
     hydrated.current = true;
   }, []);
@@ -69,6 +73,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               </Link>
             );
           })}
+
+          {/* Desktop sidebar only, pinned to its foot */}
+          <LiveViewers className="hidden md:flex md:mt-auto" />
         </nav>
 
         <main className="flex-1 min-w-0 min-h-0 h-full overflow-hidden flex flex-col">
@@ -89,6 +96,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           </div>
         </main>
       </div>
+
+      <TourLauncher />
     </div>
   );
 }
