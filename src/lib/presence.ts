@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { firebaseConfigured, loadFirebase, signInAnonymouslyOnce } from "./firebase";
 
 /**
@@ -19,15 +19,19 @@ export type Viewer = { id: string; name?: string; avatar?: string; you: boolean 
 type Profile = { name?: string; avatar?: string };
 type Connection = Profile & { at?: number };
 
+// The Google sign-in and sign-out, set once Firebase has loaded. They live at module level so other features
+// that need a Google identity (the guestbook) go through the same code: it moves this visitor's presence entry
+// to the new identity, which a second sign-in path would leave behind.
+let shared: { signIn: () => Promise<void>; signOut: () => Promise<void> } | null = null;
+
+export const googleSignIn = () => shared?.signIn();
+export const googleSignOut = () => shared?.signOut();
+
 /** The live viewer list (Google profiles first) and this visitor's Google sign-in state. */
 export function useLiveViewers() {
   const [viewers, setViewers] = useState<Viewer[]>([]);
   const [signedIn, setSignedIn] = useState(false);
   const [connected, setConnected] = useState(false);
-  // Set once Firebase has loaded: the sign-in and sign-out actions.
-  const actions = useRef<{ signIn: () => Promise<void>; signOut: () => Promise<void> } | null>(
-    null,
-  );
 
   useEffect(() => {
     if (!presenceConfigured) return;
@@ -101,7 +105,7 @@ export function useLiveViewers() {
         }),
       );
 
-      actions.current = {
+      shared = {
         signIn: async () => {
           await leave();
           try {
@@ -118,6 +122,9 @@ export function useLiveViewers() {
         },
       };
       cleanups.push(() => void leave());
+      cleanups.push(() => {
+        shared = null;
+      });
     })();
 
     return () => {
@@ -126,8 +133,5 @@ export function useLiveViewers() {
     };
   }, []);
 
-  const signIn = useCallback(() => actions.current?.signIn(), []);
-  const signOut = useCallback(() => actions.current?.signOut(), []);
-
-  return { viewers, signedIn, connected, signIn, signOut };
+  return { viewers, signedIn, connected, signIn: googleSignIn, signOut: googleSignOut };
 }

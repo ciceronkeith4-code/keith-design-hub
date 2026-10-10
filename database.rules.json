@@ -28,6 +28,19 @@
       },
       "$other": { ".validate": false }
     },
+    "guestbook": {
+      ".read": true,
+      ".indexOn": ["at"],
+      "$uid": {
+        ".write": "auth != null && ((auth.uid === $uid && auth.token.firebase.sign_in_provider === 'google.com') || (!newData.exists() && auth.token.email === 'ciceronkeith4@gmail.com' && auth.token.email_verified === true))",
+        ".validate": "newData.hasChildren(['message', 'at'])",
+        "message": { ".validate": "newData.isString() && newData.val().length <= 140 && newData.val().matches(/^\\s*\\S.*$/)" },
+        "name": { ".validate": "newData.isString() && newData.val().length <= 100 && newData.val() === auth.token.name" },
+        "avatar": { ".validate": "newData.isString() && newData.val().length <= 500 && newData.val().matches(/^https:\\/\\/lh[0-9]+\\.googleusercontent\\.com\\/.*$/)" },
+        "at": { ".validate": "newData.val() === now" },
+        "$other": { ".validate": false }
+      }
+    },
     "$other": { ".read": false, ".write": false }
   }
 }

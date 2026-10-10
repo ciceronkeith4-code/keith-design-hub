@@ -36,14 +36,17 @@ export function LikeButton() {
       title={
         liked ? "You liked this today. Come back tomorrow to like it again." : "Like this website"
       }
-      className={`inline-flex items-center gap-2 rounded-md border border-[#E5E5E0] dark:border-[#262626] bg-white dark:bg-[#141414] px-3.5 py-2.5 text-sm font-medium text-[#161616] dark:text-[#EDEDED] transition-colors ${
-        liked ? "cursor-default" : "hover:bg-[#F6F7F4] dark:hover:bg-[#1C1C1C] cursor-pointer"
+      // Once liked, the whole button (heart, label, sparks) goes muted gray: the heart takes the text color.
+      className={`inline-flex items-center gap-2 rounded-md border border-[#E5E5E0] dark:border-[#262626] bg-white dark:bg-[#141414] px-3.5 py-2.5 text-sm font-medium transition-colors ${
+        liked
+          ? "cursor-default text-[#62655E] dark:text-[#A3A3A3]"
+          : "cursor-pointer text-[#161616] dark:text-[#EDEDED] hover:bg-[#F6F7F4] dark:hover:bg-[#1C1C1C]"
       }`}
     >
       <span className="relative flex h-4 w-4 items-center justify-center" aria-hidden="true">
         <Heart
           className={`h-4 w-4 transition-[color,fill] duration-200 ${
-            liked ? "fill-rose-500 text-rose-500" : "fill-transparent"
+            liked ? "fill-current" : "fill-transparent"
           } ${justLiked ? "like-pop" : ""}`}
         />
         {justLiked && (

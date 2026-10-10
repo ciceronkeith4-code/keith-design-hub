@@ -16,6 +16,7 @@ import { Route as SiteAboutRouteImport } from './routes/_site/about'
 import { Route as SiteActivitiesRouteImport } from './routes/_site/activities'
 import { Route as SiteContactRouteImport } from './routes/_site/contact'
 import { Route as SiteExperienceRouteImport } from './routes/_site/experience'
+import { Route as SiteGuestbookRouteImport } from './routes/_site/guestbook'
 import { Route as SiteSkillsRouteImport } from './routes/_site/skills'
 import { Route as SiteProjectsIndexRouteImport } from './routes/_site/projects/index'
 import { Route as SiteProjectsSlugRouteImport } from './routes/_site/projects/$slug'
@@ -54,6 +55,11 @@ const SiteExperienceRoute = SiteExperienceRouteImport.update({
   path: '/experience',
   getParentRoute: () => SiteRoute,
 } as any)
+const SiteGuestbookRoute = SiteGuestbookRouteImport.update({
+  id: '/guestbook',
+  path: '/guestbook',
+  getParentRoute: () => SiteRoute,
+} as any)
 const SiteSkillsRoute = SiteSkillsRouteImport.update({
   id: '/skills',
   path: '/skills',
@@ -77,6 +83,7 @@ export interface FileRoutesByFullPath {
   '/activities': typeof SiteActivitiesRoute
   '/contact': typeof SiteContactRoute
   '/experience': typeof SiteExperienceRoute
+  '/guestbook': typeof SiteGuestbookRoute
   '/skills': typeof SiteSkillsRoute
   '/projects/$slug': typeof SiteProjectsSlugRoute
   '/projects/': typeof SiteProjectsIndexRoute
@@ -87,6 +94,7 @@ export interface FileRoutesByTo {
   '/activities': typeof SiteActivitiesRoute
   '/contact': typeof SiteContactRoute
   '/experience': typeof SiteExperienceRoute
+  '/guestbook': typeof SiteGuestbookRoute
   '/skills': typeof SiteSkillsRoute
   '/': typeof SiteIndexRoute
   '/projects/$slug': typeof SiteProjectsSlugRoute
@@ -100,6 +108,7 @@ export interface FileRoutesById {
   '/_site/activities': typeof SiteActivitiesRoute
   '/_site/contact': typeof SiteContactRoute
   '/_site/experience': typeof SiteExperienceRoute
+  '/_site/guestbook': typeof SiteGuestbookRoute
   '/_site/skills': typeof SiteSkillsRoute
   '/_site/': typeof SiteIndexRoute
   '/_site/projects/$slug': typeof SiteProjectsSlugRoute
@@ -114,6 +123,7 @@ export interface FileRouteTypes {
     | '/activities'
     | '/contact'
     | '/experience'
+    | '/guestbook'
     | '/skills'
     | '/projects/$slug'
     | '/projects/'
@@ -124,6 +134,7 @@ export interface FileRouteTypes {
     | '/activities'
     | '/contact'
     | '/experience'
+    | '/guestbook'
     | '/skills'
     | '/'
     | '/projects/$slug'
@@ -136,6 +147,7 @@ export interface FileRouteTypes {
     | '/_site/activities'
     | '/_site/contact'
     | '/_site/experience'
+    | '/_site/guestbook'
     | '/_site/skills'
     | '/_site/'
     | '/_site/projects/$slug'
@@ -198,6 +210,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SiteExperienceRouteImport
       parentRoute: typeof SiteRoute
     }
+    '/_site/guestbook': {
+      id: '/_site/guestbook'
+      path: '/guestbook'
+      fullPath: '/guestbook'
+      preLoaderRoute: typeof SiteGuestbookRouteImport
+      parentRoute: typeof SiteRoute
+    }
     '/_site/skills': {
       id: '/_site/skills'
       path: '/skills'
@@ -227,6 +246,7 @@ interface SiteRouteChildren {
   SiteActivitiesRoute: typeof SiteActivitiesRoute
   SiteContactRoute: typeof SiteContactRoute
   SiteExperienceRoute: typeof SiteExperienceRoute
+  SiteGuestbookRoute: typeof SiteGuestbookRoute
   SiteSkillsRoute: typeof SiteSkillsRoute
   SiteIndexRoute: typeof SiteIndexRoute
   SiteProjectsSlugRoute: typeof SiteProjectsSlugRoute
@@ -238,6 +258,7 @@ const SiteRouteChildren: SiteRouteChildren = {
   SiteActivitiesRoute: SiteActivitiesRoute,
   SiteContactRoute: SiteContactRoute,
   SiteExperienceRoute: SiteExperienceRoute,
+  SiteGuestbookRoute: SiteGuestbookRoute,
   SiteSkillsRoute: SiteSkillsRoute,
   SiteIndexRoute: SiteIndexRoute,
   SiteProjectsSlugRoute: SiteProjectsSlugRoute,
