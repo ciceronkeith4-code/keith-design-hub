@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowUpRight, ArrowRight } from "lucide-react";
+import { LikeButton } from "./LikeButton";
 import { ParticlePortrait } from "./ParticlePortrait";
 import { Typed } from "./Typewriter";
 import { typeSchedule, type TypeSegment } from "@/lib/typewriter";
@@ -67,6 +68,8 @@ export function BentoDashboard() {
               <span>Let's Talk</span>
               <ArrowUpRight className="h-4 w-4" />
             </Link>
+
+            <LikeButton />
           </div>
         </div>
 

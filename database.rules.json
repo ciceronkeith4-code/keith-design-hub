@@ -13,6 +13,21 @@
         }
       }
     },
+    "likes": {
+      "total": {
+        ".read": true,
+        ".write": "auth != null && newData.val() === (data.exists() ? data.val() + 1 : 1) && newData.parent().child('visitors').child(auth.uid).val() === now && (!data.parent().child('visitors').child(auth.uid).exists() || data.parent().child('visitors').child(auth.uid).val() < now - 86400000)",
+        ".validate": "newData.isNumber()"
+      },
+      "visitors": {
+        "$uid": {
+          ".read": "auth != null && auth.uid === $uid",
+          ".write": "auth != null && auth.uid === $uid && newData.val() === now && (!data.exists() || data.val() < now - 86400000)",
+          ".validate": "newData.isNumber()"
+        }
+      },
+      "$other": { ".validate": false }
+    },
     "$other": { ".read": false, ".write": false }
   }
 }

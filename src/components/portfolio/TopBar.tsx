@@ -5,6 +5,8 @@ import { CLICKABLE, playClick, readSoundOn, saveSoundOn } from "@/lib/click-soun
 import { pixelThemeTransition } from "@/lib/pixel-transition";
 
 const BRAND_NAME = "Keith Ciceron";
+// The PDF lives in public/, so it is served from the site root.
+const RESUME_PATH = "/Keith-Ciceron-Resume.pdf";
 
 const ICON_BUTTON =
   "h-8 w-8 rounded-md flex items-center justify-center text-[#62655E] dark:text-[#A3A3A3] hover:text-[#161616] dark:hover:text-[#EDEDED] hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer";
@@ -115,6 +117,16 @@ export function TopBar({ onToggleTheme }: TopBarProps) {
             className="inline-flex items-center gap-0.5 text-xs text-[#62655E] dark:text-[#A3A3A3] hover:text-[#161616] dark:hover:text-[#EDEDED] transition-colors"
           >
             <span>LinkedIn</span>
+            <ArrowUpRight className="h-3 w-3" />
+          </a>
+
+          <a
+            href={RESUME_PATH}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-0.5 text-xs text-[#62655E] dark:text-[#A3A3A3] hover:text-[#161616] dark:hover:text-[#EDEDED] transition-colors"
+          >
+            <span>Resume</span>
             <ArrowUpRight className="h-3 w-3" />
           </a>
         </div>

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { firebaseConfigured, loadFirebase, signInAnonymouslyOnce } from "./firebase";
 
 /**
  * Who is on the site right now, through Firebase Realtime Database presence.
@@ -8,19 +9,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
  * by itself when the tab closes or drops offline; a visitor counts once however many tabs they have open.
  * A visitor who signs in with Google also shares their Google name and profile photo, nothing else.
  *
- * Needs the VITE_FIREBASE_* web config (in .env.local, and in Vercel for the live site). Firebase is loaded
- * only after the page is up, so it adds nothing to the first load.
+ * The Firebase app and its web config are in ./firebase.
  */
-const CONFIG = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY as string | undefined,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN as string | undefined,
-  databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL as string | undefined,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID as string | undefined,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID as string | undefined,
-};
 const PRESENCE_PATH = "presence";
 
-export const presenceConfigured = Boolean(CONFIG.apiKey && CONFIG.databaseURL && CONFIG.authDomain);
+export const presenceConfigured = firebaseConfigured;
 
 export type Viewer = { id: string; name?: string; avatar?: string; you: boolean };
 type Profile = { name?: string; avatar?: string };
@@ -42,15 +35,9 @@ export function useLiveViewers() {
     const cleanups: (() => void)[] = [];
 
     void (async () => {
-      const [{ initializeApp, getApps }, authLib, dbLib] = await Promise.all([
-        import("firebase/app"),
-        import("firebase/auth"),
-        import("firebase/database"),
-      ]);
+      const firebase = await loadFirebase();
       if (disposed) return;
-      const app = getApps()[0] ?? initializeApp(CONFIG);
-      const auth = authLib.getAuth(app);
-      const db = dbLib.getDatabase(app);
+      const { authLib, dbLib, auth, db } = firebase;
 
       // This tab's connection entry, re-created whenever the visitor's identity or connection changes.
       let connection: ReturnType<typeof dbLib.push> | null = null;
@@ -89,7 +76,7 @@ export function useLiveViewers() {
         authLib.onAuthStateChanged(auth, (user) => {
           if (!user) {
             // Everyone gets an anonymous identity, so the rules can tell visitors apart.
-            void authLib.signInAnonymously(auth).catch(() => {});
+            void signInAnonymouslyOnce(firebase);
             return;
           }
           setSignedIn(!user.isAnonymous);
