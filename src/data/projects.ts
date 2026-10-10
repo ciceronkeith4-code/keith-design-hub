@@ -506,9 +506,11 @@ const projects: Project[] = [
         body: "All data lives in the browser's localStorage behind a small typed store module. The full borrowing flow can be demoed without a server, and the store is the one place to swap in a real API.",
       },
     ],
+    // No code link: the repository is private (it returns 404), so there is nothing for visitors to open.
+    // Add it back once the repo is public. The live site renders blank until the Vercel project's
+    // VITE_BASE_URL variable is removed (its vite.config.ts already defaults to base "/").
     links: {
       live: "https://final-sscr-library.vercel.app/",
-      code: "https://github.com/keithciceron2004-star/FINAL-SSCR-LIBRARY",
     },
     images: [
       {
