@@ -179,7 +179,7 @@ export function Contact() {
             <div>
               <label
                 htmlFor="contact-name"
-                className="font-mono text-[10px] text-[#62655E] dark:text-[#A3A3A3] uppercase tracking-wider block mb-1.5"
+                className="text-xs font-medium text-[#62655E] dark:text-[#A3A3A3] block mb-1.5"
               >
                 Name <span className="text-red-500">*</span>
               </label>
@@ -195,15 +195,13 @@ export function Contact() {
                     : "border-[#E5E5E0] dark:border-[#262626] focus:border-[#161616] dark:focus:border-[#EDEDED]"
                 }`}
               />
-              {errors.name && (
-                <p className="font-mono text-[10px] text-red-500 mt-0.5">{errors.name}</p>
-              )}
+              {errors.name && <p className="text-xs text-red-500 mt-1">{errors.name}</p>}
             </div>
 
             <div>
               <label
                 htmlFor="contact-email"
-                className="font-mono text-[10px] text-[#62655E] dark:text-[#A3A3A3] uppercase tracking-wider block mb-1.5"
+                className="text-xs font-medium text-[#62655E] dark:text-[#A3A3A3] block mb-1.5"
               >
                 Email <span className="text-red-500">*</span>
               </label>
@@ -219,9 +217,7 @@ export function Contact() {
                     : "border-[#E5E5E0] dark:border-[#262626] focus:border-[#161616] dark:focus:border-[#EDEDED]"
                 }`}
               />
-              {errors.email && (
-                <p className="font-mono text-[10px] text-red-500 mt-0.5">{errors.email}</p>
-              )}
+              {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
             </div>
           </div>
 
@@ -229,7 +225,7 @@ export function Contact() {
           <div>
             <label
               htmlFor="contact-subject"
-              className="font-mono text-[10px] text-[#62655E] dark:text-[#A3A3A3] uppercase tracking-wider block mb-1.5"
+              className="text-xs font-medium text-[#62655E] dark:text-[#A3A3A3] block mb-1.5"
             >
               Subject
             </label>
@@ -247,7 +243,7 @@ export function Contact() {
           <div>
             <label
               htmlFor="contact-message"
-              className="font-mono text-[10px] text-[#62655E] dark:text-[#A3A3A3] uppercase tracking-wider block mb-1.5"
+              className="text-xs font-medium text-[#62655E] dark:text-[#A3A3A3] block mb-1.5"
             >
               Message <span className="text-red-500">*</span>
             </label>
@@ -263,15 +259,13 @@ export function Contact() {
                   : "border-[#E5E5E0] dark:border-[#262626] focus:border-[#161616] dark:focus:border-[#EDEDED]"
               }`}
             />
-            {errors.message && (
-              <p className="font-mono text-[10px] text-red-500 mt-0.5">{errors.message}</p>
-            )}
+            {errors.message && <p className="text-xs text-red-500 mt-1">{errors.message}</p>}
           </div>
 
           {/* Status Feedback */}
           {status && (
             <div
-              className={`rounded-[8px] p-2 text-xs font-mono ${
+              className={`rounded-[8px] p-2 text-xs ${
                 status.type === "success"
                   ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800"
                   : "bg-red-50 dark:bg-red-950/40 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800"

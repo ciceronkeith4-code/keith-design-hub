@@ -37,7 +37,7 @@ export function Lightbox({
   onClose,
   onIndexChange,
   label = "Image viewer",
-  fontClassName = "font-mono",
+  fontClassName = "font-sans",
 }: LightboxProps) {
   const open = index !== null;
   const dialogRef = useRef<HTMLDivElement>(null);

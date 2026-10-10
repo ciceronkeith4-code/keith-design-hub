@@ -37,12 +37,11 @@ export const Route = createFileRoute("/_site/projects/$slug")({
 });
 
 const MUTED = "text-[#62655E] dark:text-[#A3A3A3]";
-const LABEL = `font-mono text-xs ${MUTED}`;
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section className="w-full border-t border-[#E3E5E0] dark:border-[#262626] pt-5 grid grid-cols-1 md:grid-cols-[180px_1fr] gap-x-10 gap-y-3">
-      <h2 className="font-mono text-xs font-semibold text-[#161616] dark:text-[#EDEDED]">
+      <h2 className="font-sans text-sm font-semibold text-[#161616] dark:text-[#EDEDED]">
         {title}
       </h2>
       <div className="min-w-0 text-sm leading-relaxed text-[#3A3C38] dark:text-[#C8C8C8]">
@@ -72,6 +71,7 @@ function CaseStudyPage() {
   const { live, code } = project.links;
 
   const glance = [
+    { term: "Type", value: project.type },
     { term: "Client", value: project.client },
     { term: "Role", value: project.role },
     { term: "Timeline", value: project.timeline },
@@ -84,14 +84,13 @@ function CaseStudyPage() {
       <article className="w-full flex flex-col items-start text-left gap-8">
         <Link
           to="/projects"
-          className={`font-mono text-xs ${MUTED} hover:text-[#161616] dark:hover:text-[#EDEDED] transition-colors`}
+          className={`text-xs ${MUTED} hover:text-[#161616] dark:hover:text-[#EDEDED] transition-colors`}
         >
           <span aria-hidden="true">← </span>All projects
         </Link>
 
         <header className="w-full flex flex-col items-start">
-          <p className={LABEL}>{project.type}</p>
-          <h1 className="mt-3 font-sans text-[clamp(26px,4vw,40px)] font-semibold tracking-tight text-[#161616] dark:text-[#EDEDED] leading-tight">
+          <h1 className="font-sans text-[clamp(26px,4vw,40px)] font-semibold tracking-tight text-[#161616] dark:text-[#EDEDED] leading-tight">
             {project.name}
           </h1>
           <p className={`mt-4 max-w-[68ch] text-sm sm:text-base leading-relaxed ${MUTED}`}>
@@ -145,7 +144,7 @@ function CaseStudyPage() {
               <dl className="grid grid-cols-[80px_1fr] gap-x-6 gap-y-3">
                 {glance.map((row) => (
                   <div key={row.term} className="contents">
-                    <dt className={`pt-0.5 font-mono text-xs ${MUTED}`}>{row.term}</dt>
+                    <dt className={`pt-0.5 text-xs ${MUTED}`}>{row.term}</dt>
                     <dd>{row.value}</dd>
                   </div>
                 ))}
@@ -213,7 +212,7 @@ function CaseStudyPage() {
             className="group w-full border-t border-[#E3E5E0] dark:border-[#262626] pt-5 flex items-center justify-between gap-4"
           >
             <span className="min-w-0">
-              <span className={`block font-mono text-xs ${MUTED}`}>Next project</span>
+              <span className={`block text-xs ${MUTED}`}>Next project</span>
               <span className="mt-1 block truncate text-sm font-semibold text-[#161616] dark:text-[#EDEDED] group-hover:underline">
                 {next.name}
               </span>

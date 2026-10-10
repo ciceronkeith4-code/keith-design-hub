@@ -49,8 +49,8 @@ export function Experience() {
 
       {/* Workshops and events, compact, below the work history */}
       <section className="mt-12">
-        <h2 className="pb-2 border-b border-[#E5E5E0] dark:border-[#262626] font-mono text-[11px] font-semibold uppercase tracking-wider text-[#161616] dark:text-[#EDEDED]">
-          Workshops & Events
+        <h2 className="pb-2 border-b border-[#E5E5E0] dark:border-[#262626] font-sans text-sm font-semibold text-[#161616] dark:text-[#EDEDED]">
+          Workshops & events
         </h2>
         <ul className="divide-y divide-[#E5E5E0] dark:divide-[#262626]">
           {TRAININGS.map((item) => (

@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { NOTE_MAX, useGuestbook, type Me, type Note } from "@/lib/guestbook";
 
 const MUTED = "text-[#62655E] dark:text-[#A3A3A3]";
-const LABEL = `font-mono text-[10px] uppercase tracking-wider ${MUTED}`;
+const LABEL = "font-sans text-sm font-semibold text-[#161616] dark:text-[#EDEDED]";
 const CARD =
   "rounded-[16px] sm:rounded-[20px] border border-[#E5E5E0] dark:border-[#262626] bg-[#F6F7F4] dark:bg-[#141414]";
 
@@ -208,14 +208,14 @@ function NoteCard({
             {name}
           </span>
           {you && (
-            <span className="shrink-0 rounded-full bg-black/5 px-1.5 py-px font-mono text-[10px] text-[#161616] dark:bg-white/10 dark:text-[#EDEDED]">
+            <span className="shrink-0 rounded-full bg-black/5 px-1.5 py-px text-[11px] font-medium text-[#161616] dark:bg-white/10 dark:text-[#EDEDED]">
               You
             </span>
           )}
           <time
             dateTime={new Date(note.at).toISOString()}
             title={new Date(note.at).toLocaleString()}
-            className={`shrink-0 font-mono text-[11px] ${MUTED}`}
+            className={`shrink-0 text-xs ${MUTED}`}
           >
             {ago(note.at)}
           </time>

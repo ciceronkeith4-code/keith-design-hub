@@ -183,7 +183,7 @@ export function DeviceStage({
                       {...activation(device, false)}
                     />
                     <p
-                      className="flex shrink-0 items-end font-display-mono text-xs text-[#5E615A] dark:text-[#A3A3A3]"
+                      className="flex shrink-0 items-end font-sans text-xs text-[#5E615A] dark:text-[#A3A3A3]"
                       style={{ height: CAPTION_H }}
                     >
                       {viewportCaption(spec)}
@@ -210,7 +210,7 @@ export function DeviceStage({
         images={images}
         index={lightbox?.index ?? null}
         label={lightbox ? `${project.name} ${DEVICE_NOUN[lightbox.device]} screenshots` : undefined}
-        fontClassName="font-display-mono"
+        fontClassName="font-sans"
         onClose={() => setLightbox(null)}
         onIndexChange={(index) =>
           setLightbox((current) => (current ? { ...current, index } : current))
@@ -333,7 +333,7 @@ function DeviceTabs({ id, label, options, value, onChange }: DeviceTabsProps) {
         role="tablist"
         aria-label={label}
         onKeyDown={onKeyDown}
-        className="relative inline-flex items-center font-display-mono text-[11px]"
+        className="relative inline-flex items-center font-sans text-[11px]"
       >
         {options.map((option, i) => {
           const selected = option === value;

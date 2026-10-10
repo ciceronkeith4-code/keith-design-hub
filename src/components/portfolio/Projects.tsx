@@ -3,8 +3,6 @@ import { ExternalLinkIcon } from "lucide-react";
 import { PROJECTS, type Project } from "@/data/projects";
 import { DeviceStage } from "./DeviceStage";
 
-const pad = (n: number) => String(n).padStart(2, "0");
-
 /** The case study's first sentence doubles as the project's one-line description here. */
 const firstSentence = (text: string) => text.match(/^.*?[.?](?=\s|$)/)?.[0] ?? text;
 
@@ -15,9 +13,9 @@ const MUTED = "text-[#5E615A] dark:text-[#A3A3A3]";
 
 export function Projects() {
   return (
-    <div className="w-full font-display text-[#141414] dark:text-[#EDEDED]">
+    <div className="w-full text-[#141414] dark:text-[#EDEDED]">
       <header className="border-b border-black/12 pb-8 dark:border-white/12">
-        <h1 className="text-[clamp(32px,4.4vw,46px)] font-semibold leading-[1.02] tracking-[-0.035em]">
+        <h1 className="font-sans text-[clamp(26px,3.5vh,36px)] font-semibold tracking-tight leading-tight">
           Work
         </h1>
         <p className="mt-3 max-w-[58ch] text-[15px] leading-relaxed text-[#3A3C38] dark:text-[#C8C8C8]">
@@ -27,25 +25,17 @@ export function Projects() {
       </header>
 
       <ol>
-        {PROJECTS.map((project, i) => (
-          <ProjectRow key={project.slug} project={project} number={i + 1} total={PROJECTS.length} />
+        {PROJECTS.map((project) => (
+          <ProjectRow key={project.slug} project={project} />
         ))}
       </ol>
     </div>
   );
 }
 
-function ProjectRow({
-  project,
-  number,
-  total,
-}: {
-  project: Project;
-  number: number;
-  total: number;
-}) {
+function ProjectRow({ project }: { project: Project }) {
   const titleId = `project-${project.slug}`;
-  const meta = [project.status, project.timeline, project.role].filter(Boolean);
+  const meta = [project.type, project.status, project.timeline, project.role].filter(Boolean);
   const { live, code } = project.links;
 
   return (
@@ -57,14 +47,9 @@ function ProjectRow({
         className="grid grid-cols-1 lg:grid-cols-12 lg:items-end lg:gap-x-10"
       >
         <div className="flex flex-col lg:col-span-5 lg:row-start-1">
-          <p className={`font-display-mono text-[11px] ${MUTED}`}>
-            <span className="text-[#141414] dark:text-[#EDEDED]">{pad(number)}</span> / {pad(total)}
-          </p>
-
-          <p className={`mt-4 font-display-mono text-[11px] ${MUTED}`}>{project.type}</p>
           <h2
             id={titleId}
-            className="mt-1.5 text-[clamp(22px,2.6vw,28px)] font-semibold leading-[1.15] tracking-[-0.025em] text-balance"
+            className="text-[clamp(22px,2.6vw,28px)] font-semibold leading-[1.15] tracking-[-0.025em] text-balance"
           >
             {project.name}
           </h2>
@@ -72,10 +57,8 @@ function ProjectRow({
             {firstSentence(project.intro)}
           </p>
 
-          <div
-            className={`mt-6 flex flex-col gap-1.5 font-display-mono text-[11px] leading-relaxed ${MUTED}`}
-          >
-            {meta.length > 0 && <p>{meta.join(" · ")}</p>}
+          <div className={`mt-6 flex flex-col gap-1.5 text-xs leading-relaxed ${MUTED}`}>
+            <p>{meta.join(" · ")}</p>
             <p>
               <span className="sr-only">Built with </span>
               {project.stack.join(" · ")}

@@ -31,6 +31,7 @@ export function LikeButton() {
   return (
     <button
       type="button"
+      data-tour="like"
       onClick={() => void onClick()}
       aria-disabled={liked}
       title={

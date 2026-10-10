@@ -115,7 +115,7 @@ function Screenshot({
   if (!hasShot) {
     return (
       <p
-        className="absolute inset-0 flex items-center justify-center p-2 text-center font-display-mono leading-snug text-[#A3A3A3]"
+        className="absolute inset-0 flex items-center justify-center p-2 text-center font-sans leading-snug text-[#A3A3A3]"
         style={{ fontSize: Math.min(13, Math.max(7, screenWidth * 0.045)) }}
       >
         Screenshot coming soon

@@ -4,8 +4,7 @@ import { SiGithub } from "react-icons/si";
 import { EDUCATION, SKILLS } from "@/lib/portfolio-data";
 import { PROJECTS } from "@/data/projects";
 
-const SUBHEAD =
-  "font-mono text-[11px] font-semibold uppercase tracking-wider text-[#161616] dark:text-[#EDEDED]";
+const SUBHEAD = "font-sans text-sm font-semibold text-[#161616] dark:text-[#EDEDED]";
 const MUTED = "text-[#62655E] dark:text-[#A3A3A3]";
 const LINK =
   "underline decoration-[#C9CCC4] dark:decoration-[#3A3A3A] underline-offset-2 hover:text-[#161616] dark:hover:text-[#EDEDED] hover:decoration-current";
@@ -70,7 +69,7 @@ export function About() {
 
                 <div className="mt-1 flex items-center justify-between gap-3">
                   <span className={`text-xs ${MUTED}`}>{edu.detail}</span>
-                  <span className="rounded-full border border-[#E5E5E0] dark:border-[#262626] bg-white dark:bg-[#141414] px-2 py-0.5 font-mono text-[10px] text-[#161616] dark:text-[#EDEDED] shrink-0">
+                  <span className="rounded-full border border-[#E5E5E0] dark:border-[#262626] bg-white dark:bg-[#141414] px-2 py-0.5 text-[11px] text-[#161616] dark:text-[#EDEDED] shrink-0">
                     {edu.badge}
                   </span>
                 </div>
@@ -90,9 +89,7 @@ export function About() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-6">
           {STACK_GROUPS.map(({ group, skills }) => (
             <div key={group}>
-              <h3 className={`font-mono text-[10px] uppercase tracking-wider ${MUTED} mb-1`}>
-                {group}
-              </h3>
+              <h3 className={`text-xs font-medium ${MUTED} mb-1`}>{group}</h3>
               <div className="divide-y divide-[#E5E5E0]/60 dark:divide-[#262626]">
                 {skills.map((skill) => {
                   const Icon = skill.icon;
@@ -103,9 +100,7 @@ export function About() {
                         <Icon className="h-3.5 w-3.5 shrink-0" />
                         <span>{skill.name}</span>
                       </div>
-                      <p
-                        className={`mt-0.5 pl-[22px] font-mono text-[10px] leading-relaxed ${MUTED}`}
-                      >
+                      <p className={`mt-0.5 pl-[22px] text-[11px] leading-relaxed ${MUTED}`}>
                         {skill.name === "QA Testing" ? (
                           <Link to="/experience" hash="qa" className={LINK}>
                             Dev Assistant for a leading US ride-hailing app
@@ -133,7 +128,7 @@ export function About() {
       {/* GitHub Contributions */}
       <section className="mt-10 sm:mt-12">
         <div className="flex items-center justify-between pb-2 border-b border-[#E5E5E0] dark:border-[#262626] mb-4">
-          <h2 className={SUBHEAD}>GitHub Contributions</h2>
+          <h2 className={SUBHEAD}>GitHub contributions</h2>
           <a
             href="https://github.com/ciceronkeith4-code"
             target="_blank"
