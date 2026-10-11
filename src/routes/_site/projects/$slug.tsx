@@ -40,7 +40,10 @@ const MUTED = "text-[#62655E] dark:text-[#A3A3A3]";
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <section className="w-full border-t border-[#E3E5E0] dark:border-[#262626] pt-5 grid grid-cols-1 md:grid-cols-[180px_1fr] gap-x-10 gap-y-3">
+    <section
+      data-section={title}
+      className="w-full border-t border-[#E3E5E0] dark:border-[#262626] pt-5 grid grid-cols-1 md:grid-cols-[180px_1fr] gap-x-10 gap-y-3"
+    >
       <h2 className="font-sans text-sm font-semibold text-[#161616] dark:text-[#EDEDED]">
         {title}
       </h2>

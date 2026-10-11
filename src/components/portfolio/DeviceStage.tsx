@@ -115,6 +115,7 @@ export function DeviceStage({
       <div
         ref={stageRef}
         id={`${id}-panel`}
+        data-tour="work-preview"
         role="tabpanel"
         aria-labelledby={`${id}-tab-${view}`}
         className={`relative w-full overflow-hidden transition-[height] duration-300 ${EASE} ${stageClassName}`}
@@ -196,7 +197,7 @@ export function DeviceStage({
         )}
       </div>
 
-      <div className={tabsClassName}>
+      <div data-tour="work-preview" className={tabsClassName}>
         <DeviceTabs
           id={id}
           label={`Device preview of ${project.name}`}

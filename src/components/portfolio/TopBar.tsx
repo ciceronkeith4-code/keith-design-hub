@@ -99,7 +99,7 @@ export function TopBar({ onToggleTheme }: TopBarProps) {
       </div>
 
       <div className="flex-1 min-w-0 h-full flex items-center justify-end sm:justify-between gap-2 px-3 sm:px-6">
-        <div className="hidden sm:flex items-center gap-4">
+        <div data-tour="links" className="hidden sm:flex items-center gap-4">
           <a
             href="https://github.com/ciceronkeith4-code"
             target="_blank"

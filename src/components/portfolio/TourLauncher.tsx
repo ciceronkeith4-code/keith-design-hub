@@ -54,10 +54,10 @@ export function TourLauncher() {
           className={`${CARD} tour-bubble w-[260px] max-w-[calc(100vw-24px)] rounded-xl p-3.5`}
         >
           <p className="text-sm font-medium text-[#161616] dark:text-[#EDEDED]">
-            Take a 30-second tour?
+            Take a tour of the whole site?
           </p>
           <p className="mt-0.5 text-xs text-[#62655E] dark:text-[#A3A3A3]">
-            A few quick stops. You can skip any time.
+            It stops at every page. You can skip it any time.
           </p>
           <div className="mt-3 flex justify-end gap-2">
             <button

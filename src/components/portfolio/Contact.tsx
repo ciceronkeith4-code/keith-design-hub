@@ -161,7 +161,10 @@ export function Contact() {
       </p>
 
       {/* Primary Focal Point: Message Form Card */}
-      <div className="rounded-[16px] sm:rounded-[20px] border border-[#E5E5E0] dark:border-[#262626] bg-[#F6F7F4] dark:bg-[#141414] p-5 sm:p-7 flex flex-col">
+      <div
+        data-tour="contact-form"
+        className="rounded-[16px] sm:rounded-[20px] border border-[#E5E5E0] dark:border-[#262626] bg-[#F6F7F4] dark:bg-[#141414] p-5 sm:p-7 flex flex-col"
+      >
         <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
           <input
             type="checkbox"
@@ -291,7 +294,7 @@ export function Contact() {
 
       {/* Socials on the Bottom */}
       <div className="mt-6 flex flex-col items-start gap-3 shrink-0">
-        <div className="flex items-center gap-2 flex-wrap">
+        <div data-tour="contact-links" className="flex items-center gap-2 flex-wrap">
           {SOCIAL_LINKS.map((social) => {
             const Icon = social.icon;
             return (

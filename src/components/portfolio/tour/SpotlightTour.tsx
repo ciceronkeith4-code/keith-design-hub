@@ -6,12 +6,15 @@ import {
   useState,
   type CSSProperties,
 } from "react";
+import { useRouter } from "@tanstack/react-router";
 import { TOUR_STEPS, type TourSide, type TourStep } from "./steps";
 
 /**
- * The guided tour: the page dims, one thing stays lit, and a bubble beside it says what it is. Next and Back
- * step through; Skip, Escape, or the last Done close it. On phones the bubble docks above the bottom bar so it
- * never sits on the page's content.
+ * The guided tour of the whole site: the page dims, one thing stays lit, and a bubble beside it says what it
+ * is. Steps live on different pages, so the tour opens each page itself, waits for the page to show the
+ * element, then lights it. Next and Back step through; Skip tour, Escape, or the last Done close it and put
+ * the visitor back on the page they started from. On phones the bubble docks above the bottom bar (or under
+ * the header) so it never sits on what it points at.
  */
 const PAD = 6; // light around the highlighted element
 const GAP = 14; // between the highlight and the bubble
@@ -19,11 +22,14 @@ const EDGE = 12; // closest the bubble gets to the window edge
 const BUBBLE_W = 288;
 const DOCK = 84; // phones: the bubble's bottom edge above the window bottom, clear of the nav bar
 const NEAR = 160; // phones: the arrow shows only when the highlight is this close to the bubble
+const PAGE_WAIT = 3500; // how long a new page gets to show a step's element, ms
+const SETTLE = 220; // after opening a page: its own scroll-to-top and fade-in finish first, ms
 
 type Rect = { x: number; y: number; w: number; h: number };
 type Placed = { left: number; top: number; width: number; points: TourSide | null; offset: number };
 
 const clamp = (v: number, lo: number, hi: number) => Math.min(Math.max(v, lo), Math.max(lo, hi));
+const sleep = (ms: number) => new Promise<void>((resolve) => window.setTimeout(resolve, ms));
 const isPhone = () => !window.matchMedia("(min-width: 768px)").matches;
 const overlaps = (a: Rect, b: Rect) =>
   a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
@@ -33,6 +39,7 @@ const opposite: Record<TourSide, TourSide> = {
   left: "right",
   right: "left",
 };
+const here = () => window.location.pathname + window.location.search + window.location.hash;
 
 /** The box around every element a step selects, or null when none is showing. */
 function rectOf(step: TourStep): Rect | null {
@@ -51,12 +58,21 @@ function rectOf(step: TourStep): Rect | null {
   return left === Infinity ? null : { x: left, y: top, w: right - left, h: bottom - top };
 }
 
+/** Waits until the step's element is on screen, or gives up after `ms`. */
+async function appears(step: TourStep, ms: number) {
+  const until = performance.now() + ms;
+  while (performance.now() < until) {
+    if (rectOf(step)) return true;
+    await sleep(50);
+  }
+  return false;
+}
+
 function place(spot: Rect, prefer: TourSide, height: number, phone: boolean): Placed {
   const vw = window.innerWidth;
   const vh = window.innerHeight;
   const cx = spot.x + spot.w / 2;
   const cy = spot.y + spot.h / 2;
-
   const lit: Rect = { x: spot.x - PAD, y: spot.y - PAD, w: spot.w + PAD * 2, h: spot.h + PAD * 2 };
 
   if (phone) {
@@ -86,7 +102,17 @@ function place(spot: Rect, prefer: TourSide, height: number, phone: boolean): Pl
     return r;
   };
   const order: TourSide[] = [prefer, opposite[prefer], "right", "bottom", "left", "top"];
-  const side = order.find((s) => !overlaps(at(s), lit)) ?? prefer;
+  const side = order.find((s) => !overlaps(at(s), lit));
+  if (!side) {
+    // A highlight so large nothing fits around it (it fills the window): sit at the bottom edge.
+    return {
+      left: (vw - BUBBLE_W) / 2,
+      top: vh - EDGE - height,
+      width: BUBBLE_W,
+      points: null,
+      offset: 0,
+    };
+  }
   const r = at(side);
   const points = opposite[side];
   const offset =
@@ -113,54 +139,120 @@ function arrowStyle(points: TourSide, offset: number): CSSProperties {
 }
 
 export default function SpotlightTour({ onDone }: { onDone: () => void }) {
-  // Only the steps whose element is on screen right now, fixed for this run.
-  const [steps] = useState(() => TOUR_STEPS.filter((s) => rectOf(s) !== null));
+  const router = useRouter();
+  // Steps that suit this window, fixed for this run. Whether each page really shows its element is found out
+  // when the tour gets there.
+  const [steps] = useState(() =>
+    TOUR_STEPS.filter((s) => !s.minWidth || window.innerWidth >= s.minWidth),
+  );
   const [i, setI] = useState(0);
+  const [ready, setReady] = useState(false);
   const [spot, setSpot] = useState<Rect | null>(null);
   const [placed, setPlaced] = useState<Placed | null>(null);
   const [moving, setMoving] = useState(false);
   const bubble = useRef<HTMLDivElement>(null);
   const primary = useRef<HTMLButtonElement>(null);
+  // Which way the visitor is going, so a step that can't be shown is skipped in that direction.
+  const heading = useRef(1);
+  // Where the visitor was when the tour began; they go back there when it ends.
+  const start = useRef({ href: here(), path: window.location.pathname });
 
   const step = steps[Math.min(i, steps.length - 1)];
   const last = i >= steps.length - 1;
 
-  const next = useCallback(() => (last ? onDone() : setI((n) => n + 1)), [last, onDone]);
-  const back = useCallback(() => setI((n) => Math.max(0, n - 1)), []);
+  const finish = useCallback(() => {
+    if (here() !== start.current.href) router.history.push(start.current.href);
+    onDone();
+  }, [router, onDone]);
+
+  const next = useCallback(() => {
+    heading.current = 1;
+    if (last) finish();
+    else setI((n) => n + 1);
+  }, [last, finish]);
+
+  const back = useCallback(() => {
+    heading.current = -1;
+    setI((n) => Math.max(0, n - 1));
+  }, []);
 
   useEffect(() => {
     if (steps.length === 0) onDone();
   }, [steps, onDone]);
 
-  // The page scrolls inside its pane, so put the tour back where the visitor was when it closes.
+  // The page scrolls inside its pane. If the tour ends on the page it began on, put the scroll back.
   useEffect(() => {
     const pane = document.querySelector("main > div");
     const top = pane?.scrollTop ?? 0;
-    return () => pane?.scrollTo({ top });
+    const startPath = start.current.path;
+    return () => {
+      window.setTimeout(() => {
+        if (window.location.pathname === startPath) pane?.scrollTo({ top });
+      }, SETTLE + 150);
+    };
   }, []);
 
-  const measure = useCallback(() => setSpot(step ? rectOf(step) : null), [step]);
-
-  useLayoutEffect(() => {
+  // Show a step: open its page if needed, wait for the element, scroll it into view, light it.
+  useEffect(() => {
     if (!step) return;
-    document.querySelector(step.selector)?.scrollIntoView({ block: "center", inline: "nearest" });
-    measure();
-  }, [step, measure]);
+    let cancelled = false;
+    const samePage = window.location.pathname === step.path;
+    // Hide the bubble until it has the new step's place, so its new text never shows at the old one.
+    setReady(false);
+    if (!samePage) {
+      setSpot(null);
+      router.history.push(step.path);
+    }
+    void (async () => {
+      const found = await appears(step, samePage ? 1500 : PAGE_WAIT);
+      if (cancelled) return;
+      if (!found) {
+        // The page doesn't have this element right now: move on rather than show something wrong.
+        if (heading.current > 0) {
+          if (last) finish();
+          else setI((n) => n + 1);
+        } else if (i > 0) setI((n) => n - 1);
+        else finish();
+        return;
+      }
+      if (!samePage) await sleep(SETTLE);
+      if (cancelled) return;
+      document.querySelector(step.selector)?.scrollIntoView({ block: "center", inline: "nearest" });
+      setSpot(rectOf(step));
+      setReady(true);
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // `last` and `finish` only matter if the step turns out to be missing.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [i, steps, router]);
+
+  // Keep the highlight on its element if the page changes size or scrolls (images loading, resizing).
+  const measure = useCallback(() => {
+    if (step) setSpot(rectOf(step));
+  }, [step]);
 
   useEffect(() => {
+    if (!ready || !step) return;
     window.addEventListener("resize", measure);
     document.addEventListener("scroll", measure, true);
+    const observer = new ResizeObserver(measure);
+    document.querySelectorAll(step.selector).forEach((el) => observer.observe(el));
+    const timers = [300, 900].map((ms) => window.setTimeout(measure, ms));
     return () => {
       window.removeEventListener("resize", measure);
       document.removeEventListener("scroll", measure, true);
+      observer.disconnect();
+      timers.forEach((t) => window.clearTimeout(t));
     };
-  }, [measure]);
+  }, [ready, step, measure]);
 
   // After the bubble has its text, so its height is known.
   useLayoutEffect(() => {
     if (!spot || !step || !bubble.current) return;
     setPlaced(place(spot, step.placement, bubble.current.offsetHeight, isPhone()));
-  }, [spot, step]);
+  }, [spot, step, ready]);
 
   // The highlight glides between steps, but doesn't fly in from the corner on the first one.
   useEffect(() => {
@@ -170,14 +262,14 @@ export default function SpotlightTour({ onDone }: { onDone: () => void }) {
 
   // Focus Next once the bubble is showing (a hidden element can't take focus), and again whenever focus has
   // left the bubble, for instance when the Back button it was on disappears.
-  const showing = placed !== null;
+  const showing = ready && placed !== null;
   useEffect(() => {
     if (showing && !bubble.current?.contains(document.activeElement)) primary.current?.focus();
   }, [showing, i]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onDone();
+      if (e.key === "Escape") finish();
       else if (e.key === "ArrowRight") next();
       else if (e.key === "ArrowLeft") back();
     };
@@ -191,15 +283,16 @@ export default function SpotlightTour({ onDone }: { onDone: () => void }) {
       window.removeEventListener("keydown", onKey);
       document.removeEventListener("focusin", onFocus);
     };
-  }, [next, back, onDone]);
+  }, [next, back, finish]);
 
   if (!step) return null;
 
   return (
     <>
-      {/* Catches clicks so the page behind can't be used mid-tour. */}
+      {/* Catches clicks so the page behind can't be used mid-tour. While a page is opening there is nothing
+          to light yet, so the whole screen stays dimmed instead of flashing bright. */}
       <div className="fixed inset-0 z-[70] overflow-hidden select-none" aria-hidden="true">
-        {spot && (
+        {spot ? (
           <div
             className={`tour-hole ${moving ? "is-moving" : ""}`}
             style={{
@@ -208,6 +301,8 @@ export default function SpotlightTour({ onDone }: { onDone: () => void }) {
               transform: `translate(${spot.x - PAD}px, ${spot.y - PAD}px)`,
             }}
           />
+        ) : (
+          <div className="tour-dim" />
         )}
       </div>
 
@@ -235,7 +330,7 @@ export default function SpotlightTour({ onDone }: { onDone: () => void }) {
           left: placed?.left ?? 0,
           top: placed?.top ?? 0,
           width: placed?.width ?? BUBBLE_W,
-          visibility: placed ? "visible" : "hidden",
+          visibility: showing ? "visible" : "hidden",
         }}
       >
         {placed?.points && (
@@ -257,32 +352,36 @@ export default function SpotlightTour({ onDone }: { onDone: () => void }) {
           {step.text}
         </p>
 
-        <div className="mt-4 flex items-center gap-2">
-          <div className="flex items-center gap-1.5" aria-hidden="true">
-            {steps.map((s, k) => (
-              <span
-                key={s.selector}
-                className={`h-1.5 rounded-full transition-[width,background-color] duration-200 ${
-                  k === i
-                    ? "w-4 bg-[#161616] dark:bg-[#EDEDED]"
-                    : "w-1.5 bg-[#C9CCC4] dark:bg-[#3A3A3A]"
-                }`}
-              />
-            ))}
+        <div className="mt-4 flex items-center gap-3">
+          <div
+            className="h-1 flex-1 overflow-hidden rounded-full bg-[#E5E5E0] dark:bg-[#262626]"
+            aria-hidden="true"
+          >
+            <div
+              className="h-full origin-left rounded-full bg-[#161616] transition-transform duration-300 dark:bg-[#EDEDED]"
+              style={{ transform: `scaleX(${(i + 1) / steps.length})` }}
+            />
           </div>
-          <span className="sr-only">
-            Step {i + 1} of {steps.length}
+          <span className="text-xs tabular-nums text-[#62655E] dark:text-[#A3A3A3]">
+            <span className="sr-only">Step </span>
+            {i + 1}
+            <span className="sr-only"> of </span>
+            <span aria-hidden="true"> / </span>
+            {steps.length}
           </span>
-          <span className="flex-1" />
+        </div>
+
+        <div className="mt-3 flex items-center gap-2">
           {!last && (
             <button
               type="button"
-              onClick={onDone}
+              onClick={finish}
               className="h-9 rounded-md px-2.5 text-sm text-[#62655E] hover:text-[#161616] dark:text-[#A3A3A3] dark:hover:text-[#EDEDED] cursor-pointer"
             >
-              Skip
+              Skip tour
             </button>
           )}
+          <span className="flex-1" />
           {i > 0 && (
             <button
               type="button"

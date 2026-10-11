@@ -61,7 +61,10 @@ function Composer({ me, hasNote, onPost, onSignIn, onSignOut, onDeleteMine }: Co
 
   if (!me) {
     return (
-      <div className={`${CARD} p-5 sm:p-6 flex flex-col items-start gap-4`}>
+      <div
+        data-tour="guestbook-composer"
+        className={`${CARD} p-5 sm:p-6 flex flex-col items-start gap-4`}
+      >
         <p className={`text-sm ${MUTED}`}>
           Sign in with Google to leave a note. It shows your name and profile photo, nothing else
           from your account.
@@ -88,7 +91,7 @@ function Composer({ me, hasNote, onPost, onSignIn, onSignOut, onDeleteMine }: Co
   };
 
   return (
-    <div className={`${CARD} p-5 sm:p-6 flex flex-col gap-3`}>
+    <div data-tour="guestbook-composer" className={`${CARD} p-5 sm:p-6 flex flex-col gap-3`}>
       <div className="flex items-center gap-2.5">
         <Avatar src={me.avatar} className="h-7 w-7" />
         <span className="min-w-0 flex-1 truncate text-sm font-medium text-[#161616] dark:text-[#EDEDED]">
@@ -282,9 +285,15 @@ export function Guestbook() {
           {notes === null ? (
             <p className={`text-sm ${MUTED}`}>Loading notes…</p>
           ) : notes.length === 0 ? (
-            <p className={`text-sm ${MUTED}`}>No notes yet. Be the first to sign it.</p>
+            <p data-tour="guestbook-empty" className={`text-sm ${MUTED}`}>
+              No notes yet. Be the first to sign it.
+            </p>
           ) : (
-            <ul aria-label="Guestbook notes" className="flex flex-col gap-3">
+            <ul
+              aria-label="Guestbook notes"
+              data-tour="guestbook-notes"
+              className="flex flex-col gap-3"
+            >
               {notes.map((note) => (
                 <NoteCard
                   key={note.uid}

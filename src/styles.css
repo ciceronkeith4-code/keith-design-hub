@@ -279,6 +279,12 @@
 .tour-hole.is-moving {
   transition: transform 240ms cubic-bezier(0.23, 1, 0.32, 1);
 }
+/* The same dim as the hole's shadow, for the moment between pages when there is nothing to light. */
+.tour-dim {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 10, 10, 0.55);
+}
 
 /* Tour bubble and invite (components/portfolio/TourLauncher.tsx, tour/SpotlightTour.tsx). */
 .tour-bubble {

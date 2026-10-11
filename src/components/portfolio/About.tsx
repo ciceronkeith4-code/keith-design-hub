@@ -30,7 +30,10 @@ export function About() {
       </h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-14 items-start">
-        <div className="flex flex-col gap-3 max-w-[60ch] text-sm leading-relaxed text-[#3A3C38] dark:text-[#C8C8C8]">
+        <div
+          data-tour="about-bio"
+          className="flex flex-col gap-3 max-w-[60ch] text-sm leading-relaxed text-[#3A3C38] dark:text-[#C8C8C8]"
+        >
           <p>
             I'm a full stack developer in Manila. I build web systems end to end for clients: the
             database and API, the admin tools their staff use every day, and the site their
@@ -50,7 +53,7 @@ export function About() {
         </div>
 
         {/* Education */}
-        <div className="flex flex-col">
+        <div data-tour="about-education" className="flex flex-col">
           <h2 className={`${SUBHEAD} pb-2 border-b border-[#E5E5E0] dark:border-[#262626]`}>
             Education
           </h2>
@@ -87,15 +90,20 @@ export function About() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-6">
-          {STACK_GROUPS.map(({ group, skills }) => (
+          {STACK_GROUPS.map(({ group, skills }, groupIndex) => (
             <div key={group}>
               <h3 className={`text-xs font-medium ${MUTED} mb-1`}>{group}</h3>
               <div className="divide-y divide-[#E5E5E0]/60 dark:divide-[#262626]">
-                {skills.map((skill) => {
+                {skills.map((skill, skillIndex) => {
                   const Icon = skill.icon;
                   const usedIn = PROJECTS.filter((p) => p.stack.includes(skill.name));
                   return (
-                    <div key={skill.name} className="py-1.5">
+                    <div
+                      key={skill.name}
+                      // The tour points at the first entry as the example.
+                      data-tour={groupIndex === 0 && skillIndex === 0 ? "stack-first" : undefined}
+                      className="py-1.5"
+                    >
                       <div className="flex items-center gap-2 text-xs font-medium text-[#161616] dark:text-[#EDEDED]">
                         <Icon className="h-3.5 w-3.5 shrink-0" />
                         <span>{skill.name}</span>
@@ -142,7 +150,10 @@ export function About() {
         </div>
 
         {/* Light panel in both themes: the chart's empty-day squares are a fixed light gray baked into the image */}
-        <div className="overflow-x-auto card-scrollbar rounded-[10px] border border-[#E5E5E0] dark:border-[#262626] bg-[#F6F7F4] p-3 sm:p-4">
+        <div
+          data-tour="about-github"
+          className="overflow-x-auto card-scrollbar rounded-[10px] border border-[#E5E5E0] dark:border-[#262626] bg-[#F6F7F4] p-3 sm:p-4"
+        >
           <img
             src="https://ghchart.rshah.org/161616/ciceronkeith4-code"
             alt="Keith Ciceron's GitHub contribution graph for the past year"

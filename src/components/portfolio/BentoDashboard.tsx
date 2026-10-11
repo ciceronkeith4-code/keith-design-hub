@@ -53,7 +53,7 @@ export function BentoDashboard() {
             {typed(3)}
           </p>
 
-          <div className="mt-10 flex items-center gap-2 flex-wrap">
+          <div data-tour="hero-actions" className="mt-10 flex items-center gap-2 flex-wrap">
             <Link
               to="/projects"
               className="rounded-md bg-[#161616] text-white dark:bg-[#EDEDED] dark:text-[#161616] hover:bg-[#333333] dark:hover:bg-white px-5 py-2.5 text-sm font-medium transition-colors cursor-pointer"

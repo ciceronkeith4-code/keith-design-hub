@@ -10,7 +10,7 @@ export function Experience() {
       </h1>
 
       {/* Entries separated by a 1px divider, no cards */}
-      <div className="divide-y divide-[#E5E5E0] dark:divide-[#262626]">
+      <div data-tour="experience-list" className="divide-y divide-[#E5E5E0] dark:divide-[#262626]">
         {EXPERIENCE.map((item) => (
           <div
             key={item.id}
@@ -48,7 +48,7 @@ export function Experience() {
       </div>
 
       {/* Workshops and events, compact, below the work history */}
-      <section className="mt-12">
+      <section data-tour="workshops" className="mt-12">
         <h2 className="pb-2 border-b border-[#E5E5E0] dark:border-[#262626] font-sans text-sm font-semibold text-[#161616] dark:text-[#EDEDED]">
           Workshops & events
         </h2>

@@ -46,7 +46,7 @@ function ProjectRow({ project }: { project: Project }) {
         aria-labelledby={titleId}
         className="grid grid-cols-1 lg:grid-cols-12 lg:items-end lg:gap-x-10"
       >
-        <div className="flex flex-col lg:col-span-5 lg:row-start-1">
+        <div data-tour="work-info" className="flex flex-col lg:col-span-5 lg:row-start-1">
           <h2
             id={titleId}
             className="text-[clamp(22px,2.6vw,28px)] font-semibold leading-[1.15] tracking-[-0.025em] text-balance"
