@@ -1,7 +1,8 @@
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Link, useLocation } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { Home, User, Briefcase, FolderOpen, Mail, type LucideIcon } from "lucide-react";
+import { AskPanel, AskScrim } from "./AskPanel";
 import { TopBar } from "./TopBar";
 import { LiveViewers } from "./LiveViewers";
 import { TourLauncher } from "./TourLauncher";
@@ -25,6 +26,7 @@ interface DashboardLayoutProps {
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
   const { toggleTheme } = useTheme();
+  const [askOpen, setAskOpen] = useState(false);
   const { pathname, hash } = useLocation({
     select: (l) => ({ pathname: l.pathname, hash: l.hash }),
   });
@@ -46,7 +48,11 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
   return (
     <div className="h-screen h-[100dvh] w-screen w-[100vw] overflow-hidden p-0 m-0 bg-[#ECEEEA] dark:bg-[#0A0A0A] select-none font-sans text-[#161616] dark:text-[#EDEDED] flex flex-col transition-colors duration-200">
-      <TopBar onToggleTheme={toggleTheme} />
+      <TopBar
+        onToggleTheme={toggleTheme}
+        askOpen={askOpen}
+        onToggleAsk={() => setAskOpen((open) => !open)}
+      />
 
       <div className="flex-1 min-h-0 min-w-0 flex flex-row overflow-hidden">
         {/* The one navigation: a sidebar from md up, a bar pinned to the bottom on phones. */}
@@ -97,6 +103,10 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         </main>
       </div>
 
+      {/* Closing returns keyboard focus to the Ask button by itself (useGenieTransition). */}
+      <AskPanel open={askOpen} onClose={() => setAskOpen(false)} />
+      {/* Must follow the panel directly: its CSS reads the panel's state. */}
+      <AskScrim onClose={() => setAskOpen(false)} />
       <TourLauncher />
     </div>
   );

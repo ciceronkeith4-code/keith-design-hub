@@ -265,6 +265,62 @@
   }
 }
 
+/* Genie panel (lib/use-genie-transition.ts): a floating panel that opens out of its launcher button and is sucked
+   back into it, like a window minimising on a Mac. The hook writes the transform, clip-path, blur and opacity every
+   frame; this only keeps the panel hidden whenever it isn't opening, open or closing. It stays mounted while
+   closed, so opening never rebuilds it. The hook also sets --genie-p (0 closed to 1 open) on the launcher. */
+.genie-panel {
+  visibility: hidden;
+}
+.genie-panel[data-genie-state="opening"],
+.genie-panel[data-genie-state="open"],
+.genie-panel[data-genie-state="closing"] {
+  visibility: visible;
+}
+
+/* The phone backdrop behind the Ask panel (AskScrim). It must come right after the panel in the page: it shows
+   while the panel is opening or open, and fades out as soon as the panel starts closing. */
+.ask-scrim {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 220ms ease,
+    visibility 0s linear 220ms;
+}
+.genie-panel[data-genie-state="opening"] + .ask-scrim,
+.genie-panel[data-genie-state="open"] + .ask-scrim {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition:
+    opacity 220ms ease,
+    visibility 0s;
+}
+
+/* The swipe-down-to-close handle (the panel's header) on phones. */
+@media (max-width: 767px) {
+  .genie-handle {
+    touch-action: none;
+  }
+}
+
+/* The launcher's icon follows the panel: the chat icon turns and fades out as the X turns in and fades up. */
+.genie-icon-chat {
+  opacity: calc(1 - var(--genie-p, 0));
+  transform: rotate(calc(var(--genie-p, 0) * 90deg));
+}
+.genie-icon-x {
+  opacity: var(--genie-p, 0);
+  transform: rotate(calc((1 - var(--genie-p, 0)) * -90deg));
+}
+@media (prefers-reduced-motion: reduce) {
+  .genie-icon-chat,
+  .genie-icon-x {
+    transform: none;
+  }
+}
+
 /* Tour spotlight (components/portfolio/tour/SpotlightTour.tsx): a clear box with a ring, and a huge shadow that
    dims everything else. It glides between steps once the first one has appeared. */
 .tour-hole {

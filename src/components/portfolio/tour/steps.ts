@@ -45,6 +45,13 @@ export const TOUR_STEPS: TourStep[] = [
   },
   {
     path: "/",
+    selector: '[data-tour="ask"]',
+    title: "Ask about Keith",
+    text: "An AI assistant that answers questions about his work, his service packages and prices, and how to hire him. It can be wrong, so check anything important with Keith.",
+    placement: "bottom",
+  },
+  {
+    path: "/",
     selector: '[data-tour="controls"]',
     title: "Sound and theme",
     text: "Click sounds are on by default. The speaker switches them off, and the other button switches between light and dark.",

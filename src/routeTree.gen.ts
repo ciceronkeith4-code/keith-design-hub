@@ -18,6 +18,7 @@ import { Route as SiteContactRouteImport } from './routes/_site/contact'
 import { Route as SiteExperienceRouteImport } from './routes/_site/experience'
 import { Route as SiteGuestbookRouteImport } from './routes/_site/guestbook'
 import { Route as SiteSkillsRouteImport } from './routes/_site/skills'
+import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as SiteProjectsIndexRouteImport } from './routes/_site/projects/index'
 import { Route as SiteProjectsSlugRouteImport } from './routes/_site/projects/$slug'
 
@@ -65,6 +66,11 @@ const SiteSkillsRoute = SiteSkillsRouteImport.update({
   path: '/skills',
   getParentRoute: () => SiteRoute,
 } as any)
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SiteProjectsIndexRoute = SiteProjectsIndexRouteImport.update({
   id: '/projects/',
   path: '/projects/',
@@ -85,6 +91,7 @@ export interface FileRoutesByFullPath {
   '/experience': typeof SiteExperienceRoute
   '/guestbook': typeof SiteGuestbookRoute
   '/skills': typeof SiteSkillsRoute
+  '/api/chat': typeof ApiChatRoute
   '/projects/$slug': typeof SiteProjectsSlugRoute
   '/projects/': typeof SiteProjectsIndexRoute
 }
@@ -96,6 +103,7 @@ export interface FileRoutesByTo {
   '/experience': typeof SiteExperienceRoute
   '/guestbook': typeof SiteGuestbookRoute
   '/skills': typeof SiteSkillsRoute
+  '/api/chat': typeof ApiChatRoute
   '/': typeof SiteIndexRoute
   '/projects/$slug': typeof SiteProjectsSlugRoute
   '/projects': typeof SiteProjectsIndexRoute
@@ -110,6 +118,7 @@ export interface FileRoutesById {
   '/_site/experience': typeof SiteExperienceRoute
   '/_site/guestbook': typeof SiteGuestbookRoute
   '/_site/skills': typeof SiteSkillsRoute
+  '/api/chat': typeof ApiChatRoute
   '/_site/': typeof SiteIndexRoute
   '/_site/projects/$slug': typeof SiteProjectsSlugRoute
   '/_site/projects/': typeof SiteProjectsIndexRoute
@@ -125,6 +134,7 @@ export interface FileRouteTypes {
     | '/experience'
     | '/guestbook'
     | '/skills'
+    | '/api/chat'
     | '/projects/$slug'
     | '/projects/'
   fileRoutesByTo: FileRoutesByTo
@@ -136,6 +146,7 @@ export interface FileRouteTypes {
     | '/experience'
     | '/guestbook'
     | '/skills'
+    | '/api/chat'
     | '/'
     | '/projects/$slug'
     | '/projects'
@@ -149,6 +160,7 @@ export interface FileRouteTypes {
     | '/_site/experience'
     | '/_site/guestbook'
     | '/_site/skills'
+    | '/api/chat'
     | '/_site/'
     | '/_site/projects/$slug'
     | '/_site/projects/'
@@ -157,6 +169,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   SiteRoute: typeof SiteRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  ApiChatRoute: typeof ApiChatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -224,6 +237,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SiteSkillsRouteImport
       parentRoute: typeof SiteRoute
     }
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_site/projects/': {
       id: '/_site/projects/'
       path: '/projects'
@@ -270,6 +290,7 @@ const SiteRouteWithChildren = SiteRoute._addFileChildren(SiteRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   SiteRoute: SiteRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  ApiChatRoute: ApiChatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

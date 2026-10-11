@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "@tanstack/react-router";
-import { Sun, Moon, ArrowUpRight, Volume2, VolumeX } from "lucide-react";
+import { Sun, Moon, ArrowUpRight, MessageCircle, Volume2, VolumeX, X } from "lucide-react";
 import { CLICKABLE, playClick, readSoundOn, saveSoundOn } from "@/lib/click-sound";
 import { pixelThemeTransition } from "@/lib/pixel-transition";
 
@@ -58,9 +58,11 @@ function SoundToggle() {
 
 interface TopBarProps {
   onToggleTheme: () => void;
+  askOpen: boolean;
+  onToggleAsk: () => void;
 }
 
-export function TopBar({ onToggleTheme }: TopBarProps) {
+export function TopBar({ onToggleTheme, askOpen, onToggleAsk }: TopBarProps) {
   const [manilaTime, setManilaTime] = useState<string>("");
 
   useEffect(() => {
@@ -145,7 +147,24 @@ export function TopBar({ onToggleTheme }: TopBarProps) {
             </div>
           )}
 
-          {/* data-tour: the tour points at this group */}
+          {/* data-tour: the tour points at the Ask button and at the controls group */}
+          <button
+            type="button"
+            onClick={onToggleAsk}
+            aria-expanded={askOpen}
+            title="Ask about Keith"
+            data-tour="ask"
+            className="inline-flex h-8 items-center gap-1.5 rounded-md px-2 text-xs font-medium text-[#161616] hover:bg-black/5 dark:text-[#EDEDED] dark:hover:bg-white/5 transition-colors cursor-pointer"
+          >
+            {/* The two icons trade places as the chat panel opens and closes (see .genie-icon-* in styles.css). */}
+            <span className="relative inline-block h-4 w-4" aria-hidden="true">
+              <MessageCircle className="genie-icon-chat absolute inset-0 h-4 w-4" />
+              <X className="genie-icon-x absolute inset-0 h-4 w-4" />
+            </span>
+            <span className="hidden sm:inline">Ask</span>
+            <span className="sr-only sm:hidden">Ask about Keith</span>
+          </button>
+
           <div className="flex items-center gap-1" data-tour="controls">
             <SoundToggle />
 
