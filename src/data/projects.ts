@@ -87,6 +87,60 @@ const NO_SCREENS: Project["screens"] = { desktop: [], tablet: [], mobile: [] };
 
 const projects: Project[] = [
   {
+    slug: "pingpong-city",
+    name: "PingPong City Sports Center",
+    type: "Business website",
+    intro:
+      "I built the website for PingPong City Sports Center, a table tennis venue at Farmers Plaza in Araneta City, Quezon City. Visitors find the location, opening hours, and rates on one page, with a notice that says whether the center is open right now.",
+    client: "PingPong City Sports Center",
+    role: "",
+    timeline: "",
+    status: "Live",
+    stack: ["HTML", "CSS", "JavaScript", "Tailwind CSS", "Vercel"],
+    built: [
+      "A one-page site with sections for the location, opening hours, rates, and contact, and a Google Maps link to the venue.",
+      "A hero with a 3D table tennis rally, where the table top is printed with the two headline rates.",
+      "An Open now or Closed now notice, worked out from the posted hours in Philippine time and refreshed every minute.",
+      "A rate board for unlimited play, hourly table rental with racket and ball, and coaching, with the student, senior, and PWD discount noted.",
+      "Contact links to the Facebook group, email, Messenger, and TikTok, plus a mobile menu and a nav that follows the section on screen.",
+    ],
+    decisions: [
+      {
+        title: "A 3D hero that can fail safely",
+        body: "The rally is drawn with three.js, loaded in the browser. If WebGL or the download fails, a plain SVG table stays in its place. The animation pauses when the hero is off screen or the tab is hidden, and with reduced motion on it shows one still frame.",
+      },
+      {
+        title: "Open or closed, worked out in the browser",
+        body: "The opening hours sit in a small table in the page script, and the notice reads the time in Asia/Manila, so a visitor in another country still sees the right status. If the script fails, the static hours text remains.",
+      },
+      {
+        title: "No framework, one small stylesheet",
+        body: "The site is a single HTML file. Tailwind compiles only the classes it uses into one minified stylesheet at build time, and Vercel serves the folder as static files with caching headers for images and CSS.",
+      },
+    ],
+    links: {
+      live: "https://pingpongcitysportscenter.vercel.app/",
+      code: "https://github.com/ciceronkeith4-code/pingpongcity",
+    },
+    images: [
+      {
+        src: "/images/projects/pingpong-city/desktop-1.webp",
+        alt: "Dark home page with the headline Your game. Your city. Your table., a 3D table showing the 100 and 200 peso rates, and sections for location, hours, rates, and contact",
+      },
+      {
+        src: "/images/projects/pingpong-city/desktop-2.webp",
+        alt: "Rates section with unlimited play from 100 pesos, hourly table rental at 200 pesos, and coaching at 500 pesos for one student",
+      },
+      {
+        src: "/images/projects/pingpong-city/desktop-3.webp",
+        alt: "Opening hours section listing Monday to Thursday and Sunday from 10 AM to 9 PM, Friday and Saturday to 10 PM, and a box showing whether the center is open now",
+      },
+    ],
+    heroDevice: "mobile",
+    // Captured from the live site with reduced motion on, so the 3D hero is one still frame.
+    screens: captures("pingpong-city", 3),
+  },
+  {
     slug: "booking-system-demo",
     name: "Booking System Demo",
     type: "Booking system",
