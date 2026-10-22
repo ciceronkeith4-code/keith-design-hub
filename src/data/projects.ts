@@ -87,6 +87,60 @@ const NO_SCREENS: Project["screens"] = { desktop: [], tablet: [], mobile: [] };
 
 const projects: Project[] = [
   {
+    slug: "booking-system-demo",
+    name: "Booking System Demo",
+    type: "Booking system",
+    intro:
+      "I built a booking system that a business owner can try right away, with no sign-up. Customers book, look up, move, and cancel appointments, and each change shows up in the admin side straight away.",
+    client: "Personal project",
+    role: "",
+    timeline: "",
+    status: "Live",
+    stack: ["React", "TypeScript", "Vite", "Tailwind CSS", "Vercel"],
+    built: [
+      "A four-step booking flow: choose a service and a staff member (or whoever is free), pick a date and time, enter contact details, and review. Customers get a reference code to look up, reschedule, or cancel the booking later.",
+      "Only real openings are offered. Times respect business hours, break time, closed dates, each staff member's working days, and the bookings already made. Group classes show how many spots are left.",
+      "An optional GCash down payment, with payment steps and an upload for the payment screenshot.",
+      "An admin side with a dashboard, day, week, and month calendars, a searchable bookings list, walk-in bookings, and pages for services, staff, opening hours, customers, and settings.",
+      "Four business types (dental clinic, salon and spa, gym, resort), each with its own services, staff, labels, and colors, plus a guided tour that makes one booking by itself.",
+    ],
+    decisions: [
+      {
+        title: "One store checks every booking",
+        body: "Customer pages and admin pages share one Zustand store. Every new booking and every reschedule goes through it and checks the slot again before saving, so a time that was just taken is refused instead of double booked.",
+      },
+      {
+        title: "Everything runs on Philippine time",
+        body: "Dates are kept as YYYY-MM-DD and times as HH:mm in Manila time. A visitor in another country sees the same open times, and the same times counted as past, as the business does.",
+      },
+      {
+        title: "A demo that leaves nothing behind",
+        body: "There is no backend, database, or localStorage. Everything lives in memory and a reload clears it, so a prospect can try anything without leaving data behind. The SMS and email a booking would trigger are written to an admin log instead of being sent.",
+      },
+    ],
+    links: {
+      live: "https://bookingsystemdemo.vercel.app/",
+      code: "https://github.com/ciceronkeith4-code/Booking-System-Demo",
+    },
+    images: [
+      {
+        src: "/images/projects/booking-system-demo/desktop-1.webp",
+        alt: "Home page with the headline Online booking for your dental clinic, buttons to pick a business type, and a phone preview of the booking screen",
+      },
+      {
+        src: "/images/projects/booking-system-demo/desktop-2.webp",
+        alt: "Date and time step with an October calendar, open morning, afternoon, and evening times, and 10:00 AM selected",
+      },
+      {
+        src: "/images/projects/booking-system-demo/desktop-3.webp",
+        alt: "Admin calendar for one week with confirmed and pending bookings, a shaded lunch break, and a blocked Saturday",
+      },
+    ],
+    heroDevice: "mobile",
+    // Captured from the live demo. The calendar shot has ten made-up bookings entered through the app itself.
+    screens: captures("booking-system-demo", 3),
+  },
+  {
     slug: "mgl-food-hub",
     name: "MGL Food Hub",
     type: "Food delivery",
