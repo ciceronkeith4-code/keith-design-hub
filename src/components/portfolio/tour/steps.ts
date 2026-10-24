@@ -159,10 +159,10 @@ export const TOUR_STEPS: TourStep[] = [
   // Certifications
   {
     path: "/certifications",
-    selector: '[data-tour="certifications-list"] > li:first-child',
+    selector: '[data-tour="certifications-list"]',
     title: "Certifications",
-    text: "My certificates, newest first. Click one to see it full-size.",
-    placement: "right",
+    text: "My certificates, grouped by field. Click one to see it full-size. The Cisco ones link to Credly, where anyone can check them.",
+    placement: "bottom",
   },
 
   // Contact

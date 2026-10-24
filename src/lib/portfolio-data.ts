@@ -103,12 +103,17 @@ export const TRAININGS = [
   },
 ];
 
-/** Certificates on /certifications, newest first. Images are in public/images/certificates/. */
+/**
+ * Certificates on /certifications, newest first. Images are in public/images/certificates/.
+ * Grouped on the page by `field`, in the order the fields first appear. `verify` is a public page that
+ * confirms the certificate (Credly for Cisco); leave it empty when there is none.
+ */
 export const CERTIFICATIONS = [
   {
     title: "Introduction to Modern AI",
     kind: "Certificate of course completion",
     issuer: "Cisco Networking Academy",
+    issuerShort: "Cisco Networking Academy",
     date: "Oct 2026",
     detail:
       "Student-level credential for completing the Introduction to Modern AI course, Oct 24, 2026",
@@ -120,6 +125,8 @@ export const CERTIFICATIONS = [
       "LLM chatbots with tools like web search",
     ],
     code: "",
+    field: "AI",
+    verify: "https://www.credly.com/badges/9c874468-0697-4487-8aa2-d1d586257f62",
     image: {
       src: "/images/certificates/cisco-intro-to-modern-ai.webp",
       width: 1055,
@@ -130,10 +137,13 @@ export const CERTIFICATIONS = [
     title: "Python Essentials 1",
     kind: "Statement of achievement",
     issuer: "Cisco Networking Academy with OpenEDG Python Institute",
+    issuerShort: "Cisco Networking Academy",
     date: "Oct 2026",
     detail: "Student-level credential for completing the Python Essentials 1 course, Oct 24, 2026",
     topics: ["Python 3", "algorithmic thinking", "the Python Standard Library"],
     code: "",
+    field: "Python",
+    verify: "https://www.credly.com/badges/9b3a7db3-c3e9-4150-897b-8631540b8913",
     image: {
       src: "/images/certificates/cisco-python-essentials-1.webp",
       width: 1056,
@@ -144,6 +154,7 @@ export const CERTIFICATIONS = [
     title: "Java Programming with GUI, Part 2",
     kind: "Certificate of attendance",
     issuer: "Project Tuklas Teknolohiya",
+    issuerShort: "Project Tuklas Teknolohiya",
     date: "Sep 2026",
     detail: "3-hour webinar on Google Meet, Sep 19, 2026",
     topics: [
@@ -156,17 +167,22 @@ export const CERTIFICATIONS = [
       "ActionEvent",
     ],
     code: "PTTC08-076",
+    field: "Java",
+    verify: "",
     image: { src: "/images/certificates/java-gui-part-2.webp", width: 1122, height: 789 },
   },
   {
     title: "Full Stack Developer Internship",
     kind: "Certificate of completion",
     issuer: "Legasynch Group of Companies Inc. (NCLEX Amplified Review Center)",
+    issuerShort: "NCLEX Amplified Review Center",
     date: "Sep 2026",
     detail:
       "Completed the 500-hour internship program as a Full Stack Developer Intern in the IT department, Sep 14, 2026",
     topics: [],
     code: "",
+    field: "Internship",
+    verify: "",
     image: {
       src: "/images/certificates/nclex-amplified-internship.webp",
       width: 1491,
@@ -177,20 +193,26 @@ export const CERTIFICATIONS = [
     title: "Basic Java Programming",
     kind: "Certificate of attendance",
     issuer: "Project Tuklas Teknolohiya",
+    issuerShort: "Project Tuklas Teknolohiya",
     date: "Aug 2026",
     detail: "3-hour webinar on Google Meet, Aug 22, 2026",
     topics: [],
     code: "PTTC02-036",
+    field: "Java",
+    verify: "",
     image: { src: "/images/certificates/basic-java-programming.webp", width: 799, height: 563 },
   },
   {
     title: "Internship Program Orientation",
     kind: "Certificate of attendance",
     issuer: "Legasynch Group of Companies Inc. (NCLEX Amplified Review Center)",
+    issuerShort: "NCLEX Amplified Review Center",
     date: "Jun 2026",
     detail: "Orientation for the IT department's internship programs, Jun 8, 2026",
     topics: [],
     code: "",
+    field: "Internship",
+    verify: "",
     image: {
       src: "/images/certificates/nclex-amplified-orientation.webp",
       width: 1600,
