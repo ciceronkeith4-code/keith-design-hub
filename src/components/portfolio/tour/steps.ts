@@ -32,7 +32,7 @@ export const TOUR_STEPS: TourStep[] = [
     path: "/",
     selector: 'nav[aria-label="Main"] > a',
     title: "Menu",
-    text: "The five main pages: Home, About, Work, Experience and Contact. This tour visits each one.",
+    text: "The six main pages: Home, About, Work, Experience, Certifications and Contact. This tour visits each one.",
     placement: "right",
   },
   {
@@ -154,6 +154,15 @@ export const TOUR_STEPS: TourStep[] = [
     title: "Workshops and events",
     text: "Workshops, hackathons and events I've attended, with dates.",
     placement: "top",
+  },
+
+  // Certifications
+  {
+    path: "/certifications",
+    selector: '[data-tour="certifications-list"] > li:first-child',
+    title: "Certifications",
+    text: "My certificates, newest first. Click one to see it full-size.",
+    placement: "right",
   },
 
   // Contact

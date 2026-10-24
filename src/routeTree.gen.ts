@@ -14,6 +14,7 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SiteIndexRouteImport } from './routes/_site/index'
 import { Route as SiteAboutRouteImport } from './routes/_site/about'
 import { Route as SiteActivitiesRouteImport } from './routes/_site/activities'
+import { Route as SiteCertificationsRouteImport } from './routes/_site/certifications'
 import { Route as SiteContactRouteImport } from './routes/_site/contact'
 import { Route as SiteExperienceRouteImport } from './routes/_site/experience'
 import { Route as SiteGuestbookRouteImport } from './routes/_site/guestbook'
@@ -44,6 +45,11 @@ const SiteAboutRoute = SiteAboutRouteImport.update({
 const SiteActivitiesRoute = SiteActivitiesRouteImport.update({
   id: '/activities',
   path: '/activities',
+  getParentRoute: () => SiteRoute,
+} as any)
+const SiteCertificationsRoute = SiteCertificationsRouteImport.update({
+  id: '/certifications',
+  path: '/certifications',
   getParentRoute: () => SiteRoute,
 } as any)
 const SiteContactRoute = SiteContactRouteImport.update({
@@ -87,6 +93,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/about': typeof SiteAboutRoute
   '/activities': typeof SiteActivitiesRoute
+  '/certifications': typeof SiteCertificationsRoute
   '/contact': typeof SiteContactRoute
   '/experience': typeof SiteExperienceRoute
   '/guestbook': typeof SiteGuestbookRoute
@@ -99,6 +106,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/about': typeof SiteAboutRoute
   '/activities': typeof SiteActivitiesRoute
+  '/certifications': typeof SiteCertificationsRoute
   '/contact': typeof SiteContactRoute
   '/experience': typeof SiteExperienceRoute
   '/guestbook': typeof SiteGuestbookRoute
@@ -114,6 +122,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_site/about': typeof SiteAboutRoute
   '/_site/activities': typeof SiteActivitiesRoute
+  '/_site/certifications': typeof SiteCertificationsRoute
   '/_site/contact': typeof SiteContactRoute
   '/_site/experience': typeof SiteExperienceRoute
   '/_site/guestbook': typeof SiteGuestbookRoute
@@ -130,6 +139,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/about'
     | '/activities'
+    | '/certifications'
     | '/contact'
     | '/experience'
     | '/guestbook'
@@ -142,6 +152,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/about'
     | '/activities'
+    | '/certifications'
     | '/contact'
     | '/experience'
     | '/guestbook'
@@ -156,6 +167,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/_site/about'
     | '/_site/activities'
+    | '/_site/certifications'
     | '/_site/contact'
     | '/_site/experience'
     | '/_site/guestbook'
@@ -207,6 +219,13 @@ declare module '@tanstack/react-router' {
       path: '/activities'
       fullPath: '/activities'
       preLoaderRoute: typeof SiteActivitiesRouteImport
+      parentRoute: typeof SiteRoute
+    }
+    '/_site/certifications': {
+      id: '/_site/certifications'
+      path: '/certifications'
+      fullPath: '/certifications'
+      preLoaderRoute: typeof SiteCertificationsRouteImport
       parentRoute: typeof SiteRoute
     }
     '/_site/contact': {
@@ -264,6 +283,7 @@ declare module '@tanstack/react-router' {
 interface SiteRouteChildren {
   SiteAboutRoute: typeof SiteAboutRoute
   SiteActivitiesRoute: typeof SiteActivitiesRoute
+  SiteCertificationsRoute: typeof SiteCertificationsRoute
   SiteContactRoute: typeof SiteContactRoute
   SiteExperienceRoute: typeof SiteExperienceRoute
   SiteGuestbookRoute: typeof SiteGuestbookRoute
@@ -276,6 +296,7 @@ interface SiteRouteChildren {
 const SiteRouteChildren: SiteRouteChildren = {
   SiteAboutRoute: SiteAboutRoute,
   SiteActivitiesRoute: SiteActivitiesRoute,
+  SiteCertificationsRoute: SiteCertificationsRoute,
   SiteContactRoute: SiteContactRoute,
   SiteExperienceRoute: SiteExperienceRoute,
   SiteGuestbookRoute: SiteGuestbookRoute,

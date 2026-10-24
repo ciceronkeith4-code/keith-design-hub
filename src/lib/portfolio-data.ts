@@ -103,6 +103,38 @@ export const TRAININGS = [
   },
 ];
 
+/** Certificates on /certifications, newest first. Images are in public/images/certificates/. */
+export const CERTIFICATIONS = [
+  {
+    title: "Java Programming with GUI, Part 2",
+    kind: "Certificate of attendance",
+    issuer: "Project Tuklas Teknolohiya",
+    date: "Sep 2026",
+    detail: "3-hour webinar on Google Meet, Sep 19, 2026",
+    topics: [
+      "JFrame",
+      "JLabel",
+      "JTextField",
+      "JButton",
+      "GridLayout",
+      "ActionListener",
+      "ActionEvent",
+    ],
+    code: "PTTC08-076",
+    image: { src: "/images/certificates/java-gui-part-2.webp", width: 1122, height: 789 },
+  },
+  {
+    title: "Basic Java Programming",
+    kind: "Certificate of attendance",
+    issuer: "Project Tuklas Teknolohiya",
+    date: "Aug 2026",
+    detail: "3-hour webinar on Google Meet, Aug 22, 2026",
+    topics: [],
+    code: "PTTC02-036",
+    image: { src: "/images/certificates/basic-java-programming.webp", width: 799, height: 563 },
+  },
+];
+
 // Projects live in ./projects.ts.
 
 export const CONTACT = { email: "ciceronkeith4@gmail.com", location: "Manila, Philippines" };

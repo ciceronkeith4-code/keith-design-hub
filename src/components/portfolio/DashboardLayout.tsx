@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Link, useLocation } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { Home, User, Briefcase, FolderOpen, Mail, type LucideIcon } from "lucide-react";
+import { Home, User, Briefcase, FolderOpen, Award, Mail, type LucideIcon } from "lucide-react";
 import { AskPanel, AskScrim } from "./AskPanel";
 import { TopBar } from "./TopBar";
 import { LiveViewers } from "./LiveViewers";
@@ -10,11 +10,13 @@ import { useTheme } from "@/lib/theme";
 import { useScrollReveal } from "@/lib/scroll-reveal";
 
 // Every section is its own URL, so each one is server-rendered and crawlable.
-const SECTIONS: { path: string; label: string; icon: LucideIcon }[] = [
+// `short` is the label in the phone bar, where a long one pushes the last icon off a 320px screen.
+const SECTIONS: { path: string; label: string; short?: string; icon: LucideIcon }[] = [
   { path: "/", label: "Home", icon: Home },
   { path: "/about", label: "About", icon: User },
   { path: "/projects", label: "Work", icon: FolderOpen },
   { path: "/experience", label: "Experience", icon: Briefcase },
+  { path: "/certifications", label: "Certifications", short: "Certs", icon: Award },
   { path: "/contact", label: "Contact", icon: Mail },
 ];
 
@@ -75,7 +77,16 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 }`}
               >
                 <Icon className="h-4 w-4 md:h-3.5 md:w-3.5 shrink-0" strokeWidth={2} />
-                <span className={isActive ? "" : "sr-only md:not-sr-only"}>{item.label}</span>
+                <span className={isActive ? "" : "sr-only md:not-sr-only"}>
+                  {item.short ? (
+                    <>
+                      <span className="md:hidden">{item.short}</span>
+                      <span className="hidden md:inline">{item.label}</span>
+                    </>
+                  ) : (
+                    item.label
+                  )}
+                </span>
               </Link>
             );
           })}
