@@ -124,6 +124,21 @@ export const CERTIFICATIONS = [
     image: { src: "/images/certificates/java-gui-part-2.webp", width: 1122, height: 789 },
   },
   {
+    title: "Full Stack Developer Internship",
+    kind: "Certificate of completion",
+    issuer: "Legasynch Group of Companies Inc. (NCLEX Amplified Review Center)",
+    date: "Sep 2026",
+    detail:
+      "Completed the 500-hour internship program as a Full Stack Developer Intern in the IT department, Sep 14, 2026",
+    topics: [],
+    code: "",
+    image: {
+      src: "/images/certificates/nclex-amplified-internship.webp",
+      width: 1491,
+      height: 1055,
+    },
+  },
+  {
     title: "Basic Java Programming",
     kind: "Certificate of attendance",
     issuer: "Project Tuklas Teknolohiya",
@@ -132,6 +147,20 @@ export const CERTIFICATIONS = [
     topics: [],
     code: "PTTC02-036",
     image: { src: "/images/certificates/basic-java-programming.webp", width: 799, height: 563 },
+  },
+  {
+    title: "Internship Program Orientation",
+    kind: "Certificate of attendance",
+    issuer: "Legasynch Group of Companies Inc. (NCLEX Amplified Review Center)",
+    date: "Jun 2026",
+    detail: "Orientation for the IT department's internship programs, Jun 8, 2026",
+    topics: [],
+    code: "",
+    image: {
+      src: "/images/certificates/nclex-amplified-orientation.webp",
+      width: 1600,
+      height: 1131,
+    },
   },
 ];
 

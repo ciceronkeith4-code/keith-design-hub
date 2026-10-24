@@ -25,7 +25,7 @@ export function Certifications() {
           className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-10"
         >
           {CERTIFICATIONS.map((cert, i) => (
-            <li key={cert.code} className="flex flex-col">
+            <li key={cert.image.src} className="flex flex-col">
               <button
                 type="button"
                 onClick={() => setLightboxIndex(i)}
@@ -54,9 +54,11 @@ export function Certifications() {
               <p className="mt-3 text-xs sm:text-[13px] leading-relaxed text-[#4A4D47] dark:text-[#CCCCCC]">
                 {cert.detail}.{cert.topics.length > 0 && <> Topics: {cert.topics.join(", ")}.</>}
               </p>
-              <p className={`mt-2 text-xs ${MUTED}`}>
-                Certificate code <span className="font-mono">{cert.code}</span>
-              </p>
+              {cert.code && (
+                <p className={`mt-2 text-xs ${MUTED}`}>
+                  Certificate code <span className="font-mono">{cert.code}</span>
+                </p>
+              )}
             </li>
           ))}
         </ul>
