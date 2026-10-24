@@ -106,6 +106,27 @@ export const TRAININGS = [
 /** Certificates on /certifications, newest first. Images are in public/images/certificates/. */
 export const CERTIFICATIONS = [
   {
+    title: "Introduction to Modern AI",
+    kind: "Certificate of course completion",
+    issuer: "Cisco Networking Academy",
+    date: "Oct 2026",
+    detail:
+      "Student-level credential for completing the Introduction to Modern AI course, Oct 24, 2026",
+    topics: [
+      "AI and machine learning basics",
+      "object detection and image segmentation",
+      "machine translation",
+      "how large language models work and how to prompt them",
+      "LLM chatbots with tools like web search",
+    ],
+    code: "",
+    image: {
+      src: "/images/certificates/cisco-intro-to-modern-ai.webp",
+      width: 1055,
+      height: 817,
+    },
+  },
+  {
     title: "Python Essentials 1",
     kind: "Statement of achievement",
     issuer: "Cisco Networking Academy with OpenEDG Python Institute",
