@@ -106,6 +106,20 @@ export const TRAININGS = [
 /** Certificates on /certifications, newest first. Images are in public/images/certificates/. */
 export const CERTIFICATIONS = [
   {
+    title: "Python Essentials 1",
+    kind: "Statement of achievement",
+    issuer: "Cisco Networking Academy with OpenEDG Python Institute",
+    date: "Oct 2026",
+    detail: "Student-level credential for completing the Python Essentials 1 course, Oct 24, 2026",
+    topics: ["Python 3", "algorithmic thinking", "the Python Standard Library"],
+    code: "",
+    image: {
+      src: "/images/certificates/cisco-python-essentials-1.webp",
+      width: 1056,
+      height: 818,
+    },
+  },
+  {
     title: "Java Programming with GUI, Part 2",
     kind: "Certificate of attendance",
     issuer: "Project Tuklas Teknolohiya",

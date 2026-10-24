@@ -8,7 +8,7 @@ export const Route = createFileRoute("/_site/certifications")({
       path: "/certifications",
       title: "Certifications | Keith Ciceron",
       description:
-        "Keith Ciceron's certificates: a 500-hour full stack internship at NCLEX Amplified Review Center, and Java webinars from Project Tuklas Teknolohiya.",
+        "Keith Ciceron's certificates: a 500-hour full stack internship at NCLEX Amplified Review Center, Cisco's Python Essentials 1, and Java webinars.",
     }),
   component: Certifications,
 });

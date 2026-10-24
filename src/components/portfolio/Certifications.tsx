@@ -37,7 +37,7 @@ export function Certifications() {
                   alt={IMAGES[i].alt}
                   width={cert.image.width}
                   height={cert.image.height}
-                  className="block aspect-[1122/789] h-auto w-full object-cover"
+                  className="block aspect-[1122/789] h-auto w-full object-contain"
                 />
               </button>
 
