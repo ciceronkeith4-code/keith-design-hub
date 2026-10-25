@@ -22,9 +22,13 @@ type Connection = Profile & { at?: number };
 // The Google sign-in and sign-out, set once Firebase has loaded. They live at module level so other features
 // that need a Google identity (Recommendations) go through the same code: it moves this visitor's presence entry
 // to the new identity, which a second sign-in path would leave behind.
-let shared: { signIn: () => Promise<void>; signOut: () => Promise<void> } | null = null;
+let shared: { signIn: () => Promise<SignInResult>; signOut: () => Promise<void> } | null = null;
 
-export const googleSignIn = () => shared?.signIn();
+/** How a Google sign-in ended. "not-ready": Firebase is still loading, so nothing was opened. */
+export type SignInResult = "signed-in" | "cancelled" | "blocked" | "failed" | "not-ready";
+
+export const googleSignIn = (): Promise<SignInResult> =>
+  shared ? shared.signIn() : Promise.resolve("not-ready");
 export const googleSignOut = () => shared?.signOut();
 
 /** The live viewer list (Google profiles first) and this visitor's Google sign-in state. */
@@ -107,13 +111,26 @@ export function useLiveViewers() {
 
       shared = {
         signIn: async () => {
+          // The popup opens first, straight from the click: Safari (so every iPhone browser) and strict popup
+          // blockers stop a popup opened after an await. The anonymous entry is removed while it is open, still
+          // as the anonymous visitor, since the rules only let each identity remove its own.
+          const popup = authLib.signInWithPopup(auth, new authLib.GoogleAuthProvider());
           await leave();
+          let result: SignInResult = "signed-in";
           try {
-            await authLib.signInWithPopup(auth, new authLib.GoogleAuthProvider());
-          } catch {
-            // Popup closed or blocked: carry on as the anonymous visitor.
+            await popup;
+          } catch (error) {
+            // Closed, blocked or failed: carry on as the anonymous visitor.
+            const code = (error as { code?: string }).code;
+            result =
+              code === "auth/popup-blocked"
+                ? "blocked"
+                : code === "auth/popup-closed-by-user" || code === "auth/cancelled-popup-request"
+                  ? "cancelled"
+                  : "failed";
           }
           await join();
+          return result;
         },
         signOut: async () => {
           await leave();

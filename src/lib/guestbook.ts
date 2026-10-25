@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { firebaseConfigured, loadFirebase, type FirebaseHandle } from "./firebase";
-import { googleSignIn, googleSignOut } from "./presence";
+import { googleSignIn, googleSignOut, type SignInResult } from "./presence";
 
 /**
  * Recommendations (the /recommendations page), through Firebase Realtime Database: guestbook/<uid> holds one per
@@ -256,13 +256,14 @@ export function useGuestbook() {
     [preview],
   );
 
-  const signIn = useCallback(async () => {
+  // Not async: googleSignIn has to run inside the click, before any await, or the popup is blocked.
+  const signIn = useCallback((): Promise<SignInResult> => {
     if (preview) {
       const owner = new URLSearchParams(window.location.search).has("owner");
       setMe({ uid: "me", name: "Preview Visitor", owner });
-      return;
+      return Promise.resolve("signed-in");
     }
-    await googleSignIn();
+    return googleSignIn();
   }, [preview]);
 
   const signOut = useCallback(async () => {

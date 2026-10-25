@@ -269,6 +269,19 @@ export function Recommendations() {
   const deleteNote = (uid: string) => async () => {
     if (!(await remove(uid))) toast.error("Couldn't delete that recommendation. Please try again.");
   };
+  const startSignIn = async () => {
+    // signIn() runs before the first await, so the Google window opens straight from the click.
+    const result = await signIn();
+    if (result === "blocked") {
+      toast.error(
+        "Your browser blocked the Google sign-in window. Allow pop-ups for this site, then try again.",
+      );
+    } else if (result === "not-ready") {
+      toast.error("Sign-in is still loading. Try again in a moment.");
+    } else if (result === "failed") {
+      toast.error("Couldn't sign in with Google. Please try again.");
+    }
+  };
   const togglePin = async (note: Note) => {
     if (!(await setPinned(note, !note.pinned))) {
       toast.error(
@@ -298,7 +311,7 @@ export function Recommendations() {
             me={me}
             hasNote={Boolean(mine)}
             onPost={post}
-            onSignIn={() => void signIn()}
+            onSignIn={() => void startSignIn()}
             onSignOut={() => void signOut()}
             onDeleteMine={me ? deleteNote(me.uid) : async () => {}}
           />
