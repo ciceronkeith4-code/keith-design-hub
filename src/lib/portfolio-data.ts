@@ -127,6 +127,25 @@ export const CERTIFICATIONS = [
     },
   },
   {
+    title: "Introduction to the Basics of Azure Services",
+    kind: "Declaration of completion",
+    // The certificate says it is not an official Microsoft certification, so Simplilearn is the issuer.
+    issuer: "Simplilearn SkillUp (a Microsoft course)",
+    issuerShort: "Simplilearn SkillUp",
+    date: "Oct 2026",
+    detail:
+      "Completed the Microsoft course Introduction to the Basics of Azure Services on Simplilearn, Oct 25, 2026. Not an official Microsoft certification",
+    topics: [],
+    code: "10939091",
+    field: "Cloud",
+    verify: "",
+    image: {
+      src: "/images/certificates/simplilearn-azure-basics.webp",
+      width: 1120,
+      height: 791,
+    },
+  },
+  {
     title: "Introduction to Modern AI",
     kind: "Certificate of course completion",
     issuer: "Cisco Networking Academy",
