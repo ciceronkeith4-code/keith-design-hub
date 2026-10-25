@@ -15,6 +15,13 @@ const CONFIG = {
 
 export const firebaseConfigured = Boolean(CONFIG.apiKey && CONFIG.databaseURL && CONFIG.authDomain);
 
+/**
+ * Facebook as a second way to sign in. Turn on only once Facebook is enabled under Authentication → Sign-in method
+ * in the Firebase console (that needs a Meta app) and the current database.rules.json is published; until then the
+ * button stays hidden.
+ */
+export const FACEBOOK_SIGN_IN = false;
+
 export type FirebaseHandle = Awaited<ReturnType<typeof loadFirebase>>;
 
 /** Loads the Firebase libraries and returns the shared app's auth and database, with the libraries themselves. */

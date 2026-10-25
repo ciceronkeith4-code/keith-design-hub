@@ -7,7 +7,8 @@ import { firebaseConfigured, loadFirebase, signInAnonymouslyOnce } from "./fireb
  * Every visitor is signed in anonymously (invisible to them) so the database rules can limit each visitor to
  * writing only their own entry. Each open tab adds a connection under presence/<uid>/, which Firebase deletes
  * by itself when the tab closes or drops offline; a visitor counts once however many tabs they have open.
- * A visitor who signs in with Google also shares their Google name and profile photo, nothing else.
+ * A visitor who signs in with Google (or Facebook) also shares their name, and with Google their profile photo,
+ * nothing else.
  *
  * The Firebase app and its web config are in ./firebase.
  */
@@ -19,17 +20,39 @@ export type Viewer = { id: string; name?: string; avatar?: string; you: boolean 
 type Profile = { name?: string; avatar?: string };
 type Connection = Profile & { at?: number };
 
-// The Google sign-in and sign-out, set once Firebase has loaded. They live at module level so other features
-// that need a Google identity (Recommendations) go through the same code: it moves this visitor's presence entry
-// to the new identity, which a second sign-in path would leave behind.
-let shared: { signIn: () => Promise<SignInResult>; signOut: () => Promise<void> } | null = null;
+// The sign-in and sign-out, set once Firebase has loaded. They live at module level so other features that need a
+// real identity (Recommendations) go through the same code: it moves this visitor's presence entry to the new
+// identity, which a second sign-in path would leave behind.
+let shared: {
+  signIn: (provider: SignInProvider) => Promise<SignInResult>;
+  signOut: () => Promise<void>;
+} | null = null;
 
-/** How a Google sign-in ended. "not-ready": Firebase is still loading, so nothing was opened. */
-export type SignInResult = "signed-in" | "cancelled" | "blocked" | "failed" | "not-ready";
+export type SignInProvider = "google" | "facebook";
 
-export const googleSignIn = (): Promise<SignInResult> =>
-  shared ? shared.signIn() : Promise.resolve("not-ready");
-export const googleSignOut = () => shared?.signOut();
+/**
+ * How a sign-in ended. "not-ready": Firebase is still loading, so nothing was opened. "other-provider": the
+ * visitor's email already signed in here with the other provider, which Firebase keeps as one account.
+ */
+export type SignInResult =
+  "signed-in" | "cancelled" | "blocked" | "failed" | "not-ready" | "other-provider";
+
+export const socialSignIn = (provider: SignInProvider = "google"): Promise<SignInResult> =>
+  shared ? shared.signIn(provider) : Promise.resolve("not-ready");
+export const socialSignOut = () => shared?.signOut();
+
+/**
+ * The profile photo to show, Google's only: a Facebook photo URL needs an access token to load, and one doesn't
+ * belong in public data, so Facebook visitors get the plain placeholder.
+ */
+export const shownPhoto = (user: {
+  photoURL: string | null;
+  providerData: { providerId: string }[];
+}) =>
+  user.providerData.some((p) => p.providerId === "google.com") &&
+  user.photoURL?.startsWith("https://")
+    ? user.photoURL
+    : undefined;
 
 /** The live viewer list (Google profiles first) and this visitor's Google sign-in state. */
 export function useLiveViewers() {
@@ -58,10 +81,10 @@ export function useLiveViewers() {
       const join = async () => {
         const user = auth.currentUser;
         if (!user || !online || connection) return;
-        const google = !user.isAnonymous;
         const entry: Connection = { at: Date.now() };
-        if (google && user.displayName) entry.name = user.displayName.slice(0, 80);
-        if (google && user.photoURL?.startsWith("https://")) entry.avatar = user.photoURL;
+        if (!user.isAnonymous && user.displayName) entry.name = user.displayName.slice(0, 80);
+        const photo = shownPhoto(user);
+        if (photo) entry.avatar = photo;
         const ref = dbLib.push(dbLib.ref(db, `${PRESENCE_PATH}/${user.uid}`));
         connection = ref;
         await dbLib.onDisconnect(ref).remove();
@@ -110,11 +133,16 @@ export function useLiveViewers() {
       );
 
       shared = {
-        signIn: async () => {
+        signIn: async (provider) => {
           // The popup opens first, straight from the click: Safari (so every iPhone browser) and strict popup
           // blockers stop a popup opened after an await. The anonymous entry is removed while it is open, still
           // as the anonymous visitor, since the rules only let each identity remove its own.
-          const popup = authLib.signInWithPopup(auth, new authLib.GoogleAuthProvider());
+          const popup = authLib.signInWithPopup(
+            auth,
+            provider === "facebook"
+              ? new authLib.FacebookAuthProvider()
+              : new authLib.GoogleAuthProvider(),
+          );
           await leave();
           let result: SignInResult = "signed-in";
           try {
@@ -127,7 +155,9 @@ export function useLiveViewers() {
                 ? "blocked"
                 : code === "auth/popup-closed-by-user" || code === "auth/cancelled-popup-request"
                   ? "cancelled"
-                  : "failed";
+                  : code === "auth/account-exists-with-different-credential"
+                    ? "other-provider"
+                    : "failed";
           }
           await join();
           return result;
@@ -150,5 +180,11 @@ export function useLiveViewers() {
     };
   }, []);
 
-  return { viewers, signedIn, connected, signIn: googleSignIn, signOut: googleSignOut };
+  return {
+    viewers,
+    signedIn,
+    connected,
+    signIn: () => socialSignIn("google"),
+    signOut: socialSignOut,
+  };
 }

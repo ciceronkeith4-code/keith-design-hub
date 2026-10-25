@@ -1,12 +1,18 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { firebaseConfigured, loadFirebase, type FirebaseHandle } from "./firebase";
-import { googleSignIn, googleSignOut, type SignInResult } from "./presence";
+import {
+  shownPhoto,
+  socialSignIn,
+  socialSignOut,
+  type SignInProvider,
+  type SignInResult,
+} from "./presence";
 
 /**
  * Recommendations (the /recommendations page), through Firebase Realtime Database: guestbook/<uid> holds one per
  * visitor. The page began as a guestbook; the database path keeps that name so every earlier note stays listed.
  *
- * Only a visitor signed in with Google can write, and only under their own uid, so each person has at most one
+ * Only a visitor signed in with Google (or Facebook, once FACEBOOK_SIGN_IN is on) can write, and only under their own uid, so each person has at most one
  * note and can replace or delete it. database.rules.json also pins the name to the visitor's real Google name,
  * the photo to Google's image host, and the time to the server's clock, so a note can't pose as someone else.
  * The owner's Google account can delete any note, and pin notes to the top: pins/<uid> holds the `at` of the
@@ -160,7 +166,7 @@ export function useGuestbook() {
           setMe({
             uid: user.uid,
             name: user.displayName ?? undefined,
-            avatar: user.photoURL?.startsWith("https://") ? user.photoURL : undefined,
+            avatar: shownPhoto(user),
             owner: user.email === OWNER_EMAIL && user.emailVerified,
           });
         }),
@@ -198,7 +204,9 @@ export function useGuestbook() {
           at: handle.dbLib.serverTimestamp(),
         };
         if (user.displayName) entry.name = user.displayName.slice(0, 100);
-        if (user.photoURL?.startsWith("https://")) entry.avatar = user.photoURL;
+        // Google photos only; the rules accept nothing else, and a Facebook one would fail the whole post.
+        const photo = shownPhoto(user);
+        if (photo) entry.avatar = photo;
         await handle.dbLib.set(handle.dbLib.ref(handle.db, `${PATH}/${user.uid}`), entry);
         return true;
       } catch {
@@ -256,22 +264,25 @@ export function useGuestbook() {
     [preview],
   );
 
-  // Not async: googleSignIn has to run inside the click, before any await, or the popup is blocked.
-  const signIn = useCallback((): Promise<SignInResult> => {
-    if (preview) {
-      const owner = new URLSearchParams(window.location.search).has("owner");
-      setMe({ uid: "me", name: "Preview Visitor", owner });
-      return Promise.resolve("signed-in");
-    }
-    return googleSignIn();
-  }, [preview]);
+  // Not async: socialSignIn has to run inside the click, before any await, or the popup is blocked.
+  const signIn = useCallback(
+    (provider: SignInProvider = "google"): Promise<SignInResult> => {
+      if (preview) {
+        const owner = new URLSearchParams(window.location.search).has("owner");
+        setMe({ uid: "me", name: "Preview Visitor", owner });
+        return Promise.resolve("signed-in");
+      }
+      return socialSignIn(provider);
+    },
+    [preview],
+  );
 
   const signOut = useCallback(async () => {
     if (preview) {
       setMe(null);
       return;
     }
-    await googleSignOut();
+    await socialSignOut();
   }, [preview]);
 
   // Pinned notes first, then the rest, each newest first.

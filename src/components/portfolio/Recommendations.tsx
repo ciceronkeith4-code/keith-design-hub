@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { Pin, UserRound } from "lucide-react";
-import { FaGoogle } from "react-icons/fa6";
+import { FaFacebook, FaGoogle } from "react-icons/fa6";
 import { toast } from "sonner";
+import { FACEBOOK_SIGN_IN } from "@/lib/firebase";
 import { NOTE_MAX, useGuestbook, type Me, type Note } from "@/lib/guestbook";
+import type { SignInProvider } from "@/lib/presence";
 
 const MUTED = "text-[#62655E] dark:text-[#A3A3A3]";
 const INK = "text-[#161616] dark:text-[#EDEDED]";
@@ -11,6 +13,8 @@ const DIVIDER = "border-[#E5E5E0] dark:border-[#262626]";
 const BOX = `rounded-[8px] border ${DIVIDER} bg-[#F6F7F4] dark:bg-[#141414]`;
 const BUTTON =
   "inline-flex items-center gap-2 whitespace-nowrap rounded-[6px] bg-[#161616] text-white dark:bg-[#EDEDED] dark:text-[#161616] hover:bg-[#2E2E2E] dark:hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed px-4 py-2 text-sm font-medium transition-colors cursor-pointer";
+const BUTTON_OUTLINE =
+  "inline-flex items-center gap-2 whitespace-nowrap rounded-[6px] border border-[#D9DBD4] dark:border-[#333333] bg-white dark:bg-[#1C1C1C] text-[#161616] dark:text-[#EDEDED] hover:bg-[#F0F1EE] dark:hover:bg-[#232323] px-4 py-2 text-sm font-medium transition-colors cursor-pointer";
 const TEXT_LINK = `text-xs underline decoration-[#C9CCC4] underline-offset-2 hover:text-[#161616] dark:decoration-[#3A3A3A] dark:hover:text-[#EDEDED] cursor-pointer ${MUTED}`;
 
 const relative = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
@@ -54,7 +58,7 @@ interface ComposerProps {
   me: Me | null;
   hasNote: boolean;
   onPost: (text: string) => Promise<boolean>;
-  onSignIn: () => void;
+  onSignIn: (provider: SignInProvider) => void;
   onSignOut: () => void;
   onDeleteMine: () => Promise<void>;
 }
@@ -70,12 +74,31 @@ function Composer({ me, hasNote, onPost, onSignIn, onSignOut, onDeleteMine }: Co
         className={`${BOX} p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6`}
       >
         <p className={`flex-1 text-sm leading-relaxed ${MUTED}`}>
-          Sign in with Google to write one. Only your name and profile photo are shown.
+          {FACEBOOK_SIGN_IN ? "Sign in" : "Sign in with Google"} to write one. Only your name and
+          profile photo are shown.
         </p>
-        <button type="button" onClick={onSignIn} className={`self-start sm:self-auto ${BUTTON}`}>
-          <FaGoogle className="h-3.5 w-3.5" aria-hidden="true" />
-          <span>Sign in with Google</span>
-        </button>
+        <div className="self-start sm:self-auto flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => onSignIn("google")}
+            aria-label={FACEBOOK_SIGN_IN ? "Sign in with Google" : undefined}
+            className={BUTTON}
+          >
+            <FaGoogle className="h-3.5 w-3.5" aria-hidden="true" />
+            <span>{FACEBOOK_SIGN_IN ? "Google" : "Sign in with Google"}</span>
+          </button>
+          {FACEBOOK_SIGN_IN && (
+            <button
+              type="button"
+              onClick={() => onSignIn("facebook")}
+              aria-label="Sign in with Facebook"
+              className={BUTTON_OUTLINE}
+            >
+              <FaFacebook className="h-3.5 w-3.5" aria-hidden="true" />
+              <span>Facebook</span>
+            </button>
+          )}
+        </div>
       </div>
     );
   }
@@ -269,17 +292,27 @@ export function Recommendations() {
   const deleteNote = (uid: string) => async () => {
     if (!(await remove(uid))) toast.error("Couldn't delete that recommendation. Please try again.");
   };
-  const startSignIn = async () => {
-    // signIn() runs before the first await, so the Google window opens straight from the click.
-    const result = await signIn();
+  const startSignIn = async (provider: SignInProvider) => {
+    const brand = provider === "facebook" ? "Facebook" : "Google";
+    // signIn() runs before the first await, so the sign-in window opens straight from the click.
+    const result = await signIn(provider);
     if (result === "blocked") {
       toast.error(
-        "Your browser blocked the Google sign-in window. Allow pop-ups for this site, then try again.",
+        `Your browser blocked the ${brand} sign-in window. Allow pop-ups for this site, then try again.`,
       );
     } else if (result === "not-ready") {
       toast.error("Sign-in is still loading. Try again in a moment.");
     } else if (result === "failed") {
-      toast.error("Couldn't sign in with Google. Please try again.");
+      toast.error(`Couldn't sign in with ${brand}. Please try again.`);
+    } else if (result === "other-provider") {
+      toast.error(
+        `That email already signed in here with ${provider === "facebook" ? "Google" : "Facebook"}. Use that button instead.`,
+      );
+    } else if (result === "cancelled") {
+      // Also what a pop-up blocker extension looks like: it closes the window the moment it opens.
+      toast(
+        `Sign-in closed before it finished. If no ${brand} window appeared, allow pop-ups for this site and try again.`,
+      );
     }
   };
   const togglePin = async (note: Note) => {
@@ -311,7 +344,7 @@ export function Recommendations() {
             me={me}
             hasNote={Boolean(mine)}
             onPost={post}
-            onSignIn={() => void startSignIn()}
+            onSignIn={(provider) => void startSignIn(provider)}
             onSignOut={() => void signOut()}
             onDeleteMine={me ? deleteNote(me.uid) : async () => {}}
           />
