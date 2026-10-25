@@ -84,10 +84,10 @@ export function BentoDashboard() {
 
       <div className="w-full flex items-center justify-between pt-6">
         <Link
-          to="/guestbook"
+          to="/recommendations"
           className="group inline-flex items-center gap-1.5 text-sm text-[#62655E] dark:text-[#A3A3A3] hover:text-[#161616] dark:hover:text-[#EDEDED] transition-colors cursor-pointer"
         >
-          <span>Sign the guestbook</span>
+          <span>Write a recommendation</span>
           <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
         </Link>
 

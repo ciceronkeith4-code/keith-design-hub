@@ -21,7 +21,7 @@ export type TourStep = {
 const CASE_STUDY = `/projects/${PROJECTS[0].slug}`;
 
 /**
- * The tour visits every page in the menu order, then the guestbook. Each step points at one specific thing,
+ * The tour visits every page in the menu order. Each step points at one specific thing,
  * marked with data-tour (or data-section on a case study), so what is lit is exactly what the text describes.
  * A step whose element never appears (for instance a case study without a "Technical decisions" section) is
  * skipped rather than shown wrong.
@@ -32,7 +32,7 @@ export const TOUR_STEPS: TourStep[] = [
     path: "/",
     selector: 'nav[aria-label="Main"] > a',
     title: "Menu",
-    text: "The six main pages: Home, About, Work, Experience, Certifications and Contact. This tour visits each one.",
+    text: "The seven main pages: Home, About, Work, Experience, Certifications, Recommendations and Contact. This tour visits each one.",
     placement: "right",
   },
   {
@@ -165,6 +165,23 @@ export const TOUR_STEPS: TourStep[] = [
     placement: "bottom",
   },
 
+  // Recommendations
+  {
+    path: "/recommendations",
+    selector: '[data-tour="recommendations-composer"]',
+    title: "Write a recommendation",
+    text: "Sign in with Google to write one of up to 140 characters. Each person has one, and you can replace or delete it.",
+    placement: "bottom",
+  },
+  {
+    path: "/recommendations",
+    selector:
+      '[data-tour="recommendations-list"] > li:first-child, [data-tour="recommendations-empty"]',
+    title: "Recommendations",
+    text: "What people have written, newest first. New ones appear live.",
+    placement: "top",
+  },
+
   // Contact
   {
     path: "/contact",
@@ -178,22 +195,6 @@ export const TOUR_STEPS: TourStep[] = [
     selector: '[data-tour="contact-links"]',
     title: "Direct links",
     text: "LinkedIn, Gmail and GitHub. Hover an icon to see its handle.",
-    placement: "right",
-  },
-
-  // Guestbook
-  {
-    path: "/guestbook",
-    selector: '[data-tour="guestbook-composer"]',
-    title: "Sign the guestbook",
-    text: "Sign in with Google to leave a note of up to 140 characters. Each person has one note, and you can replace or delete it.",
-    placement: "right",
-  },
-  {
-    path: "/guestbook",
-    selector: '[data-tour="guestbook-notes"] > li:first-child, [data-tour="guestbook-empty"]',
-    title: "Notes",
-    text: "Notes from other visitors, newest first. New ones appear live.",
     placement: "right",
     next: "Done",
   },

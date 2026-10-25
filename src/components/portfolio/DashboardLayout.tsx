@@ -1,7 +1,16 @@
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { Link, useLocation } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { Home, User, Briefcase, FolderOpen, Award, Mail, type LucideIcon } from "lucide-react";
+import {
+  Home,
+  User,
+  Briefcase,
+  FolderOpen,
+  Award,
+  MessageSquareQuote,
+  Mail,
+  type LucideIcon,
+} from "lucide-react";
 import { AskPanel, AskScrim } from "./AskPanel";
 import { TopBar } from "./TopBar";
 import { LiveViewers } from "./LiveViewers";
@@ -11,13 +20,13 @@ import { useScrollReveal } from "@/lib/scroll-reveal";
 import { useSmoothWheel } from "@/lib/smooth-wheel";
 
 // Every section is its own URL, so each one is server-rendered and crawlable.
-// `short` is the label in the phone bar, where a long one pushes the last icon off a 320px screen.
-const SECTIONS: { path: string; label: string; short?: string; icon: LucideIcon }[] = [
+const SECTIONS: { path: string; label: string; icon: LucideIcon }[] = [
   { path: "/", label: "Home", icon: Home },
   { path: "/about", label: "About", icon: User },
   { path: "/projects", label: "Work", icon: FolderOpen },
   { path: "/experience", label: "Experience", icon: Briefcase },
-  { path: "/certifications", label: "Certifications", short: "Certs", icon: Award },
+  { path: "/certifications", label: "Certifications", icon: Award },
+  { path: "/recommendations", label: "Recommendations", icon: MessageSquareQuote },
   { path: "/contact", label: "Contact", icon: Mail },
 ];
 
@@ -60,7 +69,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       />
 
       <div className="flex-1 min-h-0 min-w-0 flex flex-row overflow-hidden">
-        {/* The one navigation: a sidebar from md up, a bar pinned to the bottom on phones. */}
+        {/* The one navigation: a sidebar from md up, a bar pinned to the bottom on phones. The phone bar is icons
+            only, seven to a 320px screen, with the page you're on in a white circle; each label stays for screen
+            readers, and the page's own heading names it. */}
         <nav
           aria-label="Main"
           className="fixed bottom-2 inset-x-2 z-50 h-14 flex items-center justify-between rounded-full border border-white/10 bg-[#1C1C1C] px-2 shadow-lg dark:bg-[#141414] md:static md:z-30 md:h-full md:w-52 lg:w-56 md:shrink-0 md:flex-col md:items-stretch md:justify-start md:gap-1 md:rounded-none md:border-0 md:border-r md:border-[#E5E5E0] md:bg-transparent md:px-3 md:py-6 md:shadow-none md:dark:border-[#262626] md:dark:bg-transparent"
@@ -73,23 +84,14 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 key={item.path}
                 to={item.path}
                 aria-current={isActive ? "page" : undefined}
-                className={`h-10 shrink-0 flex items-center justify-center gap-1.5 rounded-full text-xs transition-colors cursor-pointer md:h-auto md:w-full md:justify-start md:gap-2.5 md:rounded-md md:px-2.5 md:py-1.5 md:text-sm md:font-medium ${
+                className={`h-10 w-10 shrink-0 flex items-center justify-center rounded-full transition-colors cursor-pointer md:h-auto md:w-full md:justify-start md:gap-2.5 md:rounded-md md:px-2.5 md:py-1.5 md:text-sm md:font-medium ${
                   isActive
-                    ? "px-3.5 bg-white text-[#161616] font-medium md:bg-black/5 md:dark:bg-white/10 md:dark:text-[#EDEDED]"
-                    : "w-10 text-white/60 hover:text-white md:text-[#62655E] md:dark:text-[#A3A3A3] md:hover:text-[#161616] md:dark:hover:text-[#EDEDED] md:hover:bg-black/[0.03] md:dark:hover:bg-white/[0.04]"
+                    ? "bg-white text-[#161616] md:bg-black/5 md:dark:bg-white/10 md:dark:text-[#EDEDED]"
+                    : "text-white/60 hover:text-white md:text-[#62655E] md:dark:text-[#A3A3A3] md:hover:text-[#161616] md:dark:hover:text-[#EDEDED] md:hover:bg-black/[0.03] md:dark:hover:bg-white/[0.04]"
                 }`}
               >
                 <Icon className="h-4 w-4 md:h-3.5 md:w-3.5 shrink-0" strokeWidth={2} />
-                <span className={isActive ? "" : "sr-only md:not-sr-only"}>
-                  {item.short ? (
-                    <>
-                      <span className="md:hidden">{item.short}</span>
-                      <span className="hidden md:inline">{item.label}</span>
-                    </>
-                  ) : (
-                    item.label
-                  )}
-                </span>
+                <span className="sr-only md:not-sr-only">{item.label}</span>
               </Link>
             );
           })}

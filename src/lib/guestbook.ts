@@ -3,17 +3,20 @@ import { firebaseConfigured, loadFirebase, type FirebaseHandle } from "./firebas
 import { googleSignIn, googleSignOut } from "./presence";
 
 /**
- * The guestbook, through Firebase Realtime Database: guestbook/<uid> holds one note per visitor.
+ * Recommendations (the /recommendations page), through Firebase Realtime Database: guestbook/<uid> holds one per
+ * visitor. The page began as a guestbook; the database path keeps that name so every earlier note stays listed.
  *
  * Only a visitor signed in with Google can write, and only under their own uid, so each person has at most one
  * note and can replace or delete it. database.rules.json also pins the name to the visitor's real Google name,
  * the photo to Google's image host, and the time to the server's clock, so a note can't pose as someone else.
- * The owner's Google account can delete any note.
+ * The owner's Google account can delete any note, and pin notes to the top: pins/<uid> holds the `at` of the
+ * pinned note, so a note its author replaces drops its pin until the owner pins the new one.
  */
 export const NOTE_MAX = 140;
 // The newest notes shown.
 const SHOWN = 60;
 const PATH = "guestbook";
+const PINS_PATH = "pins";
 /** The owner's Google account. database.rules.json checks the same address; this one only shows the buttons. */
 const OWNER_EMAIL = "ciceronkeith4@gmail.com";
 
@@ -25,6 +28,8 @@ export type Note = {
   at: number;
   /** Arrived while the page was open, so it slides in. */
   fresh: boolean;
+  /** Pinned to the top by the owner. */
+  pinned?: boolean;
 };
 export type Me = { uid: string; name?: string; avatar?: string; owner: boolean };
 
@@ -59,6 +64,8 @@ export function useGuestbook() {
   const [notes, setNotes] = useState<Note[] | null>(preview ? PREVIEW_NOTES : null);
   const [me, setMe] = useState<Me | null>(null);
   const [reachable, setReachable] = useState(true);
+  // uid -> `at` of the pinned note. Null until read, or if the pins rules aren't published (then no pin buttons).
+  const [pins, setPins] = useState<Record<string, number> | null>(preview ? {} : null);
   const firebase = useRef<Promise<FirebaseHandle | null> | null>(null);
 
   useEffect(() => {
@@ -116,6 +123,27 @@ export function useGuestbook() {
             if (import.meta.env.DEV) {
               console.warn(
                 `Guestbook: can't read ${PATH}. Publish database.rules.json in the Firebase console.`,
+              );
+            }
+          },
+        ),
+      );
+
+      cleanups.push(
+        dbLib.onValue(
+          dbLib.ref(db, PINS_PATH),
+          (snap) => {
+            const next: Record<string, number> = {};
+            snap.forEach((child) => {
+              if (child.key && typeof child.val() === "number") next[child.key] = child.val();
+            });
+            setPins(next);
+          },
+          () => {
+            setPins(null);
+            if (import.meta.env.DEV) {
+              console.warn(
+                `Recommendations: can't read ${PINS_PATH}. Publish database.rules.json in the Firebase console.`,
               );
             }
           },
@@ -191,6 +219,35 @@ export function useGuestbook() {
         const handle = await firebase.current;
         if (!handle) return false;
         await handle.dbLib.remove(handle.dbLib.ref(handle.db, `${PATH}/${uid}`));
+        // Tidy up its pin too; a pin left behind matches nothing, so a failure here doesn't matter.
+        if (pins?.[uid]) {
+          handle.dbLib.remove(handle.dbLib.ref(handle.db, `${PINS_PATH}/${uid}`)).catch(() => {});
+        }
+        return true;
+      } catch {
+        return false;
+      }
+    },
+    [preview, pins],
+  );
+
+  /** Owner only: pins a note to the top, or unpins it. True once saved. */
+  const setPinned = useCallback(
+    async (note: Note, pinned: boolean) => {
+      if (preview) {
+        setPins((current) => {
+          const next = { ...current };
+          if (pinned) next[note.uid] = note.at;
+          else delete next[note.uid];
+          return next;
+        });
+        return true;
+      }
+      try {
+        const handle = await firebase.current;
+        if (!handle) return false;
+        const ref = handle.dbLib.ref(handle.db, `${PINS_PATH}/${note.uid}`);
+        await (pinned ? handle.dbLib.set(ref, note.at) : handle.dbLib.remove(ref));
         return true;
       } catch {
         return false;
@@ -216,13 +273,22 @@ export function useGuestbook() {
     await googleSignOut();
   }, [preview]);
 
+  // Pinned notes first, then the rest, each newest first.
+  const listed =
+    notes &&
+    notes
+      .map((n) => ({ ...n, pinned: pins?.[n.uid] === n.at }))
+      .sort((a, b) => Number(b.pinned) - Number(a.pinned) || b.at - a.at);
+
   return {
     // Without the Firebase config the live site shows no guestbook; local development shows a preview of it.
     available: firebaseConfigured ? reachable : import.meta.env.DEV,
-    notes,
+    notes: listed,
     me,
+    canPin: Boolean(me?.owner) && pins !== null,
     post,
     remove,
+    setPinned,
     signIn,
     signOut,
   };

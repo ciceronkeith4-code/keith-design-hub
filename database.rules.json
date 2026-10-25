@@ -41,6 +41,13 @@
         "$other": { ".validate": false }
       }
     },
+    "pins": {
+      ".read": true,
+      "$uid": {
+        ".write": "auth != null && auth.token.email === 'ciceronkeith4@gmail.com' && auth.token.email_verified === true",
+        ".validate": "newData.isNumber()"
+      }
+    },
     "$other": { ".read": false, ".write": false }
   }
 }

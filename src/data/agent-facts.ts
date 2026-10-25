@@ -197,10 +197,10 @@ export const RESUME_FACTS = [
 ];
 
 export const SITE_FACTS = [
-  "Pages: Home (/), About (/about), Work (/projects) with a case study per project (/projects/<name>), Experience (/experience), Certifications (/certifications), Contact (/contact), and a public Guestbook (/guestbook).",
+  "Pages: Home (/), About (/about), Work (/projects) with a case study per project (/projects/<name>), Experience (/experience), Certifications (/certifications), Recommendations (/recommendations) and Contact (/contact).",
   "Resume: a PDF at /Keith-Ciceron-Resume.pdf, also linked in the top navigation next to GitHub and LinkedIn.",
   "Contact page: a message form (name, email and message are required) plus LinkedIn, Gmail and GitHub links.",
-  "Guestbook: visitors sign in with Google and leave a note of up to 140 characters, one note each.",
+  "Recommendations: visitors sign in with Google and write a public recommendation of up to 140 characters, one each.",
   "Home has a like button (one like per visitor per day), and the site has a guided tour (the Tour button) that visits every page.",
   "The site has a light and dark theme and optional click sounds.",
 ];

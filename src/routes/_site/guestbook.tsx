@@ -1,17 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { Guestbook } from "@/components/portfolio/Guestbook";
-import { pageHead } from "@/lib/seo";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
+// The guestbook became Recommendations (same entries).
 export const Route = createFileRoute("/_site/guestbook")({
-  head: () => {
-    const head = pageHead({
-      path: "/guestbook",
-      title: "Guestbook | Keith Ciceron",
-      description:
-        "Leave a note for Keith Ciceron. Sign in with Google and your name and photo appear with it.",
-    });
-    // The page lists visitors' names and photos, so it stays out of search results.
-    return { ...head, meta: [...head.meta, { name: "robots", content: "noindex" }] };
+  beforeLoad: () => {
+    throw redirect({ to: "/recommendations", statusCode: 301 });
   },
-  component: Guestbook,
 });

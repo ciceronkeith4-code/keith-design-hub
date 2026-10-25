@@ -20,7 +20,7 @@ type Profile = { name?: string; avatar?: string };
 type Connection = Profile & { at?: number };
 
 // The Google sign-in and sign-out, set once Firebase has loaded. They live at module level so other features
-// that need a Google identity (the guestbook) go through the same code: it moves this visitor's presence entry
+// that need a Google identity (Recommendations) go through the same code: it moves this visitor's presence entry
 // to the new identity, which a second sign-in path would leave behind.
 let shared: { signIn: () => Promise<void>; signOut: () => Promise<void> } | null = null;
 
