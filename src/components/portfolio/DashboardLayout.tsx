@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { Link, useLocation } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { Home, User, Briefcase, FolderOpen, Award, Mail, type LucideIcon } from "lucide-react";
@@ -8,6 +8,7 @@ import { LiveViewers } from "./LiveViewers";
 import { TourLauncher } from "./TourLauncher";
 import { useTheme } from "@/lib/theme";
 import { useScrollReveal } from "@/lib/scroll-reveal";
+import { useSmoothWheel } from "@/lib/smooth-wheel";
 
 // Every section is its own URL, so each one is server-rendered and crawlable.
 // `short` is the label in the phone bar, where a long one pushes the last icon off a 320px screen.
@@ -37,12 +38,14 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const hydrated = useRef(false);
   useScrollReveal(scrollRef, pathname);
+  useSmoothWheel(scrollRef, pathname);
   useEffect(() => {
     hydrated.current = true;
   }, []);
 
   // The content pane scrolls, not the window: start each page at the top, or at the #hash entry.
-  useEffect(() => {
+  // Before the page is drawn, so the router's scroll restoration never records the old page's position for it.
+  useLayoutEffect(() => {
     const target = hash ? document.getElementById(hash) : null;
     if (target) target.scrollIntoView();
     else scrollRef.current?.scrollTo({ top: 0 });
@@ -98,6 +101,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         <main className="flex-1 min-w-0 min-h-0 h-full overflow-hidden flex flex-col">
           <div
             ref={scrollRef}
+            data-scroll-restoration-id="content"
             className="flex-1 min-h-0 min-w-0 h-full w-full overflow-y-auto card-scrollbar px-6 sm:px-12 lg:px-16 pt-8 sm:pt-12 pb-24 md:pb-12 flex flex-col items-start text-left"
           >
             {/* Fade in on navigation only: the server-rendered first page must be visible before hydration */}
