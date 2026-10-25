@@ -15,6 +15,18 @@ const FOCUS =
 // Each print leans a little, as if pinned up by hand, and straightens when pointed at.
 const TILT = [-1.6, 1.2, 1.3, -1.1, -1.2, 1.5];
 
+// The site a verify link confirms the certificate on, named in the link's label.
+const VERIFIERS: [RegExp, string][] = [
+  [/(^|\.)credly\.com$/, "Credly"],
+  [/(^|\.)simplilearn\.com$|^simpli-web\.app\.link$/, "Simplilearn"],
+  [/(^|\.)educourse\.co\.za$/, "EduCourse"],
+];
+const verifyLabel = (url: string) => {
+  const host = new URL(url).hostname;
+  const site = VERIFIERS.find(([pattern]) => pattern.test(host))?.[1];
+  return site ? `Verify on ${site}` : "Verify";
+};
+
 /** Fields in the order they first appear, so the newest certificate's field comes first. */
 const GROUPS = CERTIFICATIONS.reduce<{ field: string; certs: Certificate[] }[]>((groups, cert) => {
   const group = groups.find((g) => g.field === cert.field);
@@ -33,6 +45,8 @@ const IMAGES: LightboxImage[] = ON_PAGE.map((cert) => ({
 
 function Print({ cert, onOpen }: { cert: Certificate; onOpen: () => void }) {
   const at = ON_PAGE.indexOf(cert);
+  // A portrait certificate is drawn narrower, so it stands about as tall as the landscape prints beside it.
+  const portrait = cert.image.height > cert.image.width;
   return (
     <figure className="flex flex-col">
       <button
@@ -40,7 +54,7 @@ function Print({ cert, onOpen }: { cert: Certificate; onOpen: () => void }) {
         onClick={onOpen}
         aria-label={`Enlarge: ${IMAGES[at].alt}`}
         style={{ "--tilt": `${TILT[at % TILT.length]}deg` } as CSSProperties}
-        className={`block w-full cursor-zoom-in rounded-[3px] bg-white p-1.5 sm:p-2 ring-1 ring-black/[0.06] dark:bg-[#1E1E1E] dark:ring-white/[0.08] rotate-(--tilt) shadow-[0_1px_2px_rgba(22,22,22,0.08),0_12px_24px_-14px_rgba(22,22,22,0.4)] dark:shadow-[0_1px_2px_rgba(0,0,0,0.4),0_12px_24px_-12px_rgba(0,0,0,0.8)] transition-[rotate,translate,box-shadow] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:rotate-0 hover:-translate-y-1 hover:shadow-[0_2px_4px_rgba(22,22,22,0.08),0_24px_40px_-18px_rgba(22,22,22,0.45)] dark:hover:shadow-[0_2px_4px_rgba(0,0,0,0.4),0_24px_40px_-16px_rgba(0,0,0,0.9)] focus-visible:rotate-0 focus-visible:-translate-y-1 motion-reduce:transition-none ${FOCUS}`}
+        className={`block ${portrait ? "w-[56%]" : "w-full"} cursor-zoom-in rounded-[3px] bg-white p-1.5 sm:p-2 ring-1 ring-black/[0.06] dark:bg-[#1E1E1E] dark:ring-white/[0.08] rotate-(--tilt) shadow-[0_1px_2px_rgba(22,22,22,0.08),0_12px_24px_-14px_rgba(22,22,22,0.4)] dark:shadow-[0_1px_2px_rgba(0,0,0,0.4),0_12px_24px_-12px_rgba(0,0,0,0.8)] transition-[rotate,translate,box-shadow] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:rotate-0 hover:-translate-y-1 hover:shadow-[0_2px_4px_rgba(22,22,22,0.08),0_24px_40px_-18px_rgba(22,22,22,0.45)] dark:hover:shadow-[0_2px_4px_rgba(0,0,0,0.4),0_24px_40px_-16px_rgba(0,0,0,0.9)] focus-visible:rotate-0 focus-visible:-translate-y-1 motion-reduce:transition-none ${FOCUS}`}
       >
         <img
           src={cert.image.src}
@@ -67,7 +81,7 @@ function Print({ cert, onOpen }: { cert: Certificate; onOpen: () => void }) {
             rel="noopener noreferrer"
             className={`mt-2 inline-flex items-center gap-1 text-xs ${MUTED} ${LINK}`}
           >
-            Verify on Credly
+            {verifyLabel(cert.verify)}
             <ArrowUpRight aria-hidden="true" className="h-3 w-3" />
           </a>
         )}

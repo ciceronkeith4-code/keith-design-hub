@@ -123,7 +123,7 @@ ${TRAININGS.map((t) => `- ${t.title} (${t.role}), ${t.date}`).join("\n")}
 ## Certifications (shown on /certifications)
 ${CERTIFICATIONS.map(
   (c) =>
-    `- ${c.title}: ${c.kind.toLowerCase()} from ${c.issuer}. ${c.detail}.${c.topics.length ? ` Topics: ${c.topics.join(", ")}.` : ""}${c.code ? ` Certificate code ${c.code}.` : ""}${c.verify ? ` Verify it on Credly: ${c.verify}` : ""}`,
+    `- ${c.title}: ${c.kind.toLowerCase()} from ${c.issuer}. ${c.detail}.${c.topics.length ? ` Topics: ${c.topics.join(", ")}.` : ""}${c.code ? ` Certificate code ${c.code}.` : ""}${c.verify ? ` Verify it here: ${c.verify}` : ""}`,
 ).join("\n")}
 
 ## Projects (${PROJECTS.length}, in the order they appear on the Work page)

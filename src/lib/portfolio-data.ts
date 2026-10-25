@@ -106,7 +106,7 @@ export const TRAININGS = [
 /**
  * Certificates on /certifications, newest first. Images are in public/images/certificates/.
  * Grouped on the page by `field`, in the order the fields first appear. `verify` is a public page that
- * confirms the certificate (Credly for Cisco); leave it empty when there is none.
+ * confirms the certificate (Credly for Cisco, Simplilearn and EduCourse their own); leave it empty when there is none.
  */
 export const CERTIFICATIONS = [
   {
@@ -119,7 +119,7 @@ export const CERTIFICATIONS = [
     topics: [],
     code: "10938871",
     field: "CSS",
-    verify: "",
+    verify: "https://simpli-web.app.link/e/4QD4TsK0v7b",
     image: {
       src: "/images/certificates/simplilearn-intro-to-css.webp",
       width: 585,
@@ -138,7 +138,7 @@ export const CERTIFICATIONS = [
     topics: [],
     code: "10939091",
     field: "Cloud",
-    verify: "",
+    verify: "https://simpli-web.app.link/e/ClrQNUq5v7b",
     image: {
       src: "/images/certificates/simplilearn-azure-basics.webp",
       width: 1120,
@@ -155,11 +155,28 @@ export const CERTIFICATIONS = [
     topics: [],
     code: "10940333",
     field: "React",
-    verify: "",
+    verify: "https://simpli-web.app.link/e/2q22g6Cow7b",
     image: {
       src: "/images/certificates/simplilearn-reactjs-for-beginners.webp",
       width: 1118,
       height: 797,
+    },
+  },
+  {
+    title: "Getting Started with NodeJS",
+    kind: "Certificate of completion",
+    issuer: "Simplilearn SkillUp",
+    issuerShort: "Simplilearn SkillUp",
+    date: "Oct 2026",
+    detail: "Completed the Getting Started with NodeJS online course, Oct 25, 2026",
+    topics: [],
+    code: "10942967",
+    field: "Node.js",
+    verify: "https://simpli-web.app.link/e/Mz0UjMOVw7b",
+    image: {
+      src: "/images/certificates/simplilearn-getting-started-with-nodejs.webp",
+      width: 640,
+      height: 456,
     },
   },
   {
@@ -185,6 +202,26 @@ export const CERTIFICATIONS = [
       width: 1055,
       height: 817,
     },
+  },
+  {
+    title: "Claude AI",
+    kind: "Course certificate",
+    issuer: "EduCourse Online Learning",
+    issuerShort: "EduCourse",
+    date: "Oct 2026",
+    detail: "Completed the Claude AI course, Oct 24, 2026",
+    topics: [
+      "Claude AI basics and setup",
+      "AI concepts",
+      "applications and customisation",
+      "AI ethics and safety",
+      "prompting",
+      "workplace productivity",
+    ],
+    code: "",
+    field: "AI",
+    verify: "https://www.educourse.co.za/verify-certificate/7EED804307-7EED804367-7A5173D3BB/",
+    image: { src: "/images/certificates/educourse-claude-ai.webp", width: 494, height: 702 },
   },
   {
     title: "Python Essentials 1",
@@ -213,7 +250,7 @@ export const CERTIFICATIONS = [
     topics: [],
     code: "10938096",
     field: "Database",
-    verify: "",
+    verify: "https://simpli-web.app.link/e/q3C3iHqov7b",
     image: {
       src: "/images/certificates/simplilearn-intro-to-sql.webp",
       width: 1121,
