@@ -8,7 +8,7 @@ export const Route = createFileRoute("/_site/certifications")({
       path: "/certifications",
       title: "Certifications | Keith Ciceron",
       description:
-        "Keith Ciceron's certificates, from a 500-hour full stack internship to courses in CSS, Azure, AI, Python, SQL, IoT and Java.",
+        "Keith Ciceron's certificates, from a 500-hour full stack internship to courses in CSS, React, Azure, AI, Python, SQL, IoT and Java.",
     }),
   component: Certifications,
 });

@@ -146,6 +146,23 @@ export const CERTIFICATIONS = [
     },
   },
   {
+    title: "ReactJS for Beginners",
+    kind: "Certificate of completion",
+    issuer: "Simplilearn SkillUp",
+    issuerShort: "Simplilearn SkillUp",
+    date: "Oct 2026",
+    detail: "Completed the ReactJS for Beginners online course, Oct 25, 2026",
+    topics: [],
+    code: "10940333",
+    field: "React",
+    verify: "",
+    image: {
+      src: "/images/certificates/simplilearn-reactjs-for-beginners.webp",
+      width: 1118,
+      height: 797,
+    },
+  },
+  {
     title: "Introduction to Modern AI",
     kind: "Certificate of course completion",
     issuer: "Cisco Networking Academy",
