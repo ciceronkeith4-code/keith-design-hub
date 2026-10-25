@@ -473,13 +473,21 @@ export function ParticlePortrait({ play = true, className = "", style }: Particl
       });
       io.observe(container);
 
-      const ro = new ResizeObserver(resize);
+      // Once it has landed, the portrait only changes on a pose change, a theme change or a resize (or every
+      // frame with an idle drift), so a frame is drawn only then and the GPU is left free for scrolling.
+      let dirty = true;
+
+      const ro = new ResizeObserver(() => {
+        resize();
+        dirty = true;
+      });
       ro.observe(container);
 
       const themeObserver = new MutationObserver(() => {
         const p = palette();
         uniforms.uInk.value.set(p.ink);
         uniforms.uPaper.value.set(p.paper);
+        dirty = true;
       });
       themeObserver.observe(document.documentElement, {
         attributes: true,
@@ -492,6 +500,7 @@ export function ParticlePortrait({ play = true, className = "", style }: Particl
         if (k === pose) return;
         pose = k;
         uniforms.uPoseW.value = oneHot(k);
+        dirty = true;
       };
 
       // Turn to the pose whose direction is nearest the point's direction from the portrait's center. Inside the
@@ -535,18 +544,37 @@ export function ParticlePortrait({ play = true, className = "", style }: Particl
       };
       window.addEventListener("pointerdown", onPointerDown, { passive: true });
 
-      const t0 = performance.now();
+      // While anything on the page scrolls, an idle drift holds still so the GPU only has the scroll to
+      // draw. Scroll events don't bubble, so this listens in the capture phase.
+      let scrollingUntil = 0;
+      const onScroll = () => {
+        scrollingUntil = performance.now() + 150;
+      };
+      document.addEventListener("scroll", onScroll, { capture: true, passive: true });
+
+      // The clock only runs while frames are drawn, so a paused drift resumes where it stopped.
+      let last = performance.now();
+      let clock = 0;
       renderer.setAnimationLoop((now: number) => {
+        const dt = now - last;
+        last = now;
         if (from !== to) {
           const k = animDuration > 0 ? Math.min((now - animStart) / animDuration, 1) : 1;
           uniforms.uProgress.value = from + (to - from) * k;
-          if (k >= 1) from = to;
+          if (k >= 1) {
+            from = to;
+            dirty = true; // draw the landed frame
+          }
         }
 
         const animating = from !== to;
+        const drifting = CONFIG.IDLE_DRIFT > 0 && now >= scrollingUntil;
         if (!visible && !animating) return;
+        if (!animating && !drifting && !dirty) return;
+        dirty = false;
 
-        uniforms.uTime.value = (now - t0) / 1000;
+        clock += Math.min(dt, 50);
+        uniforms.uTime.value = clock / 1000;
         renderer.render(scene, camera);
       });
 
@@ -554,6 +582,7 @@ export function ParticlePortrait({ play = true, className = "", style }: Particl
 
       teardown = () => {
         renderer.setAnimationLoop(null);
+        document.removeEventListener("scroll", onScroll, { capture: true });
         window.removeEventListener("pointermove", onPointerMove);
         window.removeEventListener("pointerdown", onPointerDown);
         document.documentElement.removeEventListener("pointerleave", onPointerLeave);

@@ -9,9 +9,10 @@ import { useEffect, type RefObject } from "react";
 
 // Blocks that fade in. Only the outermost match animates, so a list item's paragraphs move with it.
 const BLOCKS = "h1, h2, h3, p, li, img, figure, form, table, pre, blockquote, [data-reveal]";
-// Siblings that appear together start this many ms apart, up to MAX_STAGGER.
-const STAGGER = 60;
-const MAX_STAGGER = 240;
+// Siblings that appear together start this many ms apart, up to MAX_STAGGER. Kept short so a fast
+// scroll never outruns the content.
+const STAGGER = 40;
+const MAX_STAGGER = 120;
 
 /** Re-scans `root` whenever `key` changes (a new page). */
 export function useScrollReveal(root: RefObject<HTMLElement | null>, key: string) {
@@ -53,7 +54,8 @@ export function useScrollReveal(root: RefObject<HTMLElement | null>, key: string
             );
           }
         },
-        { root: container, rootMargin: "0px 0px -6% 0px", threshold: 0.01 },
+        // Blocks start appearing just before they scroll into view, so nothing is still blank on arrival.
+        { root: container, rootMargin: "0px 0px 10% 0px", threshold: 0 },
       );
       for (const el of hidden) {
         el.classList.add("reveal");

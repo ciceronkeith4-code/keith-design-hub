@@ -82,7 +82,7 @@ export function TourLauncher() {
           type="button"
           onClick={start}
           aria-label="Take the site tour"
-          className={`${CARD} flex h-9 items-center gap-1.5 rounded-full px-3 text-xs font-medium text-[#161616] backdrop-blur transition-colors hover:bg-white dark:text-[#EDEDED] dark:hover:bg-[#1C1C1C] cursor-pointer`}
+          className={`${CARD} flex h-9 items-center gap-1.5 rounded-full px-3 text-xs font-medium text-[#161616] transition-colors hover:bg-white dark:text-[#EDEDED] dark:hover:bg-[#1C1C1C] cursor-pointer`}
         >
           <Footprints className="h-3.5 w-3.5" aria-hidden="true" />
           <span>Tour</span>

@@ -193,13 +193,14 @@
   }
 }
 
-/* Fade-in on scroll (src/lib/scroll-reveal.ts): only opacity and transform, so it runs on the compositor. */
+/* Fade-in on scroll (src/lib/scroll-reveal.ts): only opacity and transform, so it runs on the compositor.
+   A 2D translate, so waiting blocks don't each hold a GPU layer while the page scrolls. */
 .reveal {
   opacity: 0;
-  transform: translate3d(0, 14px, 0);
+  transform: translateY(10px);
   transition:
-    opacity 600ms cubic-bezier(0.22, 1, 0.36, 1),
-    transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
+    opacity 380ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 380ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 .reveal.is-revealed {
   opacity: 1;

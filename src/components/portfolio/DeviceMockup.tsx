@@ -7,12 +7,34 @@ import type { ScreenSync } from "./screen-sync";
 const FOCUS_RING =
   "focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#3F4A3A] dark:focus-visible:outline-[#B4C0A4]";
 
+/**
+ * Smaller copies of each full-page screenshot, next to it as `<name>-<width>w.webp`. A screen a few
+ * hundred pixels wide then decodes a few megapixels instead of a 12-megapixel capture, which is
+ * what made the Work page stutter while scrolling. The full-size file stays the largest choice and
+ * is what the lightbox shows. Every `<device>-1.webp` needs these copies.
+ */
+const SCREEN_WIDTHS: Record<Device, number[]> = {
+  desktop: [480, 960],
+  tablet: [400, 800],
+  mobile: [200, 400],
+};
+/** Pixel width of the full-size captures (mobile ones are taken at 2x). */
+const CAPTURE_WIDTH: Record<Device, number> = { desktop: 1440, tablet: 1194, mobile: 780 };
+
+const screenSrcSet = (src: string, device: Device) =>
+  [
+    ...SCREEN_WIDTHS[device].map((w) => `${src.replace(/\.webp$/, `-${w}w.webp`)} ${w}w`),
+    `${src} ${CAPTURE_WIDTH[device]}w`,
+  ].join(", ");
+
 interface DeviceMockupProps {
   device: Device;
   project: Project;
   sync: ScreenSync;
   /** Drawn width of the device image, in px. */
   width: number;
+  /** CSS scale the mockup is drawn at (the scene shrinks as a whole), so the right image size is picked. */
+  scale?: number;
   /** Click, Enter, or Space on the device. Omit to make it non-interactive. */
   onActivate?: () => void;
   /** Accessible name for the device as a button. */
@@ -30,6 +52,7 @@ export function DeviceMockup({
   project,
   sync,
   width,
+  scale = 1,
   onActivate,
   label,
   style,
@@ -68,6 +91,7 @@ export function DeviceMockup({
           project={project}
           sync={sync}
           screenWidth={(screen.width / 100) * width}
+          scale={scale}
         />
       </div>
       <img
@@ -88,11 +112,13 @@ function Screenshot({
   project,
   sync,
   screenWidth,
+  scale,
 }: {
   device: Device;
   project: Project;
   sync: ScreenSync;
   screenWidth: number;
+  scale: number;
 }) {
   const src = project.screens[device][0];
   const [failed, setFailed] = useState(false);
@@ -131,6 +157,8 @@ function Screenshot({
       <img
         ref={imgRef}
         src={src}
+        srcSet={screenSrcSet(src, device)}
+        sizes={`${Math.ceil(screenWidth * scale)}px`}
         alt={screenAlt(project, device)}
         width={DEVICES[device].width}
         height={DEVICES[device].height}

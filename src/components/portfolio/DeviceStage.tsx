@@ -54,6 +54,12 @@ export function DeviceStage({
   );
 
   const [view, setView] = useState<View>("all");
+  // A device view is built the first time it is opened, so its full-page screenshot isn't loaded
+  // and decoded in a hidden layer for every project on the page.
+  const [opened, setOpened] = useState<Set<View>>(() => new Set(["all"]));
+  useEffect(() => {
+    setOpened((prev) => (prev.has(view) ? prev : new Set(prev).add(view)));
+  }, [view]);
   const [lightbox, setLightbox] = useState<{ device: Device; index: number } | null>(null);
   const [sync] = useState(() => new ScreenSync());
   useEffect(() => () => sync.dispose(), [sync]);
@@ -163,6 +169,7 @@ export function DeviceStage({
                       project={project}
                       sync={sync}
                       width={d.width}
+                      scale={sceneScale}
                       {...activation(d.device, true)}
                       style={{ position: "absolute", left: d.x, top: d.y, zIndex: d.hero ? 2 : 1 }}
                     />
@@ -175,21 +182,23 @@ export function DeviceStage({
               const spec = DEVICES[device];
               return (
                 <Layer key={device} active={view === device} height={focusH(device)}>
-                  <div className="flex h-full flex-col items-center justify-end">
-                    <DeviceMockup
-                      device={device}
-                      project={project}
-                      sync={sync}
-                      width={focusWidth(device)}
-                      {...activation(device, false)}
-                    />
-                    <p
-                      className="flex shrink-0 items-end font-sans text-xs text-[#5E615A] dark:text-[#A3A3A3]"
-                      style={{ height: CAPTION_H }}
-                    >
-                      {viewportCaption(spec)}
-                    </p>
-                  </div>
+                  {(opened.has(device) || view === device) && (
+                    <div className="flex h-full flex-col items-center justify-end">
+                      <DeviceMockup
+                        device={device}
+                        project={project}
+                        sync={sync}
+                        width={focusWidth(device)}
+                        {...activation(device, false)}
+                      />
+                      <p
+                        className="flex shrink-0 items-end font-sans text-xs text-[#5E615A] dark:text-[#A3A3A3]"
+                        style={{ height: CAPTION_H }}
+                      >
+                        {viewportCaption(spec)}
+                      </p>
+                    </div>
+                  )}
                 </Layer>
               );
             })}
