@@ -110,6 +110,23 @@ export const TRAININGS = [
  */
 export const CERTIFICATIONS = [
   {
+    title: "Introduction to CSS",
+    kind: "Certificate of completion",
+    issuer: "Simplilearn SkillUp",
+    issuerShort: "Simplilearn SkillUp",
+    date: "Oct 2026",
+    detail: "Completed the Introduction to CSS online course, Oct 25, 2026",
+    topics: [],
+    code: "10938871",
+    field: "CSS",
+    verify: "",
+    image: {
+      src: "/images/certificates/simplilearn-intro-to-css.webp",
+      width: 585,
+      height: 414,
+    },
+  },
+  {
     title: "Introduction to Modern AI",
     kind: "Certificate of course completion",
     issuer: "Cisco Networking Academy",
