@@ -110,6 +110,24 @@ export const TRAININGS = [
  */
 export const CERTIFICATIONS = [
   {
+    title: "Getting Started with Full Stack Java Development",
+    kind: "Certificate of completion",
+    issuer: "Simplilearn SkillUp",
+    issuerShort: "Simplilearn SkillUp",
+    date: "Oct 2026",
+    detail:
+      "Completed the Getting Started with Full Stack Java Development online course, Oct 26, 2026",
+    topics: [],
+    code: "10946124",
+    field: "Java",
+    verify: "https://simpli-web.app.link/e/RhTuUtYly7b",
+    image: {
+      src: "/images/certificates/simplilearn-full-stack-java.webp",
+      width: 836,
+      height: 590,
+    },
+  },
+  {
     title: "Introduction to CSS",
     kind: "Certificate of completion",
     issuer: "Simplilearn SkillUp",
